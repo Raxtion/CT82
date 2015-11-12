@@ -1,0 +1,180 @@
+[SYSTEM]
+E0001=AXIS "X" 馬達Alarm <AXIS "X" Motor Alarm>
+E0002=AXIS "Y" 馬達Alarm <AXIS "Y" Motor Alarm>
+E0003=AXIS "LC" 馬達Alarm <AXIS "LC" Motor Alarm>
+E0004=AXIS "FL" 馬達Alarm <AXIS "FL" Motor Alarm>
+E0005=緊急停止被按下 <Emergent stop>
+E0006=主氣壓源不足 <Main Air presss low>
+E0007=前翻轉平台正面檢知沒有"ON" (Sensor X000)  <Front site-Turn table position sensor not detect"ON"(sensor X000)>
+E0008=後翻轉平台正面檢知沒有"ON" (Sensor X008)  <Back site-Turn table position sensor not detect"ON"(sensor X008)>
+E0009=前翻轉平台真空檢知沒有"OFF" (SensorX002)  <Front site-Turn table vacuum sensor not detect"OFF"(sensor X002)>
+E0010=後翻轉平台真空檢知沒有"OFF" (sensorX010)  <Back site-Turn table vacuum sensor not detect "OFF"(sensor X010)>
+E0011=Boat 流道 "1",Boat 有無檢知"ON" (Sensor X021)    <Boat rail "1",Boat detect sensor "ON" (Sensor X021)>
+E0012=Boat 流道 "2",Boat 入料檢知"ON" (Sensor X022)    <Boat rail "2",Boat Input detect sensor "ON" (Sensor X022)>
+E0013=Boat 流道 "2",停止汽缸 "下位"檢知沒有"ON" (Sensor X024) <Boat rail "2",Stoper cylinder "Down" detect sensor not "ON"(Sensor X024)>
+E0014=Boat 流道 "2",靠邊汽缸 伸出檢知沒有"ON" (Sensor X025) <Boat rail "2",Locker cylinder "Push" detect sensor not "ON"(Sensor X025)>      
+E0015=Boat 流道 "2",升降汽缸 下位檢知沒有"ON" (Sensor X029) <Boat rail "2",Lifter cylinder "Down" detect sensor not "ON"(Sensor X029)>
+E0016=Boat 流道 "2",Boat 出料防夾檢知"ON" (Sensor X030)     <Boat rail "2",Boat output detect sensor "ON"(Sensor X030)>
+E0017=Boat 流道 "2",Boat 蓋板放置檢知"ON" (Sensor X031)     <Boat rail "2",Boat cover position detect sensor "ON"(Sensor X031)>
+E0018=上蓋板Loader, 靠邊汽缸 縮回檢知沒有ON (Sensor X038)   <Cover Loader Area,Locker cylinder "return" detect sensor not "ON"(Sensor X038)>
+E0019=轉板區 基板吸盤 上位檢知沒有ON (Sensor X040)  <Pick up Area-"SBT" pickup vacuun cylinder "UP" detect sensor not "ON"(Sensor X040)>
+E0020=轉板區 蓋板吸盤 上位檢知沒有ON (Sensor X042)  <Pick up Area-"Cover" pickup vacuun cylinder "UP" detect sensor not "ON"(Sensor X042)>
+E0021=轉板區 基板吸盤 真空檢知沒有OFF (Sensor X044) <Pick up Area-"SBT" pickup vacuun detect sensor not "OFF"(Sensor X044)>
+E0022=轉板區 蓋板吸盤 真空檢知沒有OFF (Sensor X045) <Pick up Area-"Cover" pickup vacuun detect sensor not "OFF"(Sensor X045)>
+E0023=CCD 光源上位檢知沒有ON (Sensor X049)          <CCD light bar cylinder "UP" detect sensor not "ON"(Sensor X049)>
+E0024=基板入料流道 基板有無檢知 ON (Sensor X052)    <SBT Input rail-SBT check sensor "ON" (Sensor X052)>
+E0025=基板入料流道 基板定位檢知 ON (Sensor X053)    <SBT Input rail-SBT stop position detect sensor "ON" (Sensor X053)>
+E0026=基板入料流道 基板入料檢知 ON (Sensor X054)    <SBT Input rail-SBT detect sensor "ON" (Sensor X054)>
+E0027=空Boat 吸盤 真空檢知沒有OFF (Sensor X064)
+E0028=入料區 基板吸盤 上位檢知沒有ON (Sensor X072)  <SBT input Area-"SBT" pickup vacuun cylinder "UP" detect sensor not "ON"(Sensor X072)>
+E0029=入料區 間隔材吸盤 上位檢知沒有ON (Sensor X074)<SBT input Area-"Paper" pickup vacuun cylinder "UP" detect sensor not "ON"(Sensor X074)>
+E0030=入料區 基板吸盤 真空檢知沒有OFF (Sensor X076) <SBT input Area-"SBT" pickup vacuum sensor not detect"OFF"(sensor X076)>
+E0031=入料區 間隔材吸盤 真空檢知沒有OFF (Sensor X077)<SBT input Area-"Paper" pickup vacuum sensor not detect"OFF"(sensor X076)>
+E0032=Boat夾持沒有在打開位置 (Sensor X089) <Boat clamp cylinder not on OPEN position (Sensor X089)>
+E0033=Boat夾持Y 軸 必須要在原點才可以復歸!!<Boat clamp AXIS "Y" must on Home position ,machine it can do ORIGIN!!>
+E0034=Boat 流道 2,Boat 到位檢知ON (Sensor X020) <Boat rail "2",Boat stop position detect sensor "ON" (Sensor X020)>
+E0035=安全門開啟<Safety door error>
+E0036=啟用雷刻時,必須跟SMS連線狀態為On Line Remote <If will use laser system ,Machine with SMS system must "On Line Remote">
+E0037=Boat 台車沒有鎖定(Sensor X016 off) <Boat Car lock Error (Sensor X016 off)>
+E0038=Boat夾持Y 軸,沒有在先前停止的位置,請手動移至該點
+E0039=Boat夾持Z 軸,沒有在先前停止的位置,請手動移至該點
+E0040=基板出料流道 基板有無檢知 ON (Sensor X025)    <SBT Out rail-SBT check sensor "ON" (Sensor X025)>
+E0041=基板出料流道 基板定位檢知 ON (Sensor X026)    <SBT Out rail-SBT stop position detect sensor "ON" (Sensor X026)>
+E0042=基板出料流道 基板脫離檢知 ON (Sensor X027)    <SBT Out rail-SBT detect sensor "ON" (Sensor X027)>
+E0043=基板出料流道 推桿沒有縮回 x041 off
+E0044=基板出料流道 推桿沒有在上位 x042 off
+E0045=基板出料流道 放置前發現流道上可能有基板 x025 x026 x027 on
+E0046=基板出料流道 沒有在時間內到達出口 x025 x026 off,xo27 on
+E0047=基板出料流道 推桿沒有在下位 x043 off
+E0048=基板出料流道 推料受阻 044 on
+E0049=基板出料流道 推桿沒有推出到定位 x040 off
+
+E0050=機台軸卡網路通訊異常 請檢查後 關閉程式重開
+E0051=現有Product Pgm.跟Part No.名稱不一樣, 請重新確認
+
+E0100=MAP 檔案上傳失敗 請確認連線狀態 或 是否重複上傳<Map file send out fail,please check network link status OR re-send>
+
+E0110=前平台入料區離子風扇異常(X014 on)
+E0111=前平台出料區離子風扇異常(X006 on)
+E0112=後平台入料區離子風扇異常(X015 on)
+E0113=後平台出料區離子風扇異常(X007 on)
+
+E0201=AXIS FTX 馬達Alarm <AXIS FTX Motor Alarm>
+E0202=AXIS RTX 馬達Alarm <AXIS RTX Motor Alarm>
+E0203=AXIS SSY 馬達Alarm <AXIS SSY Motor Alarm>
+E0204=AXIS CCD 馬達Alarm <AXIS CCD Motor Alarm>
+E0205=AXIS BPY 馬達Alarm <AXIS BPY Motor Alarm>
+E0206=AXIS BPZ 馬達Alarm <AXIS BPZ Motor Alarm>
+E0207=AXIS BLZ 馬達Alarm <AXIS BLZ Motor Alarm>
+E0208=AXIS CRD 馬達Alarm <AXIS CRD Motor Alarm>
+E0209=AXIS SCY 馬達Alarm <AXIS SCY Motor Alarm>
+E0210=AXIS SCZ 馬達Alarm <AXIS SCZ Motor Alarm>
+
+E0300=入料區 基板沒有在時間內到達定位 <Input Area-SBT Jaming on rail>
+E0301=入料區 基板倉放太滿 (Sensor X057 & Sensor X062 ON) <Input Area-SBT storage is over (Sensor X057 & Sensor X062 ON)>
+E0302=入料區 基板倉沒有了 (Sensor X059 Off) <Input Area-SBT storage is Empty(Sensor X059 Off)> 
+E0303=入料區 基板倉下降至下限了 可是準備位置檢知還是沒有off (Sensor X057 & Sensor X062 ON) <Input Area-SBT storage elevator DOWN position error(Sensor X057 & Sensor X062 ON)> 
+E0304=入料區 基板倉下降愈時 準備位置檢知沒有off (Sensor X062 ON) <Input Area-SBT storage elevator DOWN position error(Sensor X062 ON)> 
+E0305=入料區 基板倉上升愈時 準備位置檢知沒有On (X062 Off) <Input Area-SBT storage elevator UP position error(Sensor X062 OFF)>
+E0306=入料區 基板倉上升至上限了 可是準備位置檢知沒有On (Sensor X062 Off) <Input Area-SBT storage elevator UP position error(Sensor X062 OFF)>
+E0307=入料區 基板吸盤 沒有在上位 (Sensor X072 Off) <Input Area-SBT vacuum pick up cylinder"UP" detect sensor not "ON"(Sensor X072 OFF)> 
+E0308=入料區 間隔材吸盤 沒有在上位 (Sensor X074 Off) <Input Area-Paper vacuum pick up cylinder"UP" detect sensor not "ON"(Sensor X074 OFF)>
+E0309=入料區 基板吸盤 真空on (Sensor X076 ON) <Input Area-SBT vacuum detect sensor "ON"(Sensor X076 ON)>
+E0310=入料區 間隔材吸盤 真空on (Sensor X077 ON) <Input Area-Paper vacuum detect sensor "ON"(Sensor X077 ON)>
+E0311=入料區 基板吸盤 下位檢知沒有ON (Sensor X073 Off) <Input Area-SBT vacuum pick up cylinder"DOWN" detect sensor not "ON"(Sensor X073 OFF)>
+E0312=入料區 間隔材吸盤 下位檢知沒有ON (Sensor X075 Off) <Input Area-Paper vacuum pick up cylinder"DOWN" detect sensor not "ON"(Sensor X075 OFF)>
+E0313=入料區 基板吸盤 真空檢知沒有ON (Sensor X076 Off) <Input Area-SBT vacuum detect sensor not "ON"(Sensor X076 OFF)>
+E0314=入料區 間隔材吸盤 真空檢知沒有ON (Sensor X077 Off) <Input Area-Paper vacuum detect sensor not "ON"(Sensor X077 OFF)>
+E0315=入料區 基板吸盤 上位檢知沒有ON (Sensor X072 Off)<Input Area-SBT vacuum pick up cylinder"UP" detect sensor not "ON"(Sensor X072 OFF)>
+E0316=入料區 間隔材吸盤 上位檢知沒有ON (Sensor X074 Off) <Input Area-Paper vacuum pick up cylinder"UP" detect sensor not "ON"(Sensor X074 OFF)>
+E0317=入料區 間隔材吸盤 真空檢知沒有ON (Sensor X077 Off),間隔材移動中掉落 <Input Area-Paper vacuum error (Sensor X077 Off),Please check Paper prop >
+E0318=入料區 間隔材 丟棄盒放置檢知off (Sensor X058)<Input Area-Paper scrap box can not detect (Sensor X058)>
+E0319=入料區 間隔材 丟棄盒滿料檢知off (Sensor X061)<Input Area-Paper scrap box is full (Sensor X061)>
+
+E0400=前翻轉平台正面檢知沒有ON (Sensor X000) <Front site-Turn table position sensor not detect"ON"(sensor X000)>
+E0401=後翻轉平台正面檢知沒有ON (Sensor X008) <Back site-Turn table position sensor not detect"ON"(sensor X008)>
+E0402=前翻轉平台Lock汽缸沒有伸出 (Sensor X003) <Front site-Turn table Locker cylinder position error (Sensor X013)>
+E0403=後翻轉平台Lock汽缸沒有伸出 (Sensor X011) <Back site-Turn table Locker cylinder position error (Sensor X011)>
+E0404=前翻轉平台靠邊汽缸沒有縮回 (Sensor X005) <Front site-Turn table SBT locker cylinder position error(Sensor X005)>
+E0405=後翻轉平台靠邊汽缸沒有縮回 (Sensor X013) <Back site-Turn table SBT locker cylinder position error(Sensor X013)>
+E0406=入料區 基板吸盤 上位檢知沒有ON (Sensor X072)  <SBT input Area-"SBT" pickup vacuun cylinder "UP" detect sensor not "ON"(Sensor X072)>
+E0407=入料區 間隔材吸盤 上位檢知沒有ON (Sensor X074) <SBT input Area-"Paper" pickup vacuun cylinder "UP" detect sensor not "ON"(Sensor X074)>      
+E0408=入料區 基板吸盤 真空檢知沒有ON (Sensor X073 Off) <SBT input Area-"SBT" pickup vacuum sensor not"ON"(sensor X073 off)>
+E0409=入料區基板吸盤 下位檢知沒有ON (Sensor X073 Off) <Input Area-SBT vacuum pick up cylinder"DOWN" detect sensor not "ON"(Sensor X073 OFF)>
+E0410=前翻轉平台真空檢知沒有ON (Sensor X002) <Front site-Turn table vacuum sensor not detect"ON"(sensor X002)>
+E0411=後翻轉平台真空檢知沒有ON (Sensor X010) <Back site-Turn table vacuum sensor not detect "ON"(sensor X010)>
+E0412=基板2D 無法辨識 <SBT 2D reader - CODE readeing fail>
+E0413=基板2D 讀取器沒有回應 <SBT 2D reader - reader link fail>
+E0414=基板2D 字碼長度不足 <SBT 2D reader - character not enough>
+E0415=定位ccd 取像失敗或材料反向<SBT origin point inspection fail or Check SBT direction >
+E0416=雷射開檔 愈時無回應 <Laser file - time out>
+E0417=雷射開檔 回應開啟失敗 <Laser file - File open fail>
+E0418=設定雷射座標 回應失敗 <Laser coordinates setting - time out or faceback fail>
+E0419=雷射擊發失敗 <Laser marking-fail>
+E0420=設定雷射座標 愈時無回應 <Laser coordinates setting - time out>
+E0421=雷射擊發 愈時無回應 <Laser marking -time out>
+E0422=基板2D 無法辨識 <SBT 2D reader - CODE readeing fail>
+E0423=基板2D 讀取器沒有回應 <SBT 2D reader - reader link fail>
+E0424=基板2D 字碼長度不足 <SBT 2D reader - character not enough>
+E0425=定位ccd 找不到定位標記 <CCD inspection - setting point scratch fail>
+E0426=基板放反了 找不到標記 <Check SBT direction >
+E0427=ccd點量程序沒有回應 <CCD inspection - NG mark scratch procedure fail >
+E0428=取消設定雷射座標 回應失敗 <Laser coordinates canael - time out or faceback fail>
+E0429=取消設定雷射座標 愈時無回應 <Laser coordinates canael - time out>
+E0430=請求雷刻序號 SMS回傳失敗 <Request Laser serial number - SMS system faceback fail>
+E0431=請求雷刻序號 SMS時間內沒有回應 <Request Laser serial number - SMS system faceback time out>
+E0432=前翻轉平台挾持汽缸沒有縮回 (Sensor X006) <Front site-Turn table SBT locker cylinder position error(Sensor X006)>
+E0433=後翻轉平台挾持汽缸沒有縮回 (Sensor X014) <Back site-Turn table SBT locker cylinder position error(Sensor X014)>
+
+E0500=轉板區 基板吸盤 上位檢知沒有ON (Sensor X016)  <Pick up Area-"SBT" pickup vacuun cylinder "UP" detect sensor not "ON"(Sensor X016)>
+
+E0502=轉板區 基板吸盤 真空檢知沒有OFF (Sensor X020) <Pick up Area-"SBT" pickup vacuun detect sensor not "OFF"(Sensor X020)>
+
+
+
+E0507=轉板區 基板吸盤 下位檢知沒有ON (Sensor X017)  <Pick up Area-"SBT" pickup vacuun cylinder "DOWN" detect sensor not "ON"(Sensor X017)>
+E0508=轉板區 基板吸盤 真空檢知沒有ON (Sensor X020)  <Pick up Area-"SBT" pickup vacuun detect sensor not "ON"(Sensor X020)>
+
+E0511=轉板區 基板吸盤 上位檢知沒有ON (Sensor X016)  <Pick up Area-"SBT" pickup vacuun cylinder "UP" detect sensor not "ON"(Sensor X040)>
+E0512=轉板區 基板吸盤 上位檢知沒有ON (Sensor X016)  <Pick up Area-"SBT" pickup vacuun cylinder "UP" detect sensor not "ON"(Sensor X040)>
+E0513=轉板區 基板吸盤 上位檢知沒有ON (Sensor X016)  <Pick up Area-"SBT" pickup vacuun cylinder "UP" detect sensor not "ON"(Sensor X040)>
+
+E0600=上蓋板倉放太滿 (Sensor X035 & Sensor X036 ON) <Cover area - Cover storage is over (Sensor X035 & Sensor X036 ON)>
+E0601=上蓋板倉放沒有了 (Sensor X033 Off) <Cover area - Cover storage is Empty (Sensor X033 Off)>
+E0602=上蓋板倉下降至下限了 可是上位檢知還是沒有off (Sensor X035 & Sensor X036 ON) <Cover area - Cover storage elevator DOWN position error(Sensor X035 & Sensor X036 ON)>
+E0603=上蓋板倉下降愈時 上位檢知沒有off (Sensor X036 ON) <Cover area - Cover storage elevator DOWN position error(Sensor X036 ON)>
+E0604=上蓋板倉上升愈時 上位檢知沒有on (Sensor X036 Off) <Cover area - Cover storage elevator UP position error(Sensor X036 OFF)>
+E0605=上蓋板倉 靠邊機構沒有縮回 (Sensor X038 Off) <Cover area - Cover storage locker cylinder position error(Sensor X005)>
+
+E0700=Boat台車檢知沒有on (Sensor X019) <Boat car - No Boat car (Sensor X019)> 
+E0701=Boat台車放太滿 <Boat car - Boat storage is over>
+E0702=Boat台車下降至下限了 可是到位檢知還是沒有off (Sensor X018 ON) <Boat car - Boat storage elevator DOWN position error(Sensor X018 ON)>
+E0703=Boat台車下降愈時 到位檢知沒有off (Sensor X018 ON) <Boat car - Boat storage elevator DOWN position error - "time out"(Sensor X018 ON)>
+E0704=Boat台車沒有Boat  <Boat car - Boat storage is Empty>
+E0705=Boat台車上升愈時 到位檢知沒有on (Sensor X018 Off) <Boat car - Boat storage elevator UP position error - "time out"(Sensor X018 OFF)>
+E0706=Boat分離挾持汽缸沒有縮回 (Sensor X091 Off) <Boat clamp cylinder position error (Sensor X091 Off)>
+
+E0800=取Boat z軸 位置大於10.0mm <Boat Pick up -"Boat " pickup AXIS "Z" Position >10.0mm>
+E0801=Boat夾持沒有在打開位置 (Sensor X089) <Boat lock cylinder not on OPEN position (Sensor X089)>
+E0802=Boat夾持沒有夾住 (Sensor X088) <Boat lock cylinder no clamp (Sensor X088)>
+E0803=Boat夾持分離沒有夾住 (Sensor X090) <Boat lock error (Sensor X090)>
+
+E0900=Boat排出流道停止汽缸沒有在上位 (Sensor X023 off) <Boat rail- Stoper cylinder position error "UP"(Sensor X023 off)>
+E0901=Boat排出流道靠邊汽缸沒有返回 (Sensor X025 off) <Boat rail- Lock cylinder position error "Return"(Sensor X025 off)>
+E0902=Boat排出流道頂昇汽缸沒有在下位 (Sensor X029 off) <Boat rail- Lifter cylinder position error "Down"(Sensor X029 off)>
+E0903=Boat排出流道到位on (Sensor X020) <Boat rail- Boat jaming (Sensor X020)>
+E0904=Boat沒有在時間內到達定位 <Boat rail- Boat jaming>
+E0905=Boat靠邊汽缸沒有在時間內夾住 <Boat rail- Lock cylinder "Clamp" time out>
+E0906=Boat靠邊汽缸沒有在時間內放開 <Boat rail- Lock cylinder "Open" time out>
+E0907=Boat排出流道頂昇汽缸沒有在上位 (Sensor X028 off)  <Boat rail- Lifter cylinder position error "UP"(Sensor X028 off)>
+E0908=Boat排出流道 真空建立失敗 <Boat rail- Boat vacuum fail>
+E0909=Boat排出流道頂昇汽缸沒有在下位 (Sensor X029 off) <Boat rail- Lifter cylinder position error "Down"(Sensor X029 off)>
+E0910=Boat排出流道停止汽缸沒有在下位 (Sensor X024 off) <Boat rail- Stoper cylinder position error "Down"(Sensor X024 off)>
+E0911=Boat排出流道沒有在時間內排出 <Boat rail- output Boat time out or Jaming>
+E0912=Boat排出流道 Buffer區 阻擋汽缸沒有在上位(Sensor X068 off) <Boat rail- Buffer Stoper cylinder position error "UP"(Sensor X068 off)>
+E0913=基板作業完畢 自動停機 Lot Complete , Auto Stop
+E0914=PQC 自動停機 PQC Complete , Auto Stop
+
+E0999=請先復歸機台 (Please reset Machine-push button 5 sec)
+E1000=機台初始中,請稍后 (Machine ALL AXIS to home position ,Please waiting)
+E1001=機台初始復歸 完成 (Machine ALL AXIS to home position ,FINISH)

@@ -1,0 +1,3781 @@
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#pragma hdrstop
+
+#include "MainThread.h"
+#pragma package(smart_init)
+
+
+#include "C_GetTime.h"
+#include "PCIM114GL.h"
+#include "IniFile.h"
+#include "math.h"
+#include "DominoVision.h"
+#include "CEVision.h"
+#include "KenenceLaser.h"
+#include "SMSXML.h"
+
+#include <algorithm>
+
+extern PCIM114GL g_MNet;
+extern CIniFile g_IniFile;
+extern CEVision theVision;
+extern DominoVision g_Grabber;
+extern CKeyenceLaser g_Laser;
+bool g_bStopMainThread=false;
+extern CSMSXML g_SMSXML;
+
+CMainThread *g_pMainThread;
+//---------------------------------------------------------------------------
+
+//   Important: Methods and properties of objects in VCL can only be
+//   used in a method called using Synchronize, for example:
+//
+//      Synchronize(UpdateCaption);
+//
+//   where UpdateCaption could look like:
+//
+//      void __fastcall CMainThread::UpdateCaption()
+//      {
+//        Form1->Caption = "Updated in a thread";
+//      }
+//---------------------------------------------------------------------------
+
+__fastcall CMainThread::CMainThread(bool CreateSuspended)
+        : TThread(CreateSuspended)
+{
+
+        m_bRefresh=false;
+        m_bIsHomeDone=false;
+        m_bStopLoad=false;
+        m_bNeedHome=false;
+        bFrontTable=false;
+
+}
+//---------------------------------------------------------------------------
+void __fastcall CMainThread::Execute()
+{
+        //---- Place thread code here ----
+        C_GetTime tmReset,tmAlarm,tmResetLamp;
+
+	g_bStopMainThread=false;
+
+	bool bHomeDone=false;
+	bool bAutoMode=false;
+        bool bPreAuto=false;
+
+	bool bLastStart=false;
+	bool bLastReset=false;
+
+	bool bAlarmLamp=false;
+	bool bResetLamp=false;
+
+        bool bStartMachineInit=false;
+
+	//int nThreadIndex[MAX_PROCESS]={0};		//0:Inti 1:Start Measure
+
+	while(1)
+	{
+		if(g_bStopMainThread) break;
+
+                //Status
+                m_bIsHomeDone=bHomeDone;
+                m_bIsAutoMode=bAutoMode;
+                //
+
+                if(m_bNeedHome)
+                {
+                        m_bNeedHome=false;
+                        bHomeDone=false;
+                }
+
+                 g_Motion.m_bAutoMode=m_bIsAutoMode;
+
+
+                //---Start Homing
+		if(g_DIO.ReadDIBit(DI::ResetBtn) && !bLastReset) tmReset.timeStart(3000);
+		if(bLastReset && tmReset.timeUp())
+		{
+			bStartMachineInit=true;
+			bHomeDone=false;
+		}
+		bLastReset=g_DIO.ReadDIBit(DI::ResetBtn);
+
+                //CheckAlarm();
+                if(g_MNet.IsCommError(0)) g_IniFile.m_nErrorCode=50;
+		
+                //----Alarm Occured
+                //--Stop Auto
+		if(g_DIO.ReadDIBit(DI::StopBtn) || (g_IniFile.m_nErrorCode>0 && g_IniFile.m_nErrorCode<1000))
+                {
+                        bStartMachineInit=false;
+                        bAutoMode=false;
+                        bPreAuto=false;
+                        SetManualSpeed();
+
+                        g_DIO.SetDO(DO::SR_Start,false);
+                        g_DIO.SetDO(DO::BR1_RailStart,false);
+                        g_DIO.SetDO(DO::BR2_RailStart,false);
+                        g_DIO.SetDO(DO::CL_Start,false);
+                        g_DIO.SetDO(DO::SL_Start,false);
+
+                        for(int nIndex=0;nIndex<10;nIndex++)
+                        {
+                                if((nIndex!=Axis_Const::BPZ) &&  (nIndex!=Axis_Const::BPY) ) g_Motion.StopMove(nIndex);
+                        }
+
+                        m_bSSPickerDown=g_DIO.GetDO(DO::SS_SSucker);
+                        m_bSpaPickerDown=g_DIO.GetDO(DO::SS_SpaSucker);
+                        m_bSSPicker2Down=g_DIO.GetDO(DO::SC_SSucker);
+                        m_bCoverPickerDown=g_DIO.GetDO(DO::SC_CSucker);
+                        m_bLEDDown=g_DIO.GetDO(DO::LEDDown);
+
+                        g_DIO.SetDO(DO::SS_SSucker,false);
+                        g_DIO.SetDO(DO::SS_SpaSucker,false);
+                        g_DIO.SetDO(DO::SC_SSucker,false);
+                        g_DIO.SetDO(DO::SC_CSucker,false);
+                        g_DIO.SetDO(DO::LEDDown,false);
+
+                        
+                }
+
+                //---Reset Alarm
+		if(g_DIO.ReadDIBit(DI::ResetBtn) )
+		{
+			g_IniFile.m_nErrorCode=0;
+
+			g_DIO.SetDO(DO::RedLamp,false);
+			g_DIO.SetDO(DO::Buzzer,false);
+		}
+
+                //---Buzzer
+		if(tmAlarm.timeUp() && g_IniFile.m_nErrorCode>0)
+		{
+			g_DIO.SetDO(DO::RedLamp,bAlarmLamp);
+			g_DIO.SetDO(DO::Buzzer,bAlarmLamp);
+			bAlarmLamp=!bAlarmLamp;
+			tmAlarm.timeStart(500);
+		}
+                //---Homing Announce
+                else if(tmAlarm.timeUp() && !bHomeDone)
+		{
+			g_DIO.SetDO(DO::StopBtnLamp,bAlarmLamp);
+                        g_DIO.SetDO(DO::StartBtnLamp,bAlarmLamp);
+                        g_DIO.SetDO(DO::ResetBtnLamp,bAlarmLamp);
+
+			bAlarmLamp=!bAlarmLamp;
+			tmAlarm.timeStart(500);
+		}
+		
+
+
+	        //---Homing Process
+		if(!bHomeDone && !bAutoMode  && bStartMachineInit)
+		{
+			bHomeDone=InitialMachine(nThreadIndex[0]);
+			if(bHomeDone)
+                        {
+
+                                for(int nIndex=0;nIndex<MAX_PROCESS;nIndex++)
+                                        nThreadIndex[nIndex]=0;
+
+
+                                bStartMachineInit=false;
+                        }
+
+                        CheckAlarm();
+
+
+
+			
+		}
+		else if(bAutoMode && bHomeDone)	                //AutoMode
+		{
+			g_DIO.SetDO(DO::StopBtnLamp,false);
+			g_DIO.SetDO(DO::StartBtnLamp,true);
+			g_DIO.SetDO(DO::GreenLamp,true);
+			g_DIO.SetDO(DO::YellowLamp,false);
+			g_DIO.SetDO(DO::RedLamp,false);
+
+                        CheckAlarm();
+			SetWorkSpeed();
+
+                        //do Auto process
+
+                        if(g_IniFile.m_bIsRailLoad )
+                        {
+                                doLoadRail(nThreadIndex[1]);
+                                doSSPickerFromRail(nThreadIndex[2]);
+                        }
+                        else
+                        {
+                                if(!m_bStopLoad) doLoadLifter(nThreadIndex[3]);
+                                doSSPickerFromLifter(nThreadIndex[4]);
+                        }
+
+                        if(g_IniFile.m_nUseTable==0 || g_IniFile.m_nUseTable==2) doTable(nThreadIndex[5],true);
+                        if(g_IniFile.m_nUseTable==1 || g_IniFile.m_nUseTable==2) doTable(nThreadIndex[6],false);
+
+                        doSCPicker(nThreadIndex[7]);
+                        if(g_IniFile.m_bUseCover) doCoverLifter(nThreadIndex[8]);
+                        if(g_IniFile.m_bUseBoat) doBoatLifter(nThreadIndex[9]);
+                        if(g_IniFile.m_bUseBoat) doBoatPicker(nThreadIndex[10]);
+                        doBoatRail(nThreadIndex[11]);
+                        //doBoatRailBuffer(nThreadIndex[12]);
+
+
+		}
+		else if(bHomeDone)			        //Manual Mode
+		{
+			g_DIO.SetDO(DO::StopBtnLamp,true);
+			g_DIO.SetDO(DO::StartBtnLamp,false);
+                        g_DIO.SetDO(DO::ResetBtnLamp,false);
+
+			SetManualSpeed();
+
+			g_DIO.SetDO(DO::GreenLamp,false);
+			g_DIO.SetDO(DO::YellowLamp,true);
+			//g_DIO.SetDO(DO::RedLamp,false);
+
+			if(g_DIO.ReadDIBit(DI::StartBtn))
+			{
+                                if(g_IniFile.m_strProductPgm==g_IniFile.m_strSMSPartNo)
+                                {
+                                        bPreAuto=true;
+                                        nThreadIndex[19]=0;      //pre auto
+                                        SetWorkSpeed();
+
+                                        //nThreadIndex[5]=15;     //test only
+                                }
+                                else g_IniFile.m_nErrorCode=51;
+			}
+
+                        if(bPreAuto)
+                        { 
+                                g_DIO.SetDO(DO::StopBtnLamp,true);
+			        g_DIO.SetDO(DO::StartBtnLamp,true);
+			        g_DIO.SetDO(DO::GreenLamp,true);
+			        g_DIO.SetDO(DO::YellowLamp,false);
+			        g_DIO.SetDO(DO::RedLamp,false);
+
+
+                                bAutoMode=doPreAuto(nThreadIndex[19]);
+                                bPreAuto=!bAutoMode;
+                        }
+		}
+		else
+		{
+                        if(!bHomeDone && g_DIO.ReadDIBit(DI::StartBtn)) g_IniFile.m_nErrorCode=999;
+                        //Announce to Homing 
+			if(tmResetLamp.timeUp())
+			{
+				g_DIO.SetDO(DO::ResetBtnLamp,bResetLamp);
+				g_DIO.SetDO(DO::YellowLamp,bResetLamp);
+				bResetLamp=!bResetLamp;
+				tmResetLamp.timeStart(500);
+			}
+		}
+	
+		::Sleep(10);
+	}
+}
+//---------------------------------------------------------------------------
+bool __fastcall CMainThread::InitialMachine(int &nThreadIndex)
+{
+        static C_GetTime tm1MS(EX_SCALE::TIME_1MS,false);
+
+
+        switch(nThreadIndex)
+        {
+                case 0:
+                        if(!g_DIO.ReadDIBit(DI::MainAir)) g_IniFile.m_nErrorCode=6;     //debug
+                        else if(!g_DIO.ReadDIBit(DI::FT_Positive)) g_IniFile.m_nErrorCode=7;
+                        else if(!g_DIO.ReadDIBit(DI::RT_Positive)) g_IniFile.m_nErrorCode=8;
+                        else if(g_DIO.ReadDIBit(DI::FT_VacGauge)) g_IniFile.m_nErrorCode=9;
+                        else if(g_DIO.ReadDIBit(DI::RT_VacGauge)) g_IniFile.m_nErrorCode=10;
+                        else if(g_DIO.ReadDIBit(DI::BR1_Exist)) g_IniFile.m_nErrorCode=11;
+                        else if(g_DIO.ReadDIBit(DI::BR2_Entry)) g_IniFile.m_nErrorCode=12;
+                        else if(g_DIO.ReadDIBit(DI::BR2_Inp)) g_IniFile.m_nErrorCode=12;
+                        //else if(!g_DIO.ReadDIBit(DI::BR2_StopDown)) g_IniFile.m_nErrorCode=13;      bypass
+                        //else if(!g_DIO.ReadDIBit(DI::BR2_AlignOff)) g_IniFile.m_nErrorCode=14;      //not exist anymore
+                        else if(!g_DIO.ReadDIBit(DI::BR2_LifterDown)) g_IniFile.m_nErrorCode=15;
+                        else if(g_DIO.ReadDIBit(DI::BR2_Exit)) g_IniFile.m_nErrorCode=16;
+                        else if(g_DIO.ReadDIBit(DI::BR2_LaserCheck)) g_IniFile.m_nErrorCode=17;
+                        //else if(!g_DIO.ReadDIBit(DI::CL_AlignOff)) g_IniFile.m_nErrorCode=18;
+                        else if(g_DIO.ReadDIBit(DI::CL_AlignOn)) g_IniFile.m_nErrorCode=18;
+                        else if(!g_DIO.ReadDIBit(DI::SC_SSuckerUp)) g_IniFile.m_nErrorCode=19;
+                        else if(!g_DIO.ReadDIBit(DI::SC_CSuckerUp)) g_IniFile.m_nErrorCode=20;
+                        else if(g_DIO.ReadDIBit(DI::SC_SSuckerVacGauge)) g_IniFile.m_nErrorCode=21;
+                        else if(g_DIO.ReadDIBit(DI::SC_CSuckerVacGauge)) g_IniFile.m_nErrorCode=22;
+                        else if(!g_DIO.ReadDIBit(DI::LEDUp)) g_IniFile.m_nErrorCode=23;
+                        else if(g_DIO.ReadDIBit(DI::SR_Exist)) g_IniFile.m_nErrorCode=24;
+                        else if(g_DIO.ReadDIBit(DI::SR_Inp)) g_IniFile.m_nErrorCode=25;
+                        else if(g_DIO.ReadDIBit(DI::SR_Entry)) g_IniFile.m_nErrorCode=26;
+                        else if(g_DIO.ReadDIBit(DI::BoatSuckerVacGauge)) g_IniFile.m_nErrorCode=27;
+                        else if(!g_DIO.ReadDIBit(DI::SS_SSuckerUp)) g_IniFile.m_nErrorCode=28;
+                        else if(!g_DIO.ReadDIBit(DI::SS_SpaSuckerUp)) g_IniFile.m_nErrorCode=29;
+                        else if(g_DIO.ReadDIBit(DI::SS_SSuckerVacGauge)) g_IniFile.m_nErrorCode=30;
+                        else if(g_DIO.ReadDIBit(DI::SS_SpaSuckerVacGauge)) g_IniFile.m_nErrorCode=31;
+                        else if(!g_DIO.ReadDIBit(DI::BoatClampAOpen)) g_IniFile.m_nErrorCode=32;    //PTI
+                        else if(!g_Motion.GetAxisStatus(Axis_Const::BPY,Axis_Const::ORG)) g_IniFile.m_nErrorCode=33;    //PTI
+                        else
+                        {
+                                for(int nIndex=0;nIndex<96;nIndex++) g_DIO.SetDO(nIndex,false);
+
+                                for(int nIndex=0;nIndex<10;nIndex++) g_Motion.ServoOn(nIndex,true);
+
+
+                                nThreadIndex++;
+                        }
+                        break;
+                case 1:
+
+                        //g_IniFile.m_nErrorCode=1000;    //Start Homing
+                        m_listLog.push_back("機台初始中,請稍后");
+
+                        g_Motion.SetMoveSpeed(Axis_Const::FTX,20,0.01,0.01);
+                        g_Motion.SetMoveSpeed(Axis_Const::RTX,20,0.01,0.01);
+                        g_Motion.SetMoveSpeed(Axis_Const::SSY,10,0.01,0.01);
+                        g_Motion.SetMoveSpeed(Axis_Const::CCD,10,0.01,0.01);
+                        g_Motion.SetMoveSpeed(Axis_Const::BPY,10,0.01,0.01);
+                        g_Motion.SetMoveSpeed(Axis_Const::BPZ,5,0.01,0.01);
+                        g_Motion.SetMoveSpeed(Axis_Const::BLZ,20,0.01,0.01);
+                        g_Motion.SetMoveSpeed(Axis_Const::CRD,10,0.01,0.01);
+                        g_Motion.SetMoveSpeed(Axis_Const::SCY,10,0.01,0.01);
+                        g_Motion.SetMoveSpeed(Axis_Const::SCZ,5,0.01,0.01);
+
+                        if(g_Motion.GetAxisStatus(Axis_Const::BPZ,Axis_Const::MEL) || g_Motion.GetAxisStatus(Axis_Const::BPZ,Axis_Const::ORG)) g_Motion.RelMove(Axis_Const::BPZ,10.0);
+                        if(g_Motion.GetAxisStatus(Axis_Const::SCZ,Axis_Const::MEL) || g_Motion.GetAxisStatus(Axis_Const::SCZ,Axis_Const::ORG)) g_Motion.RelMove(Axis_Const::SCZ,10.0);
+
+                        /*
+                        if(g_Motion.GetStatus(AXIS_X,PCI8164::MEL) || g_Motion.GetStatus(AXIS_X,PCI8164::ORG)) g_Motion.RelMove(AXIS_X,10.0);
+                        if(g_Motion.GetStatus(AXIS_Y,PCI8164::MEL) || g_Motion.GetStatus(AXIS_Y,PCI8164::ORG))g_Motion.RelMove(AXIS_Y,10.0);
+                        if(g_Motion.GetStatus(AXIS_Z,PCI8164::MEL) || g_Motion.GetStatus(AXIS_Z,PCI8164::ORG))g_Motion.RelMove(AXIS_Z,10.0);
+                        if(g_Motion.GetStatus(AXIS_T,PCI8164::MEL) || g_Motion.GetStatus(AXIS_T,PCI8164::ORG))g_Motion.RelMove(AXIS_T,10.0);
+                        if(g_Motion.GetStatus(AXIS_H,PCI8164::MEL) || g_Motion.GetStatus(AXIS_H,PCI8164::ORG))g_Motion.RelMove(AXIS_H,10.0);
+                        */
+                        tm1MS.timeStart(1500);
+                        nThreadIndex++;
+                        break;
+                case 2:
+                        if(g_Motion.IsMotionDone(Axis_Const::BPZ) && g_Motion.IsMotionDone(Axis_Const::SCZ) && tm1MS.timeUp())
+                        {
+                                tm1MS.timeStart(1000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 3:
+                        if(tm1MS.timeUp())
+                        {
+                                g_Motion.AxisHome(Axis_Const::BPZ,false);
+                                g_Motion.AxisHome(Axis_Const::SCZ,false);
+                                tm1MS.timeStart(1500);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 4:
+                        if(g_Motion.IsMotionDone(Axis_Const::BPZ) && g_Motion.IsMotionDone(Axis_Const::SCZ) && tm1MS.timeUp())
+                        {
+                                for(int nAxis=0;nAxis<10;nAxis++)
+                                {
+                                    if(nAxis==Axis_Const::BPZ) continue;
+                                    if(nAxis==Axis_Const::SCZ) continue;
+                                    if(g_Motion.GetAxisStatus(nAxis,Axis_Const::MEL) || g_Motion.GetAxisStatus(nAxis,Axis_Const::ORG)) g_Motion.RelMove(nAxis,10.0);
+                                }
+
+                                tm1MS.timeStart(1500);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 5:
+                        if(g_Motion.IsMotionDone(Axis_Const::FTX) && g_Motion.IsMotionDone(Axis_Const::RTX) &&
+                                g_Motion.IsMotionDone(Axis_Const::SSY) && g_Motion.IsMotionDone(Axis_Const::CCD) &&
+                                g_Motion.IsMotionDone(Axis_Const::BPY) && g_Motion.IsMotionDone(Axis_Const::BPZ) &&
+                                g_Motion.IsMotionDone(Axis_Const::BLZ) && g_Motion.IsMotionDone(Axis_Const::CRD) &&
+                                g_Motion.IsMotionDone(Axis_Const::SCY) && g_Motion.IsMotionDone(Axis_Const::SCZ) && tm1MS.timeUp())
+                        {
+                                tm1MS.timeStart(1500);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 6:
+                        if(tm1MS.timeUp())
+                        {
+                                for(int nAxis=0;nAxis<10;nAxis++)
+                                {
+                                    if(nAxis==Axis_Const::BPZ) continue;
+                                    if(nAxis==Axis_Const::SCZ) continue;
+                                    g_Motion.AxisHome(nAxis,false);
+                                    tm1MS.timeStart(1500);
+                                }
+                                nThreadIndex++;
+                        }
+                        break;
+                case 7:
+                        if(g_Motion.IsMotionDone(Axis_Const::FTX) && g_Motion.IsMotionDone(Axis_Const::RTX) &&
+                                g_Motion.IsMotionDone(Axis_Const::SSY) && g_Motion.IsMotionDone(Axis_Const::CCD) &&
+                                g_Motion.IsMotionDone(Axis_Const::BPY) && g_Motion.IsMotionDone(Axis_Const::BPZ) &&
+                                g_Motion.IsMotionDone(Axis_Const::BLZ) && g_Motion.IsMotionDone(Axis_Const::CRD) &&
+                                g_Motion.IsMotionDone(Axis_Const::SCY) && g_Motion.IsMotionDone(Axis_Const::SCZ) && tm1MS.timeUp())
+                        {
+                                tm1MS.timeStart(1500);
+                                nThreadIndex++;
+                        }
+                        break;
+                 case 8:
+                        if(tm1MS.timeUp())
+                        {
+                                for(int nAxis=0;nAxis<10;nAxis++)
+                                {
+                                        g_Motion.SetCommandPos(nAxis,0.0);
+                                        g_Motion.SetFeedbackPos(nAxis,0.0);
+                                }
+                                nThreadIndex++;
+                        }
+                        break;
+                 case 9:
+                        //do initial pos or flag
+                        for(int nIndex=0;nIndex<10;nIndex++) g_Motion.m_dLastTargetPos[nIndex]=0.0;
+
+                        m_nLaserCount=0;
+                        m_nOKSummary=0;
+                        m_nNGSummary=0;
+                        m_nSubstrateRemains=0;
+                        m_nStripCount=0;
+
+                        m_bLoadRailReady=false;
+                        m_bLoadLifterReady=false;
+                        m_bSSPickerReady=false;
+                        m_bTableReady[0]=false;
+                        m_bTableReady[1]=false;
+                        m_bCoverLifterReady=false;
+                        m_bSCPickerCoverReady=false;
+                        m_bSCPickerSSReady=false;
+                        m_bBoatLifterReady=false;
+                        m_bBoatPickerReady=false;
+                        m_bBoatRailReady=false;
+                        
+                        m_bIsSSPickeLocked=false;
+                        m_bIsMapCCDLocked=false;
+
+                        m_listPickTable.clear();
+                        m_listProductInfo.clear();
+
+
+                        m_bLaserLocked=false;
+                        m_bLaserReaderLocked=false;
+
+                        m_bSSPickerDown=false;
+                        m_bSpaPickerDown=false;
+                        m_bSSPicker2Down=false;
+                        m_bCoverPickerDown=false;
+                        m_bLEDDown=false;
+
+                        g_DIO.SetDO(DO::SS_SpaVacOff,true);
+                        g_DIO.SetDO(DO::SS_SVacOff,true);
+                        g_DIO.SetDO(DO::BR2_Stopper,true);     //up
+                        //g_DIO.SetDO(DO::Buffer_Stopper,true);     //up
+
+                        g_IniFile.m_nErrorCode=1001;
+                        nThreadIndex++;
+                        break;
+
+                default:
+                        nThreadIndex=0;
+                        return true;
+
+        }
+
+        if(g_IniFile.m_nErrorCode>0 && g_IniFile.m_nErrorCode<1000)  nThreadIndex=0;
+
+        return false;
+
+}
+//---------------------------------------------------------------------------
+void __fastcall CMainThread::CheckAlarm()
+{
+        if(g_Motion.GetAxisStatus(Axis_Const::FTX ,Axis_Const::ALM)) g_IniFile.m_nErrorCode=201;
+        else if(g_Motion.GetAxisStatus(Axis_Const::RTX ,Axis_Const::ALM)) g_IniFile.m_nErrorCode=202;
+        else if(g_Motion.GetAxisStatus(Axis_Const::SSY ,Axis_Const::ALM)) g_IniFile.m_nErrorCode=203;
+        else if(g_Motion.GetAxisStatus(Axis_Const::CCD ,Axis_Const::ALM)) g_IniFile.m_nErrorCode=204;
+        else if(g_Motion.GetAxisStatus(Axis_Const::BPY ,Axis_Const::ALM)) g_IniFile.m_nErrorCode=205;
+        else if(g_Motion.GetAxisStatus(Axis_Const::BPZ ,Axis_Const::ALM)) g_IniFile.m_nErrorCode=206;
+        else if(g_Motion.GetAxisStatus(Axis_Const::BLZ ,Axis_Const::ALM)) g_IniFile.m_nErrorCode=207;
+        else if(g_Motion.GetAxisStatus(Axis_Const::CRD ,Axis_Const::ALM)) g_IniFile.m_nErrorCode=208;
+        else if(g_Motion.GetAxisStatus(Axis_Const::SCY ,Axis_Const::ALM)) g_IniFile.m_nErrorCode=209;
+        else if(g_Motion.GetAxisStatus(Axis_Const::SCZ ,Axis_Const::ALM)) g_IniFile.m_nErrorCode=210;
+
+        //if(!g_DIO.ReadDIBit(DI::EmgBtn)) g_IniFile.m_nErrorCode=5;     //debug
+        if(!g_DIO.ReadDIBit(DI::MainAir)) g_IniFile.m_nErrorCode=6;  //debug
+        if(!g_DIO.ReadDIBit(DI::SafetyDoor) && !g_DIO.ReadDOBit(DO::SafetyDoorByPass) ) g_IniFile.m_nErrorCode=35; //debug
+        if(m_bIsAutoMode && g_SMSXML.m_nOnLineMode!=2 && g_IniFile.m_bUseLaserMark ) g_IniFile.m_nErrorCode=36;
+        if(m_bIsAutoMode  && !g_DIO.ReadDIBit(DI::Bogie_LockOn)) g_IniFile.m_nErrorCode=37;
+
+        if(m_bIsAutoMode  && g_DIO.ReadDIBit(DI::FT_IN_FAN_ALM)) g_IniFile.m_nErrorCode=110;
+        if(m_bIsAutoMode  && g_DIO.ReadDIBit(DI::FT_OUT_FAN_ALM)) g_IniFile.m_nErrorCode=111;
+        if(m_bIsAutoMode  && g_DIO.ReadDIBit(DI::RT_IN_FAN_ALM)) g_IniFile.m_nErrorCode=112;
+        if(m_bIsAutoMode  && g_DIO.ReadDIBit(DI::RT_OUT_FAN_ALM)) g_IniFile.m_nErrorCode=113;
+
+}
+//---------------------------------------------------------------------------
+void __fastcall CMainThread::SetWorkSpeed()
+{
+        for(int nIndex=0;nIndex<10;nIndex++)
+                g_Motion.SetMoveSpeed(nIndex,g_IniFile.m_dWorkSpeed[nIndex],g_IniFile.m_dACCSpeed[nIndex],g_IniFile.m_dDECSpeed[nIndex]);
+
+}
+//---------------------------------------------------------------------------
+void __fastcall CMainThread::SetManualSpeed()
+{
+         for(int nIndex=0;nIndex<10;nIndex++)
+                g_Motion.SetMoveSpeed(nIndex,g_IniFile.m_dJogSpeed[nIndex],g_IniFile.m_dACCSpeed[nIndex],g_IniFile.m_dDECSpeed[nIndex]);
+}
+//---------------------------------------------------------------------------
+void __fastcall CMainThread::doLoadRail(int &nThreadIndex)
+{
+        static C_GetTime tm1MS(EX_SCALE::TIME_1MS,false);
+
+        //const int nTagA=1000;
+
+
+        switch(nThreadIndex)
+        {
+                case 0:
+                        if(!m_bStopLoad)
+                        {
+                                if(!g_DIO.GetDI(DI::SR_Entry) && !g_DIO.GetDI(DI::SR_Exist) && !g_DIO.GetDI(DI::SR_Inp))
+                                {
+                                        g_DIO.SetDO(DO::SR_Ready,true);
+                                }
+                                nThreadIndex++;
+                        }
+                        break;
+                case 1:
+                        if(g_DIO.GetDI(DI::SR_Entry) || g_DIO.GetDI(DI::SR_Exist) || g_DIO.GetDI(DI::SR_Inp))
+                        {
+                                m_nSubstrateRemains++;
+                                g_DIO.SetDO(DO::SR_Ready,false);
+                                g_DIO.SetDO(DO::SR_Start,true);
+                                tm1MS.timeStart(5000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 2:
+                        if(g_DIO.GetDI(DI::SR_Inp) && !g_DIO.GetDI(DI::SR_Entry))
+                        {
+                                tm1MS.timeStart(1000);
+                                nThreadIndex++;
+                        }
+                        else if(!g_DIO.GetDO(DO::SR_Start))
+                        {
+                                g_DIO.SetDO(DO::SR_Start,true);
+                                tm1MS.timeStart(5000);
+                        }
+                        else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=300;
+                        break;
+                case 3:
+                        if(tm1MS.timeUp())
+                        {
+                                g_DIO.SetDO(DO::SR_Start,false);
+                                g_DIO.SetDO(DO::SR_Align,true);
+                                tm1MS.timeStart(1000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 4:
+                        if(tm1MS.timeUp())
+                        {
+                                g_DIO.SetDO(DO::SR_Align,false);
+                                tm1MS.timeStart(300);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 5:
+                        if(tm1MS.timeUp())
+                        {
+                                m_bLoadRailReady=true;
+                                nThreadIndex++;
+                        }
+                        break;
+                case 6:
+                        if(!m_bLoadRailReady)
+                        {
+                                nThreadIndex++;
+                        }
+                        break;
+                default:
+                        nThreadIndex=0;
+                        break;
+        }
+
+
+}
+//---------------------------------------------------------------------------
+
+void __fastcall CMainThread::doLoadLifter(int &nThreadIndex)
+{
+        static C_GetTime tm1MS(EX_SCALE::TIME_1MS,false);
+
+        const bool bLifterDown=true;
+        const bool bLifterUp=false;
+
+        switch(nThreadIndex)
+        {
+                case 0:
+                        if(g_DIO.GetDI(DI::SL_Down) && g_DIO.GetDI(DI::SL_Inp)) g_IniFile.m_nErrorCode=301;
+                        else if(!g_DIO.GetDI(DI::SL_Exist)) g_IniFile.m_nErrorCode=302;
+                        else
+                        {
+                                g_DIO.SetDO(DO::SL_Dir,bLifterDown);
+                                g_DIO.SetDO(DO::SL_Start,!g_DIO.GetDI(DI::SL_Down));
+                                tm1MS.timeStart(10000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 1:
+                        if(!g_DIO.GetDI(DI::SL_Inp))
+                        {
+                                //g_DIO.SetDO(DO::SL_Start,false);
+                                tm1MS.timeStart(1000);
+                                nThreadIndex++;
+                        }
+                        else if(g_DIO.GetDI(DI::SL_Down))
+                        {
+                                g_DIO.SetDO(DO::SL_Start,false);
+                                g_IniFile.m_nErrorCode=303;
+                        }
+                        else if(!g_DIO.GetDO(DO::SL_Start))
+                        {
+                                g_DIO.SetDO(DO::SL_Start,true);
+                                g_DIO.SetDO(DO::SL_Dir,bLifterDown);
+                                tm1MS.timeStart(10000);
+                        }
+                        else if(tm1MS.timeUp())
+                        {
+                                g_DIO.SetDO(DO::SL_Start,false);
+                                g_IniFile.m_nErrorCode=304;
+                        }
+                        break;
+                case 2:
+                        if(tm1MS.timeUp())
+                        {
+                                g_DIO.SetDO(DO::SL_Dir,bLifterUp);
+                                g_DIO.SetDO(DO::SL_Start,true);
+                                tm1MS.timeStart(10000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 3:
+                        if(g_DIO.GetDI(DI::SL_Inp))
+                        {
+                                g_DIO.SetDO(DO::SL_Start,false);
+                                m_bLoadLifterReady=true;
+                                nThreadIndex++;
+                        }
+                        else if(g_DIO.GetDI(DI::SL_Up))
+                        {
+                                g_DIO.SetDO(DO::SL_Start,false);
+                                g_IniFile.m_nErrorCode=306;
+                        }
+                        else if(!g_DIO.GetDI(DI::SL_Exist))
+                        {
+                                g_DIO.SetDO(DO::SL_Start,false);
+                                g_IniFile.m_nErrorCode=302;
+                        }
+                        else if(!g_DIO.GetDO(DO::SL_Start))
+                        {
+                                g_DIO.SetDO(DO::SL_Start,true);
+                                g_DIO.SetDO(DO::SL_Dir,bLifterUp);
+                                tm1MS.timeStart(10000);
+                        }
+                        else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=305;
+                        break;
+                case 4:
+                        if(!m_bLoadLifterReady)
+                        {
+                                nThreadIndex++;
+                        }
+                        break;
+                default:
+                        nThreadIndex=0;
+                        break;
+        }
+
+}
+//---------------------------------------------------------------------------
+void __fastcall CMainThread::doSSPickerFromLifter(int &nThreadIndex)
+{
+        static C_GetTime tm1MS(EX_SCALE::TIME_1MS,false);
+
+        static bool bIsSubstrate=false;
+
+        const int nTagPickOK=1000;
+        const int nTagReSuck=2000;
+
+        const bool bLifterDown=true;
+        const bool bLifterUp=false;
+
+        switch(nThreadIndex)
+        {
+                case 0:
+                case nTagReSuck:nThreadIndex=0;
+                        if(!g_DIO.GetDI(DI::SS_SSuckerUp)) g_IniFile.m_nErrorCode=307;
+                        else if(!g_DIO.GetDI(DI::SS_SpaSuckerUp)) g_IniFile.m_nErrorCode=308;
+                        //else if(g_DIO.GetDI(DI::SS_SSuckerVacGauge)) g_IniFile.m_nErrorCode=309;
+                        //else if(g_DIO.GetDI(DI::SS_SpaSuckerVacGauge)) g_IniFile.m_nErrorCode=310;
+                        else if(m_bLoadLifterReady)
+                        {
+
+                                {
+                                        bIsSubstrate=g_DIO.GetDI(DI::IsSubstrate);
+                                        bIsSubstrate? g_Motion.AbsMove(Axis_Const::SSY,g_IniFile.m_dSSPickerPickPos) : g_Motion.AbsMove(Axis_Const::SSY,g_IniFile.m_dSpaPickerPickPos);
+
+                                        nThreadIndex++;
+                                }
+
+                        }
+                        break;
+                case 1:
+                        if(g_Motion.IsLastPosDone(Axis_Const::SSY))
+                        {
+                                tm1MS.timeStart(300);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 2:
+
+                        if(tm1MS.timeUp())
+                        {
+                                bIsSubstrate? g_DIO.SetDO(DO::SS_SSucker,true) : g_DIO.SetDO(DO::SS_SpaSucker,true);
+
+                                tm1MS.timeStart(3000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 3:
+                        if( (bIsSubstrate & g_DIO.GetDI(DI::SS_SSuckerDown)) ||
+                                (!bIsSubstrate & g_DIO.GetDI(DI::SS_SpaSuckerDown)))
+                        {
+                                tm1MS.timeStart(300);
+                                nThreadIndex++;
+                        }
+                        else if(!g_DIO.GetDO(DO::SS_SSucker) || !g_DIO.GetDO(DO::SS_SpaSucker) )
+                        {
+                                bIsSubstrate? g_DIO.SetDO(DO::SS_SSucker,true) : g_DIO.SetDO(DO::SS_SpaSucker,true);
+                                tm1MS.timeStart(3000);
+                        }
+                        else if(tm1MS.timeUp())
+                        {
+                                bIsSubstrate? g_IniFile.m_nErrorCode=311 : g_IniFile.m_nErrorCode=312;
+                                nThreadIndex=nTagReSuck;
+                        }
+
+                        break;
+                case 4:
+                        if(tm1MS.timeUp())
+                        {
+                                bIsSubstrate? g_DIO.SetDO(DO::SS_SVacOn,true) : g_DIO.SetDO(DO::SS_SpaVacOn,true);
+                                bIsSubstrate? g_DIO.SetDO(DO::SS_SVacOff,false) : g_DIO.SetDO(DO::SS_SpaVacOff,false);
+                                tm1MS.timeStart(5000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 5:
+                        if( (bIsSubstrate & g_DIO.GetDI(DI::SS_SSuckerVacGauge)) ||
+                                (!bIsSubstrate & g_DIO.GetDI(DI::SS_SpaSuckerVacGauge)))
+                        {
+                                tm1MS.timeStart(1000);
+                                nThreadIndex++;
+                        }
+                        /*
+                        else if( (bIsSubstrate & !g_DIO.GetDO(DI::SS_SSuckerVacGauge)) ||
+                                (!bIsSubstrate & !g_DIO.GetDO(DI::SS_SpaSuckerVacGauge)))
+                        {
+                                bIsSubstrate? g_DIO.SetDO(DO::SS_SVacOn,true) : g_DIO.SetDO(DO::SS_SpaVacOn,true);
+                                bIsSubstrate? g_DIO.SetDO(DO::SS_SVacOff,false) : g_DIO.SetDO(DO::SS_SpaVacOff,false);
+                                bIsSubstrate? g_DIO.SetDO(DO::SS_SSucker,true) : g_DIO.SetDO(DO::SS_SpaSucker,true);
+
+                                tm1MS.timeStart(5000);
+                        }
+                        */
+                        else if(tm1MS.timeUp())
+                        {
+                                nThreadIndex=nTagReSuck;
+                                bIsSubstrate? g_IniFile.m_nErrorCode=313 : g_IniFile.m_nErrorCode=314;
+                        }
+                        break;
+                case 6:
+                        if(tm1MS.timeUp())
+                        {
+                                bIsSubstrate? g_DIO.SetDO(DO::SS_SSucker,false) : g_DIO.SetDO(DO::SS_SpaSucker,false);
+                                tm1MS.timeStart(3000);
+
+                                g_DIO.SetDO(DO::SL_Start,true);
+                                g_DIO.SetDO(DO::SL_Dir,bLifterDown);
+
+                                nThreadIndex++;
+                        }
+                        break;
+                case 7:
+                        if(g_IniFile.m_bShakeSubstarte)
+                                bIsSubstrate? g_DIO.SetDO(DO::SS_SSucker, !g_DIO.GetDO(DO::SS_SSucker)) : g_DIO.SetDO(DO::SS_SpaSucker,!g_DIO.GetDO(DO::SS_SpaSucker));       //Shaking
+                                
+                        if(tm1MS.timeUp())
+                        {
+                                bIsSubstrate? g_DIO.SetDO(DO::SS_SSucker,false) : g_DIO.SetDO(DO::SS_SpaSucker,false);
+                                tm1MS.timeStart(3000);
+
+                                g_DIO.SetDO(DO::SL_Start,false);
+                                
+                                nThreadIndex++;
+                        }
+                        break;
+
+                case 8:
+                        if( (bIsSubstrate & g_DIO.GetDI(DI::SS_SSuckerUp)) ||
+                                (!bIsSubstrate & g_DIO.GetDI(DI::SS_SpaSuckerUp)))
+                        {
+                                tm1MS.timeStart(300);
+                                nThreadIndex++;
+                        }
+                        else if(g_DIO.GetDO(DO::SS_SSucker) || g_DIO.GetDO(DO::SS_SpaSucker))
+                        {
+                                 bIsSubstrate? g_DIO.SetDO(DO::SS_SSucker,false) : g_DIO.SetDO(DO::SS_SpaSucker,false);
+                                tm1MS.timeStart(3000);
+                        }
+                        else if(tm1MS.timeUp()) bIsSubstrate? g_IniFile.m_nErrorCode=315 : g_IniFile.m_nErrorCode=316;
+                        break;
+                case 9:
+                        if( (bIsSubstrate & g_DIO.GetDI(DI::SS_SSuckerVacGauge)) ||
+                                (!bIsSubstrate & g_DIO.GetDI(DI::SS_SpaSuckerVacGauge)))
+                        {
+                                nThreadIndex++;
+                        }
+                        else if(tm1MS.timeUp())
+                        {
+                                m_bLoadLifterReady=false;      //Announce Lifter to reload again
+                                nThreadIndex=nTagReSuck;
+                                bIsSubstrate? g_IniFile.m_nErrorCode=313 : g_IniFile.m_nErrorCode=314;
+                        }
+                        break;
+                case 10:
+                        if(tm1MS.timeUp())
+                        {
+                                if(bIsSubstrate)
+                                {
+                                        m_nSubstrateRemains++;
+                                         m_bSSPickerReady=true;
+                                         nThreadIndex=nTagPickOK;
+                                }
+                                else
+                                {
+                                        if(!g_DIO.GetDI(DI::SS_SSuckerUp)) g_IniFile.m_nErrorCode=307;
+                                        else if(!g_DIO.GetDI(DI::SS_SpaSuckerUp)) g_IniFile.m_nErrorCode=308;
+                                        {
+                                                g_Motion.AbsMove(Axis_Const::SSY,g_IniFile.m_dSpaPickerThrowPos);
+                                                nThreadIndex++;
+                                        }
+                                }
+
+                                m_bLoadLifterReady=false;      //Announce Lifter to reload again
+
+                        }
+                        break;
+                case 11:
+                        if(g_Motion.IsLastPosDone(Axis_Const::SSY))
+                        {
+                                tm1MS.timeStart(300);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 12:
+                        if(!g_DIO.GetDI(DI::SpacerBoxExist)) g_IniFile.m_nErrorCode=318;
+                        else  if(!g_DIO.GetDI(DI::SpacerBoxFull)) g_IniFile.m_nErrorCode=319;
+                        else if(tm1MS.timeUp())
+                        {
+                                g_DIO.SetDO(DO::SS_SpaVacOn,false);
+                                g_DIO.SetDO(DO::SS_SpaVacOff,true);
+                                g_DIO.SetDO(DO::SS_SpaDeVac,true);
+                                tm1MS.timeStart(1000);
+                                nThreadIndex++;
+                        }
+                        else if(!g_DIO.GetDI(DI::SS_SpaSuckerVacGauge)) g_IniFile.m_nErrorCode=317; 
+                        break;
+                case 13:
+                        if(tm1MS.timeUp())
+                        {
+                                g_DIO.SetDO(DO::SS_SpaDeVac,false);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 14:
+                case nTagPickOK: nThreadIndex=14;
+                        if(!m_bSSPickerReady)
+                        {
+                                nThreadIndex++;
+                        }
+                        break;
+                default:
+                        nThreadIndex=0;
+                        break;
+        }
+}
+//---------------------------------------------------------------------------
+void __fastcall CMainThread::doSSPickerFromRail(int &nThreadIndex)
+{
+        static C_GetTime tm1MS(EX_SCALE::TIME_1MS,false);
+
+        const int nTagReSuck=1000;
+
+        switch(nThreadIndex)
+        {
+                case 0:
+                        if(!g_DIO.GetDI(DI::SS_SSuckerUp)) g_IniFile.m_nErrorCode=307;
+                        else if(!g_DIO.GetDI(DI::SS_SpaSuckerUp)) g_IniFile.m_nErrorCode=308;
+                        else if(g_DIO.GetDI(DI::SS_SSuckerVacGauge)) g_IniFile.m_nErrorCode=309;
+                        else if(g_DIO.GetDI(DI::SS_SpaSuckerVacGauge)) g_IniFile.m_nErrorCode=310;
+                        else if(m_bLoadRailReady)
+                        {
+                                g_Motion.AbsMove(Axis_Const::SSY,g_IniFile.m_dSSPickerPickRailPos) ;
+                                nThreadIndex++;
+                        }
+                        break;
+                case 1:
+                        if(g_Motion.IsLastPosDone(Axis_Const::SSY))
+                        {
+                                tm1MS.timeStart(300);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 2:
+                case nTagReSuck:nThreadIndex=2;
+                        if(tm1MS.timeUp())
+                        {
+                                g_DIO.SetDO(DO::SS_SSucker,true);
+
+                                tm1MS.timeStart(3000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 3:
+                        if( g_DIO.GetDI(DI::SS_SSuckerDown))
+                        {
+                                tm1MS.timeStart(300);
+                                nThreadIndex++;
+                        }
+                        else if( !g_DIO.GetDO(DO::SS_SSucker))
+                        {
+                                g_DIO.SetDO(DO::SS_SSucker,true);
+
+                                tm1MS.timeStart(3000);
+                        }
+                        else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=311;
+
+                        break;
+                case 4:
+                        if(tm1MS.timeUp())
+                        {
+                                g_DIO.SetDO(DO::SS_SVacOn,true);
+                                g_DIO.SetDO(DO::SS_SVacOff,false);
+                                tm1MS.timeStart(5000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 5:
+                        if( g_DIO.GetDI(DI::SS_SSuckerVacGauge))
+                        {
+                                tm1MS.timeStart(1000);
+                                nThreadIndex++;
+                        }
+                        else if(tm1MS.timeUp())
+                        {
+                                nThreadIndex=nTagReSuck;
+                                g_IniFile.m_nErrorCode=313;
+                        }
+                        break;
+                        break;
+                case 6:
+                        if(tm1MS.timeUp())
+                        {
+                                g_DIO.SetDO(DO::SS_SSucker,false);
+                                tm1MS.timeStart(3000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 7:
+                        if( g_DIO.GetDI(DI::SS_SSuckerUp))
+                        {
+                                tm1MS.timeStart(300);
+                                nThreadIndex++;
+                        }
+                        else if(g_DIO.GetDO(DO::SS_SSucker))
+                        {
+                                 g_DIO.SetDO(DO::SS_SSucker,false);
+                                tm1MS.timeStart(3000);
+                        }
+                        else if(tm1MS.timeUp())g_IniFile.m_nErrorCode=315;
+                        break;
+                case 8:
+                        if( g_DIO.GetDI(DI::SS_SSuckerVacGauge))
+                        {
+                                nThreadIndex++;
+                        }
+                        else if(tm1MS.timeUp())
+                        {
+                                nThreadIndex=nTagReSuck;
+                                g_IniFile.m_nErrorCode=313;
+                        }
+                        break;
+                case 9:
+                        if(tm1MS.timeUp())
+                        {
+                                //m_nSubstrateRemains++;     //move to doLoadRail
+
+                                m_bSSPickerReady=true;
+                                m_bLoadRailReady=false;      //Announce Lifter to reload again
+                                nThreadIndex++;
+
+                        }
+                        break;
+                case 10:
+                        if(!m_bSSPickerReady)
+                        {
+                                nThreadIndex++;
+                        }
+                        break;
+                default:
+                        nThreadIndex=0;
+                        break;
+        }
+}
+
+//---------------------------------------------------------------------------
+void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
+{
+
+        static C_GetTime tm1MSFront(EX_SCALE::TIME_1MS,false);
+        static C_GetTime tm1MSRear(EX_SCALE::TIME_1MS,false);
+        static int nCCDIndex=0;
+        C_GetTime *p_tm1MS;
+
+        int iTablePositive,iTableLockOff,iTableLockOn,iTableAlignOff,iTableVacGauge;
+        int oTable,nAxisTable,oTableAlign,oTableVac,oTableLock;
+        
+        const int nTagVenderCode=1000;
+        const int nTagFMCCD=2000;
+        const int nTagMapCCD=3000;
+        const int nTagUnLockMapCCD=4000;
+        const int nTagLaserMark=5000;
+        const int nTagLaserCodeReader=6000;
+        const int nTagTableFinish=7000;
+
+        int nFounds=0;
+
+        int nAxis;
+
+        if(bFront)
+        {
+                p_tm1MS=&tm1MSFront;
+                iTablePositive=DI::FT_Positive;
+                iTableLockOff=DI::FT_LockerOff;
+                iTableLockOn=DI::FT_LockerOn;
+                iTableAlignOff=DI::FT_AlignOff;
+                iTableVacGauge=DI::FT_VacGauge;
+
+                oTableLock=DO::FT_Locker;
+                oTableAlign=DO::FT_Align;
+                oTableVac=DO::FT_Vac;
+
+                nAxisTable=Axis_Const::FTX;
+        }
+        else
+        {
+                p_tm1MS=&tm1MSRear;
+                iTablePositive=DI::RT_Positive;
+                iTableLockOff=DI::RT_LockerOff;
+                iTableLockOn=DI::RT_LockerOn;
+                iTableAlignOff=DI::RT_AlignOff;
+                iTableVacGauge=DI::RT_VacGauge;
+
+                oTableLock=DO::RT_Locker;
+                oTableAlign=DO::RT_Align;
+                oTableVac=DO::RT_Vac;
+
+                nAxisTable=Axis_Const::RTX;
+        }
+
+        switch(nThreadIndex)
+        {
+                case 0:
+                        if(!g_DIO.GetDI(iTablePositive)) bFront? g_IniFile.m_nErrorCode=400 : g_IniFile.m_nErrorCode=401;
+                        else
+                        {
+                                g_DIO.SetDO(oTableLock,true);
+                                p_tm1MS->timeStart(2000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 1:
+                        if(g_DIO.GetDI(iTableLockOn))
+                        {
+                                p_tm1MS->timeStart(100);
+                                 nThreadIndex++;
+                        }
+                        else if(p_tm1MS->timeUp() ) bFront? g_IniFile.m_nErrorCode=402 : g_IniFile.m_nErrorCode=403;
+                        break;
+                case 2:
+                        if(p_tm1MS->timeUp() )
+                        {
+                                g_Motion.AbsMove(nAxisTable,g_IniFile.m_dTablePutDownPos[bFront]);
+                                 nThreadIndex++;
+                        }
+                        break;
+                case 3:
+                        if(g_Motion.IsLastPosDone(nAxisTable))
+                        {
+                                 p_tm1MS->timeStart(500);
+                                 nThreadIndex++;
+                        }
+                        break;
+                case 4:
+                        if(!g_DIO.GetDI(iTableAlignOff)) bFront? g_IniFile.m_nErrorCode=404 : g_IniFile.m_nErrorCode=405;
+                        else if(m_bSSPickerReady  && !m_bIsSSPickeLocked && p_tm1MS->timeUp() )
+                        {
+                                m_bIsSSPickeLocked=true;
+                                nThreadIndex++;
+                        }
+                        break;
+                case 5:
+                        if(!g_DIO.GetDI(DI::SS_SSuckerUp)) g_IniFile.m_nErrorCode=406;
+                        else if(!g_DIO.GetDI(DI::SS_SpaSuckerUp)) g_IniFile.m_nErrorCode=407;
+                        else
+                        {
+                                g_Motion.AbsMove(Axis_Const::SSY,g_IniFile.m_dSSPickerPutPos[bFront]);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 6:
+                        if(!g_DIO.GetDI(DI::SS_SSuckerVacGauge))
+                        {
+                                g_IniFile.m_nErrorCode=408;
+                                //Vacuum fail
+                                m_bSSPickerReady=false;
+                                m_bIsSSPickeLocked=false;
+                                nThreadIndex=0;
+                        }
+                        else if(g_Motion.IsLastPosDone(Axis_Const::SSY))
+                        {
+                                g_DIO.SetDO(DO::SS_SSucker,true);
+                                p_tm1MS->timeStart(5000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 7:
+                        if(g_DIO.GetDI(DI::SS_SSuckerDown))
+                        {
+                                p_tm1MS->timeStart(300);
+                                nThreadIndex++;
+                        }
+                        else if(!g_DIO.GetDO(DO::SS_SSucker))
+                        {
+                                g_DIO.SetDO(DO::SS_SSucker,true);
+                                p_tm1MS->timeStart(5000);
+                        }
+                        else if(p_tm1MS->timeUp()) g_IniFile.m_nErrorCode=409;
+                        break;
+                case 8:
+                        if(p_tm1MS->timeUp() && g_DIO.GetDI(DI::SS_SSuckerDown))
+                        {
+                                g_DIO.SetDO(DO::SS_SVacOn,false);
+                                g_DIO.SetDO(DO::SS_SVacOff,true);
+                                g_DIO.SetDO(DO::SS_SDeVac,true);
+
+
+                                p_tm1MS->timeStart(300);
+                                nThreadIndex++;
+                        }
+                        else if(!g_DIO.GetDO(DO::SS_SSucker))
+                        {
+                                g_DIO.SetDO(DO::SS_SSucker,true);
+                                p_tm1MS->timeStart(5000);
+                        }
+                        else if(p_tm1MS->timeUp()) g_IniFile.m_nErrorCode=409;
+                        break;
+                case 9:
+                        if(p_tm1MS->timeUp())
+                        {
+                                g_DIO.SetDO(DO::SS_SSucker,false);
+                                m_nStripCount++;
+                                bFront ? m_listPickTable.push_back("FRONT"):m_listPickTable.push_back("REAR");
+
+                                if(m_nStripCount>=g_IniFile.m_nIssueQty && g_IniFile.m_nIssueQty>0 && !m_bStopLoad)
+                                {
+                                        m_bStopLoad=true;
+                                        m_bLoadLifterReady=false;
+                                        m_listLog.push_back("到達設定量,自動停止入料");
+                                }
+
+                                p_tm1MS->timeStart(5000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 10:
+                        if(g_DIO.GetDI(DI::SS_SSuckerUp))
+                        {
+                                g_DIO.SetDO(DO::SS_SDeVac,false);
+                                m_bSSPickerReady=false;
+                                m_bIsSSPickeLocked=false;
+                                p_tm1MS->timeStart(300);
+
+                                nThreadIndex++;
+                        }
+                        else if(g_DIO.GetDO(DO::SS_SSucker))
+                        {
+                                g_DIO.SetDO(DO::SS_SSucker,false);
+                                p_tm1MS->timeStart(5000);
+                        }
+                        else if(p_tm1MS->timeUp()) g_IniFile.m_nErrorCode=406;
+                        break;
+                case 11:
+                        if(p_tm1MS->timeUp())
+                        {
+                                g_DIO.SetDO(oTableAlign,true);
+                                p_tm1MS->timeStart(500);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 12:
+                        if(p_tm1MS->timeUp())
+                        {
+                                g_DIO.SetDO(oTableAlign,false);
+                                g_DIO.SetDO(oTableVac,true);
+
+                                p_tm1MS->timeStart(5000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 13:
+                        if(g_DIO.GetDI(iTableVacGauge) && g_DIO.GetDI(iTableAlignOff))
+                        {
+                                p_tm1MS->timeStart(500);
+                                nThreadIndex++;
+                        }
+                        else if(p_tm1MS->timeUp())
+                        {
+                                if(!g_DIO.GetDI(iTableVacGauge)) bFront ? g_IniFile.m_nErrorCode=410 : g_IniFile.m_nErrorCode=411;
+                                if(!g_DIO.GetDI(iTableAlignOff)) bFront ? g_IniFile.m_nErrorCode=404 : g_IniFile.m_nErrorCode=405 ;
+                        }
+                        break;
+                case 14:
+                        if(p_tm1MS->timeUp() && !m_bIsMapCCDLocked)
+                        {
+                                m_bIsMapCCDLocked=true;
+                                nCCDIndex=0;
+
+                                //Initial Product Info
+                                m_tmpProductInfo[bFront].m_nIndex=m_nStripCount;//-1;
+                                m_tmpProductInfo[bFront].m_nMapNG=0;
+                                m_tmpProductInfo[bFront].m_nMapOK=0;
+                                m_tmpProductInfo[bFront].m_nOffsetX=0.0;
+                                m_tmpProductInfo[bFront].m_nOffsetY=0.0;
+                                m_tmpProductInfo[bFront].m_strVenderID="N/A";
+                                m_tmpProductInfo[bFront].m_strLotID="N/A";
+                                m_tmpProductInfo[bFront].m_strBoatID="N/A";
+                                m_tmpProductInfo[bFront].m_strCoverID="N/A";
+                                m_tmpProductInfo[bFront].m_bIsSBT2DOK=false;
+                                nThreadIndex++;
+                        }
+                        break;
+                //___________________________________________________________\\
+                case 15:
+                case nTagVenderCode:nThreadIndex=15;
+                        if(g_IniFile.m_bReadVenderID)
+                        {
+                                g_Motion.AbsMove(nAxisTable,g_IniFile.m_dTableVenderCodePosX[bFront]);
+                                g_Motion.AbsMove(Axis_Const::CCD,g_IniFile.m_dTableVenderCodePosY[bFront]);
+                                nThreadIndex++;
+                        }else nThreadIndex=nTagFMCCD;
+                        break;
+                case 16:
+                        if(g_Motion.IsLastPosDone(nAxisTable)&& g_Motion.IsLastPosDone(Axis_Const::CCD))
+                        {
+                                p_tm1MS->timeStart(100);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 17:
+                        if(p_tm1MS->timeUp())
+                        {
+                                //Send Reader Command
+                                m_listVenderCodeReaderRX.clear();
+                                m_listTX.push_back("VENDER_TRIG");
+                                p_tm1MS->timeStart(5000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 18:
+                        if(m_listVenderCodeReaderRX.size()>0)
+                        {
+                                if(m_listVenderCodeReaderRX.back()=="VENDER_NOREAD") g_IniFile.m_nErrorCode=412;
+                                else if(m_listVenderCodeReaderRX.back()=="VENDER_LENGHT_ERROR") g_IniFile.m_nErrorCode=414;
+                                else
+                                {
+                                        m_listLog.push_back("Vender ID OK");
+                                        m_tmpProductInfo[bFront].m_strVenderID=m_listVenderCodeReaderRX.back(); 
+                                        //Use Vender Map
+                                        //Process something
+                                        nThreadIndex++;
+                                }
+
+                                m_listVenderCodeReaderRX.clear();
+
+                        }
+                        else if(p_tm1MS->timeUp()) g_IniFile.m_nErrorCode=413;
+                        break;
+                //___________________________________________________________\\
+                case 19:
+                case nTagFMCCD:nThreadIndex=19;
+                        if(g_IniFile.m_bUseFMCCD)
+                        {
+                                g_Motion.AbsMove(nAxisTable,g_IniFile.m_dTableMarkPosX[bFront]);
+                                g_Motion.AbsMove(Axis_Const::CCD,g_IniFile.m_dTableMarkPosY[bFront]);
+                                //LED ON
+                                nThreadIndex++;
+                        }
+                        else nThreadIndex=nTagMapCCD;
+                        break;
+                case 20:
+                        if(g_Motion.IsLastPosDone(nAxisTable) && g_Motion.IsLastPosDone(Axis_Const::CCD))
+                        {
+                                p_tm1MS->timeStart(500);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 21:
+                        if(p_tm1MS->timeUp())
+                        {
+                                g_Grabber.Grab(1);
+                                p_tm1MS->timeStart(2000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 22:
+                        if(g_Grabber.m_bValidImage[1])
+                        {
+                                //LED OFF
+                                //Process Image  get offset x,y
+
+                                theVision.m_markMatch[2].SetMaxPositions(1);
+
+                                nFounds=theVision.FindPatMatch(theVision.m_roiMark[2],theVision.m_markMatch[2]);
+
+                                if(nFounds<1)
+                                {
+                                        nThreadIndex=nTagFMCCD;
+                                        g_IniFile.m_nErrorCode=425;
+                                }
+                                else
+                                {
+                                        double dX=(theVision.GetMatchPosX(theVision.m_markMatch[2],2)-320.0)*g_IniFile.m_dFMCCDResolution[0] ;
+                                        double dY=(theVision.GetMatchPosY(theVision.m_markMatch[2],2)-240.0)*g_IniFile.m_dFMCCDResolution[1];
+                                        m_listLog.push_back("定位 Offste X="+FormatFloat("0.00 ",dX)+"Y="+FormatFloat("0.00",dY)+"mm");
+
+                                        m_tmpProductInfo[bFront].m_nOffsetX=dX;
+                                        m_tmpProductInfo[bFront].m_nOffsetY=dY;
+                                        nThreadIndex++;
+                                }
+                        }
+                        else if(p_tm1MS->timeUp()) g_IniFile.m_nErrorCode=415;
+                        break;
+                //___________________________________________________________\\
+                case 23:
+                case nTagMapCCD:nThreadIndex=23;
+                        if(g_IniFile.m_bUseMapCCD)
+                        {
+                                g_Motion.AbsMove(nAxisTable,g_IniFile.m_dTableMapCCDPosX[bFront]-nCCDIndex*g_IniFile.m_dTableMapCCDPitch);
+                                g_Motion.AbsMove(Axis_Const::CCD,g_IniFile.m_dTableMapCCDPosY[bFront]);
+                                nThreadIndex++;
+                        }
+                        else nThreadIndex=nTagUnLockMapCCD;//nTagLaserMark;
+                        break;
+                case 24:
+                       if(g_Motion.IsLastPosDone(nAxisTable)&& g_Motion.IsLastPosDone(Axis_Const::CCD))
+                        {
+                                //LED on
+                                //LED Down
+                                p_tm1MS->timeStart(100);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 25:
+                        if(p_tm1MS->timeUp())
+                        {
+                                g_Grabber.Grab(0);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 26:
+                        if(g_Grabber.m_bValidImage[0])
+                        {
+                                theVision.MergeImage(nCCDIndex,g_IniFile.m_nImageWidth,g_IniFile.m_dImageAngle);
+                                nCCDIndex++;
+                                if(nCCDIndex>=4) nThreadIndex++;
+                                else nThreadIndex=nTagMapCCD;
+                        }
+                        break;
+                case 27:
+                        nCCDIndex=0;
+                        //LED Off
+                        //LED Up
+                        theVision.m_markMatch[1].SetMaxPositions(1);
+
+                       nFounds=theVision.FindPatMatch(theVision.m_roiMark[1],theVision.m_markMatch[1]);
+
+                        if(nFounds<1)
+                        {
+                                nThreadIndex=nTagMapCCD;
+                                g_IniFile.m_nErrorCode=426;
+                        }
+                        else nThreadIndex++;
+                        break;
+                case 28:
+                        m_listVisionRX.clear();
+                        if(bFront) m_listTX.push_back("PROCESS_MAP_FRONT");   //DoVisionProcess      //ExportMapFile
+                        else m_listTX.push_back("PROCESS_MAP_REAR");
+                        p_tm1MS->timeStart(3000);
+                        nThreadIndex++;
+                        break;
+                case 29:
+                        if(m_listVisionRX.size()>0)
+                        {
+                                if(m_listVisionRX.back()=="PROCESS_MAP_DONE")
+                                {
+                                        //Get NG Mark
+                                        m_tmpProductInfo[bFront].m_nMapNG=m_nNGCount;
+                                        m_tmpProductInfo[bFront].m_nMapOK=m_nOKCount;
+                                        m_nOKSummary+=m_nOKCount;
+                                        m_nNGSummary+=m_nNGCount;
+                                        nThreadIndex++;
+                                        m_listVisionRX.clear();
+
+                                        if(!g_IniFile.m_bUseLaserMark)
+                                        {
+                                                AnsiString strLog;
+                                                strLog="["+FormatFloat("0",m_tmpProductInfo[bFront].m_nIndex)+"]-->";
+                                                strLog+="OK:"+FormatFloat("0",m_tmpProductInfo[bFront].m_nMapOK);
+                                                strLog+=" NG:"+FormatFloat("0",m_tmpProductInfo[bFront].m_nMapNG);
+
+                                                m_listVisionLog.push_back(strLog);
+                                        }
+                                }
+                        }
+                        else if(p_tm1MS->timeUp())
+                        {
+                                nThreadIndex=nTagMapCCD;
+                                g_IniFile.m_nErrorCode=427;
+                        }
+                        break;
+                //___________________________________________________________\\
+                case 30:
+                case nTagUnLockMapCCD:nThreadIndex=30;
+                        m_bIsMapCCDLocked=false;
+                        nThreadIndex++;
+                        break;
+                //___________________________________________________________\\
+                case 31:
+                case nTagLaserMark:nThreadIndex=31;
+                        if(g_IniFile.m_bUseLaserMark)
+                        {
+                                if(!m_bLaserLocked)
+                                {
+                                        m_bLaserLocked=true;
+                                        g_Motion.AbsMove(nAxisTable,g_IniFile.m_dTableLaserPos[bFront]);
+                                        nThreadIndex++;
+                                }
+                        }
+                        else nThreadIndex=nTagLaserCodeReader;
+                        break;
+                case 32:
+                        if(g_Motion.IsLastPosDone(nAxisTable))
+                        {
+                                //Select Laser File
+                                m_listLaserRX.clear();
+                                if(bFront) m_listTX.push_back("OPEN_LASER_FRONT");
+                                else m_listTX.push_back("OPEN_LASER_REAR");
+
+                                p_tm1MS->timeStart(10000);
+                                nThreadIndex++;
+                        }
+                         break;
+                case 33:
+                        if(m_listLaserRX.size()>0)
+                        {
+                                if(m_listLaserRX.back()=="OPEN_LASER_OK") nThreadIndex++;
+                                else
+                                {
+                                        g_IniFile.m_nErrorCode=417;
+                                        nThreadIndex--;
+                                }
+
+                                m_listLaserRX.clear();
+
+                        }
+                        else if(p_tm1MS->timeUp()) g_IniFile.m_nErrorCode=416;
+                        break;
+                case 34:
+                        g_SMSXML.QueryID();
+                        p_tm1MS->timeStart(10000);
+                        nThreadIndex++;
+                        break;
+                case 35:
+                        if(g_SMSXML.m_strSerialID!="FAIL" && g_SMSXML.m_strSerialID!="NOT_VALID")
+                        {
+                                m_listLog.push_back("取得雷刻ID "+g_SMSXML.m_strSerialID);
+                                m_tmpProductInfo[bFront].m_strLotID=g_SMSXML.m_strSerialID;
+
+                                nThreadIndex++;
+                        }
+                        else if(g_SMSXML.m_strSerialID=="FAIL")
+                        {
+                                g_IniFile.m_nErrorCode=430;
+                                nThreadIndex--;
+                        }
+                        else if(p_tm1MS->timeUp())
+                        {
+                                g_IniFile.m_nErrorCode=431;
+                                nThreadIndex--;
+                        }
+                        break;
+                case 36:
+                        m_listLaserRX.clear();
+                        if(bFront) m_listTX.push_back("SET_LASER_OFFSET_FRONT");
+                        else m_listTX.push_back("SET_LASER_OFFSET_REAR");
+
+                        p_tm1MS->timeStart(10000);
+                        nThreadIndex++;
+                        break;
+                case 37:
+                        if(m_listLaserRX.size()>0)
+                        {
+                                 if(m_listLaserRX.back()=="SET_LASER_OFFSET_OK") nThreadIndex++;
+                                 else
+                                 {
+                                        g_IniFile.m_nErrorCode=418;
+                                        nThreadIndex--;
+                                 }
+
+                                 m_listLaserRX.clear();
+                        }
+                        if(p_tm1MS->timeUp()) g_IniFile.m_nErrorCode=420;
+                        break;
+                case 38:
+                        m_listLaserRX.clear();
+                        if(bFront) m_listTX.push_back("FIRE_LASER_FRONT");
+                        else m_listTX.push_back("FIRE_LASER_REAR");
+
+                        p_tm1MS->timeStart(10000);
+                        nThreadIndex++;
+                        break;
+                case 39:
+                        if(m_listLaserRX.size()>0)
+                        {
+                                 if(m_listLaserRX.back()=="FIRE_LASER_OK")
+                                 {
+                                        AnsiString strLog;
+                                        strLog="["+m_tmpProductInfo[bFront].m_strLotID+"]-->";
+                                        strLog+="OK:"+FormatFloat("0",m_tmpProductInfo[bFront].m_nMapOK);
+                                        strLog+=" NG:"+FormatFloat("0",m_tmpProductInfo[bFront].m_nMapNG);
+
+                                        m_listVisionLog.push_back(strLog);
+
+                                         //m_bLaserLocked=false;
+                                         m_nLaserCount++;
+                                        nThreadIndex++;
+                                 }
+                                 else
+                                 {
+                                        g_IniFile.m_nErrorCode=419;
+                                        nThreadIndex--;
+                                 }
+
+                                 m_listLaserRX.clear();
+                        }
+                        else if(p_tm1MS->timeUp()) g_IniFile.m_nErrorCode=421;
+                        break;
+                case 40:
+                        m_listLaserRX.clear();
+                        if(bFront) m_listTX.push_back("RESET_LASER_OFFSET_FRONT");
+                        else m_listTX.push_back("RESET_LASER_OFFSET_REAR");
+
+                        p_tm1MS->timeStart(10000);
+                        nThreadIndex++;
+                        break;
+                case 41:
+                        if(m_listLaserRX.size()>0)
+                        {
+                                 if(m_listLaserRX.back()=="RESET_LASER_OFFSET_OK")
+                                 {
+                                        m_bLaserLocked=false;
+                                        nThreadIndex++;
+                                 }
+                                 else
+                                 {
+                                        g_IniFile.m_nErrorCode=428;
+                                        nThreadIndex--;
+                                 }
+
+                                 m_listLaserRX.clear();
+                        }
+                        else if(p_tm1MS->timeUp())  g_IniFile.m_nErrorCode=429;
+                        break;
+                //___________________________________________________________\\
+                case 42:
+                case nTagLaserCodeReader:nThreadIndex=42;
+                        if(g_IniFile.m_bUseLaserCodeReader && (m_bSCPickerCoverReady || !g_IniFile.m_bUseCover) )
+                        {
+                                if(!m_bLaserReaderLocked)
+                                {
+                                        m_bLaserReaderLocked=true;
+                                        if(g_IniFile.m_dTableLaserCodePosX[bFront]<g_IniFile.m_dTableLaserPos[bFront])
+                                                g_IniFile.m_dTableLaserCodePosX[bFront]=g_IniFile.m_dTableLaserPos[bFront];
+
+                                        g_Motion.AbsMove(nAxisTable,g_IniFile.m_dTableLaserCodePosX[bFront]);
+                                        g_Motion.AbsMove(Axis_Const::CRD,g_IniFile.m_dTableLaserCodePosY[bFront]);
+                                        nThreadIndex++;
+                                }
+                        }
+                        else if(!g_IniFile.m_bUseLaserCodeReader) nThreadIndex=nTagTableFinish;
+                        break;
+                case 43:
+                        if(g_Motion.IsMotionDone(nAxisTable) && g_Motion.IsMotionDone(Axis_Const::CRD))
+                        {
+                                p_tm1MS->timeStart(300);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 44:
+                        if(p_tm1MS->timeUp())
+                        {
+                                //Send Reader Command
+                                m_listVenderCodeReaderRX.clear();
+                                m_listTX.push_back("LASER_READER_TRIG");
+                                p_tm1MS->timeStart(5000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 45:
+                        if(m_listLaserCodeReaderRX.size()>0)
+                        {
+                                if(m_listLaserCodeReaderRX.back()=="LASER_READER_NOREAD") g_IniFile.m_nErrorCode=422;
+                                else if(m_listLaserCodeReaderRX.back()=="LASER_READER_LENGHT_ERROR") g_IniFile.m_nErrorCode=424;
+                                {
+                                        m_listLog.push_back("Laser Reader ID OK");
+                                        m_bLaserReaderLocked=false;
+
+                                        m_tmpProductInfo[bFront].m_bIsSBT2DOK=true;
+                                }
+
+                                m_listVenderCodeReaderRX.clear();
+
+                                nThreadIndex++;
+
+                        }
+                        else if(p_tm1MS->timeUp())
+                        {
+                                g_IniFile.m_nErrorCode=423;
+                                nThreadIndex++;
+                        }
+                        break;
+                //___________________________________________________________\\
+                case 46:
+                case nTagTableFinish:nThreadIndex=46;
+                        if(m_bSCPickerCoverReady || !g_IniFile.m_bUseCover)
+                        {
+                                //g_Motion.AbsMove(nAxisTable,g_IniFile.m_dTablePickUpPos[bFront]);       //
+
+                                if(g_IniFile.m_dTableLaserCodePosX[bFront]<g_IniFile.m_dTableLaserPos[bFront])
+                                                g_IniFile.m_dTableLaserCodePosX[bFront]=g_IniFile.m_dTableLaserPos[bFront];
+                                                
+                                g_Motion.AbsMove(nAxisTable,g_IniFile.m_dTableLaserCodePosX[bFront]);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 47:
+                        if(g_Motion.IsMotionDone(nAxisTable))                                  //
+                        {
+                                p_tm1MS->timeStart(500);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 48:
+                        if(p_tm1MS->timeUp())
+                        {
+                                m_bTableReady[bFront]=true;
+                                nThreadIndex++;
+                        }
+                        break;
+                case 49:
+                        if(!m_bTableReady[bFront])
+                        {
+                                nThreadIndex++;
+                        }
+                        break;
+                default:
+                        nThreadIndex=0;
+                        break;
+
+        }
+
+}
+//---------------------------------------------------------------------------
+void __fastcall CMainThread::doSCPicker(int &nThreadIndex)
+{
+        static C_GetTime tm1MS(EX_SCALE::TIME_1MS,false);
+
+        const int nTagPickSubstrate=1000;
+        const int nTagPickCover=2000;
+        const int nTagReSuckCover=3000;
+        const int nTagReSuckSS=4000;
+        const int nTagWaitReadyOff=5000;
+        const int nTagRePickSubstrate=6000;
+        const int nTagCoverNGBox=7000;
+        const int nTagRePickHoldCover=8000;
+
+        const bool bLifterDown=false;
+        const bool bLifterUp=true;
+
+        static bool bFrontTable=false;
+        int nAxisTable[]={Axis_Const::RTX,Axis_Const::FTX};
+
+        switch(nThreadIndex)
+        {
+                case 0:
+                        //if(!g_DIO.GetDI(DI::SC_SSuckerUp)) g_IniFile.m_nErrorCode=500;
+                        //else if(!g_DIO.GetDI(DI::SC_CSuckerUp)) g_IniFile.m_nErrorCode=501;
+                        //else if(g_DIO.GetDI(DI::SC_SSuckerVacGauge)) g_IniFile.m_nErrorCode=502;
+                        //else if(g_DIO.GetDI(DI::SC_CSuckerVacGauge)) g_IniFile.m_nErrorCode=503;
+                        if(g_Motion.GetFeedbackPos(Axis_Const::SCZ)>10.0) g_IniFile.m_nErrorCode=504;
+                        else
+                        {
+                                if(m_bCoverLifterReady && !m_bSCPickerCoverReady) nThreadIndex++;
+                                else if((m_bTableReady[0] || m_bTableReady[1]) && !m_bSCPickerSSReady) nThreadIndex=nTagPickSubstrate;
+
+                        }
+                        break;
+                        //___________________________________________________________\\
+                case 1:
+                case nTagPickCover:nThreadIndex=1;
+                case nTagReSuckCover:nThreadIndex=1;       //4
+                        if(!g_DIO.GetDI(DI::SC_CSuckerUp)) g_IniFile.m_nErrorCode=501;
+                        else
+                        {
+                                g_Motion.AbsMove(Axis_Const::SCY,g_IniFile.m_dSCPickerPickCoverPosY);
+                                if(g_IniFile.m_bEAPCoverControl) m_listTX.push_back("COVER_TRIG");
+                                nThreadIndex++;
+                        }
+                        break;
+                case 2:
+                        if(g_Motion.IsLastPosDone(Axis_Const::SCY) && m_bCoverLifterReady)
+                        {
+                                g_Motion.AbsMove(Axis_Const::SCZ,g_IniFile.m_dSCPickerPickCoverPosZ);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 3:
+                        if(g_Motion.IsLastPosDone(Axis_Const::SCZ))
+                        {
+                                g_DIO.SetDO(DO::SC_CSucker,true);
+                                tm1MS.timeStart(3000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 4:
+
+                        if(g_DIO.GetDI(DI::SC_CSuckerDown))
+                        {
+                                tm1MS.timeStart(300);
+                                nThreadIndex++;
+                        }
+                        else if(!g_DIO.GetDO(DO::SC_CSucker))
+                        {
+                                g_DIO.SetDO(DO::SC_CSucker,true);
+                                tm1MS.timeStart(3000);
+                        }
+                        else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=505;
+                        break;
+                case 5:
+                        if(tm1MS.timeUp())
+                        {
+                                g_DIO.SetDO(DO::SC_CSuckerVacOn,true);
+                                if(!g_IniFile.m_bUseCoverHolder) g_DIO.SetDO(DO::SC_CSuckerVac2On,true);
+                                g_DIO.SetDO(DO::SC_CSuckerVacOff,false);
+                                g_DIO.SetDO(DO::SC_CSuckerDeVac,false);
+                                tm1MS.timeStart(5000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 6:
+                        if(g_DIO.GetDI(DI::SC_CSuckerVacGauge))
+                        {
+                                tm1MS.timeStart(g_IniFile.m_nCoverVacTime);
+                                nThreadIndex++;
+                        }
+                        else if(!g_DIO.GetDO(DO::SC_CSucker))
+                        {
+                                g_DIO.SetDO(DO::SC_CSucker,true);
+                                tm1MS.timeStart(3000);
+                        }
+                        else if(tm1MS.timeUp())
+                        {
+                                g_IniFile.m_nErrorCode=506;
+                                nThreadIndex=nTagReSuckCover;
+                        }
+                        break;
+                case 7:
+                        if(tm1MS.timeUp())
+                        {
+                                g_DIO.SetDO(DO::CL_Align,false);
+                                tm1MS.timeStart(5000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 8:
+                        if(g_DIO.GetDI(DI::CL_AlignOff) || !g_DIO.GetDI(DI::CL_AlignOn))
+                        {
+                                nThreadIndex++;
+                                tm1MS.timeStart(1000);
+                        }
+                        else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=605;
+                        break;
+                case 9:
+                        if(tm1MS.timeUp())
+                        {
+                                g_DIO.SetDO(DO::SC_CSucker,false);
+                                if(!g_IniFile.m_bUseCoverHolder) g_Motion.AbsMove(Axis_Const::SCZ,0.0);
+                                tm1MS.timeStart(3000);
+                                nThreadIndex++;
+                        }
+                       break;
+                case 10:
+                        if(g_DIO.GetDI(DI::SC_CSuckerUp) && g_Motion.IsLastPosDone(Axis_Const::SCZ))
+                        {
+                                if(g_DIO.GetDI(DI::SC_CSuckerVacGauge))
+                                {
+                                        if(!g_IniFile.m_bUseCoverHolder) m_bCoverLifterReady=false;
+
+                                        if(!g_IniFile.m_bEAPCoverControl)
+                                        {
+
+                                                if(!g_IniFile.m_bUseCoverHolder)
+                                                {
+                                                        nThreadIndex=0;
+                                                        m_bSCPickerCoverReady=true;
+                                                }
+                                                else nThreadIndex++;    //to cover holder
+                                        }
+                                        else
+                                        {
+                                                if(m_listCoverCodeReaderRX.size()>0)
+                                                {
+                                                        if(m_listCoverCodeReaderRX.back()=="COVER_READER_NOREAD")
+                                                        {
+                                                                m_listLog.push_back("上蓋板2D讀取器 讀取失敗");
+                                                                nThreadIndex=nTagCoverNGBox;   //to NG box
+                                                        }
+                                                        else if(m_listCoverCodeReaderRX.back()=="COVER_READER_LENGHT_ERROR")
+                                                        {
+                                                                m_listLog.push_back("上蓋板2D讀取器 字元長度不足");
+                                                                nThreadIndex=nTagCoverNGBox;     //to NG box
+                                                        }
+                                                        else
+                                                        {
+                                                                //COVER OK
+                                                                m_listLog.push_back("上蓋板放行");
+
+                                                                if(!g_IniFile.m_bUseCoverHolder)
+                                                                {
+                                                                        nThreadIndex=0;
+                                                                        m_bSCPickerCoverReady=true;
+                                                                }
+                                                                else nThreadIndex++;    //to cover holder
+                                                        }
+                                                }
+                                                else
+                                                {
+                                                        m_listLog.push_back("上蓋板2D讀取器 沒有回應");
+                                                        nThreadIndex=nTagCoverNGBox;       //to NG box
+                                                }
+
+                                                m_listCoverCodeReaderRX.clear();
+
+
+                                        }
+
+                                }
+                                else
+                                {
+                                        nThreadIndex=nTagPickCover;
+                                        g_DIO.SetDO(DO::CL_Align,true);
+                                        g_IniFile.m_nErrorCode=506;
+                                }
+                        }
+                        else if(g_DIO.GetDO(DO::SC_CSucker))
+                        {
+                                g_DIO.SetDO(DO::SC_CSucker,false);
+                                tm1MS.timeStart(3000);
+                        }
+                        else if(tm1MS.timeUp() && !g_DIO.GetDI(DI::SC_CSuckerUp)) g_IniFile.m_nErrorCode=501;
+                        break;
+                        //____________________________________________________________________________________\\
+                case 11:
+                        //Cover Holder
+                        g_DIO.SetDO(DO::CL_Dir,bLifterDown);
+                        g_DIO.SetDO(DO::CL_Start,true);
+                        tm1MS.timeStart(2000);
+                        nThreadIndex++;
+                        break;
+                case 12:
+                        if(g_DIO.GetDI(DI::CL_Up) &&  !g_DIO.GetDI(DI::CL_Down))
+                        {
+                                g_DIO.SetDO(DO::CL_Start,true);
+                                tm1MS.timeStart(2000);
+                        }
+                        else if(tm1MS.timeUp() || g_DIO.GetDI(DI::CL_Down))
+                        {
+                                g_DIO.SetDO(DO::CL_Start,false);
+                                g_DIO.SetDO(DO::CoverHolder,true);
+                                tm1MS.timeStart(1000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 13:
+                        if(tm1MS.timeUp())
+                        {
+                                g_DIO.SetDO(DO::SC_CSucker,true);
+                                tm1MS.timeStart(3000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 14:
+                        if(g_DIO.GetDI(DI::SC_CSuckerDown))
+                        {
+                                tm1MS.timeStart(300);
+                                nThreadIndex++;
+                        }
+                        else if(!g_DIO.GetDO(DO::SC_CSucker))
+                        {
+                                g_DIO.SetDO(DO::SC_CSucker,true);
+                                tm1MS.timeStart(3000);
+                        }
+                        else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=505;
+                        break;
+                case 15:
+                        if(tm1MS.timeUp())
+                        {
+                                g_DIO.SetDO(DO::SC_CSuckerVacOn,false);
+                                g_DIO.SetDO(DO::SC_CSuckerVac2On,false);
+                                g_DIO.SetDO(DO::SC_CSuckerVacOff,true);
+                                g_DIO.SetDO(DO::SC_CSuckerDeVac,true);
+
+                                g_DIO.SetDO(DO::SC_CSucker,false);
+                                tm1MS.timeStart(3000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 16:
+                        if(g_DIO.GetDI(DI::SC_CSuckerUp))
+                        {
+                                g_DIO.SetDO(DO::SC_CSuckerDeVac,false);
+                                g_DIO.SetDO(DO::CL_Align,true);
+                                tm1MS.timeStart(1000);
+                                nThreadIndex++;
+
+                        }
+                        else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=501;
+                        break;
+                case 17:
+                case nTagRePickHoldCover:nThreadIndex=17;
+                        if(tm1MS.timeUp())
+                        {
+                                g_DIO.SetDO(DO::SC_CSucker,true);
+                                tm1MS.timeStart(3000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 18:
+                        if(g_DIO.GetDI(DI::SC_CSuckerDown))
+                        {
+                                tm1MS.timeStart(300);
+                                nThreadIndex++;
+                        }
+                        else if(!g_DIO.GetDO(DO::SC_CSucker))
+                        {
+                                g_DIO.SetDO(DO::SC_CSucker,true);
+                                tm1MS.timeStart(3000);
+                        }
+                        else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=505;
+                        break;
+                case 19:
+                        if(tm1MS.timeUp())
+                        {
+                                g_DIO.SetDO(DO::SC_CSuckerVacOn,true);
+                                g_DIO.SetDO(DO::SC_CSuckerVac2On,true);
+                                g_DIO.SetDO(DO::SC_CSuckerVacOff,false);
+                                g_DIO.SetDO(DO::SC_CSuckerDeVac,false);
+                                tm1MS.timeStart(5000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 20:
+                        if(g_DIO.GetDI(DI::SC_CSuckerVacGauge))
+                        {
+                                tm1MS.timeStart(g_IniFile.m_nCoverVacTime);
+                                nThreadIndex++;
+                        }
+                        else if(!g_DIO.GetDO(DO::SC_CSucker))
+                        {
+                                g_DIO.SetDO(DO::SC_CSucker,true);
+                                tm1MS.timeStart(3000);
+                        }
+                        else if(tm1MS.timeUp())
+                        {
+                                g_IniFile.m_nErrorCode=506;
+                        }
+                        break;
+                case 21:
+                        if(tm1MS.timeUp())
+                        {
+                                g_DIO.SetDO(DO::CL_Align,false);
+                                tm1MS.timeStart(5000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 22:
+                        if(g_DIO.GetDI(DI::CL_AlignOff) || !g_DIO.GetDI(DI::CL_AlignOn))
+                        {
+                                nThreadIndex++;
+                                tm1MS.timeStart(1000);
+                        }
+                        else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=605;
+                        break;
+                case 23:
+                        if(tm1MS.timeUp())
+                        {
+                                g_DIO.SetDO(DO::SC_CSucker,false);
+                                g_Motion.AbsMove(Axis_Const::SCZ,0.0);
+                                tm1MS.timeStart(3000);
+                                nThreadIndex++;
+                        }
+                       break;
+                case 24:
+                        if( g_DIO.GetDI(DI::SC_CSuckerUp) && g_Motion.IsLastPosDone(Axis_Const::SCZ))
+                        {
+                                 if(g_DIO.GetDI(DI::SC_CSuckerVacGauge))
+                                 {
+                                        nThreadIndex=0;
+                                        g_DIO.SetDO(DO::CoverHolder,false);
+                                        m_bSCPickerCoverReady=true;
+                                        m_bCoverLifterReady=false;
+                                }
+                                else
+                                {
+                                        g_IniFile.m_nErrorCode=506;
+                                        nThreadIndex=nTagRePickHoldCover;
+                                }
+                        }
+                        else if(tm1MS.timeUp() && !g_DIO.GetDI(DI::SC_CSuckerUp)) g_IniFile.m_nErrorCode=501;
+                        break;
+                       //___________________________________________________________\\
+                case 25:
+                case nTagCoverNGBox:nThreadIndex=25;
+                        //To Cover NG BOX
+                        g_DIO.SetDO(DO::CoverNGBoxIn,true);
+                        g_Motion.AbsMove(Axis_Const::SCY,g_IniFile.m_dSCPickerPutNGCoverPosY);
+                        if(m_bTableReady[0]) g_Motion.AbsMove(Axis_Const::RTX,g_IniFile.m_dTableLaserPos[0]);
+                        if(m_bTableReady[1]) g_Motion.AbsMove(Axis_Const::FTX,g_IniFile.m_dTableLaserPos[1]);
+
+                        nThreadIndex++;
+                        break;
+                case 26:
+                        if(g_Motion.IsLastPosDone(Axis_Const::SCY))
+                        {
+                                tm1MS.timeStart(3000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 27:
+                        if(g_DIO.GetDI(DI::CoverNGBoxIn))
+                        {
+                                g_DIO.SetDO(DO::SC_CSuckerVacOn,false);
+                                g_DIO.SetDO(DO::SC_CSuckerVac2On,false);
+                                g_DIO.SetDO(DO::SC_CSuckerVacOff,true);
+                                g_DIO.SetDO(DO::SC_CSuckerDeVac,true);
+                                tm1MS.timeStart(2000);
+                                nThreadIndex++;
+                        }
+                        else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=509;
+                        break;
+                case 28:
+                       if(tm1MS.timeUp())
+                       {
+                                g_DIO.SetDO(DO::SC_CSuckerVacOn,false);
+                                g_DIO.SetDO(DO::SC_CSuckerVac2On,false);
+                                g_DIO.SetDO(DO::SC_CSuckerVacOff,false);
+                                g_DIO.SetDO(DO::SC_CSuckerDeVac,false);
+                                g_DIO.SetDO(DO::CoverNGBoxIn,false);
+                                tm1MS.timeStart(5000);
+                                nThreadIndex++;
+                       }
+                       break;
+                case 29:
+                        if(g_DIO.GetDI(DI::CoverNGBoxOut))
+                        {
+                                if(!g_DIO.GetDI(DI::CoverNGBoxFull)) nThreadIndex=0;
+                                else g_IniFile.m_nErrorCode=511;
+                        }
+                        else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=510;
+                        break;
+                        //___________________________________________________________\\
+                case 30:
+                case nTagPickSubstrate:nThreadIndex=30;
+                        if(!g_DIO.GetDI(DI::SC_SSuckerUp)) g_IniFile.m_nErrorCode=500;
+                        else
+                        {
+                                if(m_listPickTable.size()>0)
+                                {
+                                        if(m_bTableReady[1] && (m_listPickTable.front()=="FRONT")) bFrontTable=true;
+                                        else if(m_bTableReady[0] && (m_listPickTable.front()=="REAR")) bFrontTable=false;
+
+                                        m_listPickTable.pop_front();
+                                        
+                                        g_Motion.AbsMove(Axis_Const::SCY,g_IniFile.m_dSCPickerPickSSPosY[bFrontTable]);
+                                        g_Motion.AbsMove(nAxisTable[bFrontTable],g_IniFile.m_dTablePickUpPos[bFrontTable]);
+
+                                        nThreadIndex++;
+                                }
+
+                        }
+                        break;
+                case 31:
+                        if(g_Motion.IsLastPosDone(Axis_Const::SCY) && g_Motion.IsLastPosDone(nAxisTable[bFrontTable]))
+                        {
+                                tm1MS.timeStart(300);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 32:
+                case nTagRePickSubstrate:nThreadIndex=32;
+                        if(tm1MS.timeUp())
+                        {
+                                g_Motion.AbsMove(Axis_Const::SCZ,g_IniFile.m_dSCPickerPickSSPosZ[bFrontTable]);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 33:
+                        if(g_Motion.IsLastPosDone(Axis_Const::SCZ))
+                        {
+                                g_DIO.SetDO(DO::SC_SSucker,true);
+                                tm1MS.timeStart(3000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 34:
+                        if(g_DIO.GetDI(DI::SC_SSuckerDown))
+                        {
+                                tm1MS.timeStart(300);
+                                nThreadIndex++;
+                        }
+                        else if(!g_DIO.GetDO(DO::SC_SSucker))
+                        {
+                                g_DIO.SetDO(DO::SC_SSucker,true);
+                                tm1MS.timeStart(3000);
+                        }
+                        else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=507;
+                        break;
+                case 35:
+                        if(tm1MS.timeUp())
+                        {
+                                g_DIO.SetDO(DO::SC_SSuckerVacOn,true);
+                                g_DIO.SetDO(DO::SC_SSuckerVacOff,false);
+                                g_DIO.SetDO(DO::SC_SSuckerDeVac,false);
+                                if(bFrontTable) g_DIO.SetDO(DO::FT_Vac,false);
+                                else g_DIO.SetDO(DO::RT_Vac,false);
+                                tm1MS.timeStart(5000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 36:
+                        if(g_DIO.GetDI(DI::SC_SSuckerVacGauge))
+                        {
+                                tm1MS.timeStart(g_IniFile.m_nSubstrateVacTime);
+                                nThreadIndex++;
+                        }
+                        else if(!g_DIO.GetDO(DO::SC_SSucker))
+                        {
+                                g_DIO.SetDO(DO::SC_SSucker,true);
+                                tm1MS.timeStart(3000);
+                        }
+                        else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=508;
+                        break;
+                case 37:
+                        if(tm1MS.timeUp())
+                        {
+                                g_DIO.SetDO(DO::SC_SSucker,false);
+                                g_Motion.AbsMove(Axis_Const::SCZ,0.0);
+                                tm1MS.timeStart(3000);
+                                nThreadIndex++;
+                        }
+                       break;
+                case 38:
+                        if(g_DIO.GetDI(DI::SC_SSuckerUp) && g_Motion.IsLastPosDone(Axis_Const::SCZ))
+                        {
+                                if(g_DIO.GetDI(DI::SC_SSuckerVacGauge))
+                                {
+                                        m_bSCPickerSSReady=true;
+                                        m_bTableReady[bFrontTable]=false;
+
+                                        m_listProductInfo.push_back(m_tmpProductInfo[bFrontTable]);
+
+                                        nThreadIndex++;
+                                }
+                                else
+                                {
+                                        nThreadIndex=nTagRePickSubstrate;
+                                        g_IniFile.m_nErrorCode=508;
+                                }
+
+                        }
+                        else if(g_DIO.GetDO(DO::SC_SSucker))
+                        {
+                                g_DIO.SetDO(DO::SC_SSucker,false);
+                                 tm1MS.timeStart(3000);
+                        }
+                        else if(tm1MS.timeUp() && !g_DIO.GetDI(DI::SC_CSuckerUp)) g_IniFile.m_nErrorCode=511;
+                        break;
+                case 39:
+                case nTagWaitReadyOff:nThreadIndex=39;
+                        if(!m_bSCPickerSSReady)
+                        {
+                                nThreadIndex++;
+                                m_listLog.push_back("DDD");
+                        }
+                        else if(!m_bSCPickerCoverReady && g_IniFile.m_bUseCover) nThreadIndex++;
+                        break;
+                default:
+                        nThreadIndex=0;
+                        break;
+        }
+
+}
+//---------------------------------------------------------------------------
+void __fastcall CMainThread::doCoverLifter(int &nThreadIndex)
+{
+        static C_GetTime tm1MS(EX_SCALE::TIME_1MS,false);
+
+        const bool bLifterDown=false;
+        const bool bLifterUp=true;
+
+        switch(nThreadIndex)
+        {
+                case 0:
+                        if(g_DIO.GetDI(DI::CL_Down) && g_DIO.GetDI(DI::CL_Up)) g_IniFile.m_nErrorCode=600;
+                        else if(/*!g_DIO.GetDI(DI::CL_AlignOff) ||*/ g_DIO.GetDI(DI::CL_AlignOn)) g_IniFile.m_nErrorCode=605;
+                        else if(!g_DIO.GetDI(DI::CL_Exist)) g_IniFile.m_nErrorCode=601;
+                        else
+                        {
+                                g_DIO.SetDO(DO::CL_Dir,bLifterDown);
+                                g_DIO.SetDO(DO::CL_Start,!g_DIO.GetDI(DI::CL_Down));
+                                tm1MS.timeStart(10000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 1:
+                        if(!g_DIO.GetDI(DI::CL_Up))
+                        {
+                                g_DIO.SetDO(DO::CL_Start,false);
+                                tm1MS.timeStart(2000);
+                                nThreadIndex++;
+                        }
+                        else if(g_DIO.GetDI(DI::CL_Down))
+                        {
+                                g_DIO.SetDO(DO::CL_Start,false);
+                                g_IniFile.m_nErrorCode=602;
+                        }
+                        else if(!g_DIO.GetDO(DO::CL_Start))
+                        {
+                                g_DIO.SetDO(DO::CL_Start,true);
+                                g_DIO.SetDO(DO::CL_Dir,bLifterDown);
+                                tm1MS.timeStart(10000);
+                        }
+                        else if(tm1MS.timeUp())
+                        {
+                                g_DIO.SetDO(DO::CL_Start,false);
+                                g_IniFile.m_nErrorCode=603;
+                        }
+                        break;
+                case 2:
+                        if(tm1MS.timeUp())
+                        {
+                                g_DIO.SetDO(DO::CL_Dir,bLifterUp);
+                                g_DIO.SetDO(DO::CL_Start,true);
+                                tm1MS.timeStart(50000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 3:
+                        if(g_DIO.GetDI(DI::CL_Up))
+                        {
+                                g_DIO.SetDO(DO::CL_Start,false);
+                                tm1MS.timeStart(1000);
+                                nThreadIndex++;
+                        }
+                        else if(!g_DIO.GetDI(DI::CL_Exist))
+                        {
+                                g_DIO.SetDO(DO::CL_Start,false);
+                                g_IniFile.m_nErrorCode=601;
+                        }
+                        else if(!g_DIO.GetDO(DO::CL_Start))
+                        {
+                                g_DIO.SetDO(DO::CL_Start,true);
+                                g_DIO.SetDO(DO::CL_Dir,bLifterUp);
+                                tm1MS.timeStart(20000);
+                        }
+                        else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=604;
+                        break;
+                case 4:
+                       if(tm1MS.timeUp())
+                       {
+                                g_DIO.SetDO(DO::CL_Align,true);
+                                m_bCoverLifterReady=true;
+                                tm1MS.timeStart(1000);
+                                nThreadIndex++;
+                       }
+                       break;
+                case 5:
+                        if(!m_bCoverLifterReady)
+                        {
+                                nThreadIndex++;
+                        }
+                        break;
+                default:
+                        nThreadIndex=0;
+                        break;
+        }
+
+}
+//---------------------------------------------------------------------------
+void __fastcall CMainThread::doBoatLifter(int &nThreadIndex)
+{
+        static C_GetTime tm1MS(EX_SCALE::TIME_1MS,false);
+
+
+
+        switch(nThreadIndex)
+        {
+                case 0:
+                        if(!g_DIO.GetDI(DI::Bogie_Exist)) g_IniFile.m_nErrorCode=700;
+                        else if(g_DIO.GetDI(DI::Bogie_Inp) && g_Motion.GetAxisStatus(Axis_Const::BLZ,Axis_Const::MEL)) g_IniFile.m_nErrorCode=701;
+                        else if(!g_DIO.GetDI(DI::BoatClampBOpen)) g_IniFile.m_nErrorCode=706;
+                        else
+                        {
+                                if(!g_Motion.GetAxisStatus(Axis_Const::BLZ,Axis_Const::MEL))
+                                        g_Motion.StartJog(Axis_Const::BLZ,false);
+                                tm1MS.timeStart(30000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 1:
+                        if(!g_DIO.GetDI(DI::Bogie_Inp))
+                        {
+                                tm1MS.timeStart(1000);
+                                g_Motion.StopMove(Axis_Const::BLZ);
+                                nThreadIndex++;
+                        }
+                        else if(g_Motion.GetAxisStatus(Axis_Const::BLZ,Axis_Const::MEL))
+                        {
+                                g_Motion.StopMove(Axis_Const::BLZ);
+                                g_IniFile.m_nErrorCode=702;
+                        }
+                        else if(g_Motion.IsMotionDone(Axis_Const::BLZ))
+                        {
+                                g_Motion.StartJog(Axis_Const::BLZ,false);
+                                tm1MS.timeStart(30000);
+                        }
+                        else if(tm1MS.timeUp())
+                        {
+                                g_Motion.StopMove(Axis_Const::BLZ);
+                                g_IniFile.m_nErrorCode=703;
+                        }
+                        break;
+                case 2:
+                        if(tm1MS.timeUp())
+                        {
+                                g_Motion.StartJog(Axis_Const::BLZ,true);
+                                tm1MS.timeStart(30000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 3:
+                        if(g_DIO.GetDI(DI::Bogie_Inp))
+                        {
+                                g_Motion.StopMove(Axis_Const::BLZ);
+                                tm1MS.timeStart(300);
+                                nThreadIndex++;
+                        }
+                        else if(g_Motion.GetAxisStatus(Axis_Const::BLZ,Axis_Const::PEL))
+                        {
+                                g_Motion.StopMove(Axis_Const::BLZ);
+                                g_IniFile.m_nErrorCode=704;
+                        }
+                        else if(g_Motion.IsMotionDone(Axis_Const::BLZ))
+                        {
+                                g_Motion.StartJog(Axis_Const::BLZ,true);
+                                tm1MS.timeStart(30000);
+                        }
+                        else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=705;
+                        break;
+                case 4:
+                       if(tm1MS.timeUp())
+                       {
+                                m_bBoatLifterReady=true;
+                                nThreadIndex++;
+                       }
+                       break;
+                case 5:
+                        if(!m_bBoatLifterReady)
+                        {
+                                nThreadIndex++;
+                        }
+                        break;
+                default:
+                        nThreadIndex=0;
+                        break;
+
+        }
+}
+//---------------------------------------------------------------------------
+void __fastcall CMainThread::doBoatPicker(int &nThreadIndex)
+{
+        static C_GetTime tm1MS(EX_SCALE::TIME_1MS,false);
+
+        bool bPickMethod=false;  //true: inverse move
+
+        switch(nThreadIndex)
+        {
+                case 0:
+                        if(g_Motion.GetFeedbackPos(Axis_Const::BPZ)>10.0) g_IniFile.m_nErrorCode=800;
+                        else if(!g_DIO.GetDI(DI::BoatClampAOpen)) g_IniFile.m_nErrorCode=801;
+                        else if(m_bBoatLifterReady)
+                        {
+                                g_Motion.AbsMove(Axis_Const::BPY,g_IniFile.m_dBoatPickerPickPosY[0] );
+                                nThreadIndex++;
+                        }
+                        break;
+                case 1:
+                        if(g_Motion.IsLastPosDone(Axis_Const::BPY))
+                        {
+                                g_Motion.AbsMove(Axis_Const::BPZ,g_IniFile.m_dBoatPickerPickPosZ[0] );
+                                nThreadIndex++;
+                        }
+                        break;
+                case 2:
+                        if(g_Motion.IsLastPosDone(Axis_Const::BPZ))
+                        {
+                                //tm1MS.timeStart(300);
+                                g_Motion.AbsMove(Axis_Const::BPY,g_IniFile.m_dBoatPickerPickPosY[1] );
+                                nThreadIndex++;
+                        }
+                        break;
+                case 3:
+                        if(g_Motion.IsLastPosDone(Axis_Const::BPY))
+                        {
+                                g_Motion.AbsMove(Axis_Const::BPZ,g_IniFile.m_dBoatPickerPickPosZ[1] );
+                                nThreadIndex++;
+                        }
+                        break;
+                case 4:
+                        if(g_Motion.IsLastPosDone(Axis_Const::BPZ))
+                        {
+                                tm1MS.timeStart(300);
+                                nThreadIndex++;
+                        }
+                        break;
+
+                case 5:
+                        if(tm1MS.timeUp())
+                        {
+                                if(bPickMethod)
+                                {
+                                        g_DIO.SetDO(DO::BoatClampAOn,true);
+                                        g_DIO.SetDO(DO::BoatClampAOff,false);
+                                        g_DIO.SetDO(DO::BoatClampB,true);
+
+                                        tm1MS.timeStart(3000);
+                                }
+                                nThreadIndex++;
+                        }
+                       break;
+                case 6:
+                        if((g_DIO.GetDI(DI::BoatClampAClose) && g_DIO.GetDI(DI::BoatClampBClose)) && bPickMethod)
+                        {
+                                tm1MS.timeStart(500);
+                                nThreadIndex++;
+                        }
+                        else if(!bPickMethod) nThreadIndex++;
+                        else if(tm1MS.timeUp() && !g_DIO.GetDI(DI::BoatClampAClose)) g_IniFile.m_nErrorCode=802;
+                        else if(tm1MS.timeUp() && !g_DIO.GetDI(DI::BoatClampBClose)) g_IniFile.m_nErrorCode=803;
+                        break;
+                case 7:
+                        if(tm1MS.timeUp())
+                        {
+                                g_Motion.AbsMove(Axis_Const::BPY,g_IniFile.m_dBoatPickerPickPosY[2] );
+                                nThreadIndex++;
+                        }
+                        break;
+                case 8:
+                        if(g_Motion.IsLastPosDone(Axis_Const::BPY))
+                        {
+
+                                if(!bPickMethod)
+                                {
+                                        g_DIO.SetDO(DO::BoatClampAOn,true);
+                                        g_DIO.SetDO(DO::BoatClampAOff,false);
+                                        g_DIO.SetDO(DO::BoatClampB,true);
+
+                                        tm1MS.timeStart(3000);
+                                }
+                                nThreadIndex++;
+                        }
+                        break;
+                case 9:
+                      if((g_DIO.GetDI(DI::BoatClampAClose) && g_DIO.GetDI(DI::BoatClampBClose)) && !bPickMethod)
+                        {
+                                tm1MS.timeStart(500);
+                                nThreadIndex++;
+                        }
+                        else if(bPickMethod) nThreadIndex++;
+                        else if(tm1MS.timeUp() && !g_DIO.GetDI(DI::BoatClampAClose)) g_IniFile.m_nErrorCode=802;
+                        else if(tm1MS.timeUp() && !g_DIO.GetDI(DI::BoatClampBClose)) g_IniFile.m_nErrorCode=803;
+                        break;
+                case 10:
+                        if(tm1MS.timeUp())
+                        {
+                                g_Motion.AbsMove(Axis_Const::BPZ,g_IniFile.m_dBoatPickerPickPosZ[2] );
+                                nThreadIndex++;
+                        }
+                        break;
+                case 11:
+                        if(g_Motion.IsLastPosDone(Axis_Const::BPZ))
+                        {
+                                g_Motion.AbsMove(Axis_Const::BPY,g_IniFile.m_dBoatPickerPickPosY[0] );
+                                nThreadIndex++;
+                        }
+                        break;
+                case 12:
+                        if(g_Motion.IsLastPosDone(Axis_Const::BPY))
+                        {
+                                g_Motion.AbsMove(Axis_Const::BPZ,0.0);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 13:
+                        if(g_Motion.IsLastPosDone(Axis_Const::BPZ))
+                        {
+                                g_DIO.SetDO(DO::BoatClampB,false);
+
+                                tm1MS.timeStart(3000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 14:
+                        if(g_DIO.GetDI(DI::BoatClampBOpen))
+                        {
+                                m_bBoatLifterReady=false;
+                                nThreadIndex++;
+                        }
+                        else if(tm1MS.timeUp())  g_IniFile.m_nErrorCode=706;
+                        break;
+                case 15:
+                        if(!m_bBoatPickerReady)
+                        {
+                                g_Motion.AbsMove(Axis_Const::BPY,g_IniFile.m_dBoatPickerPutPosY );
+                                nThreadIndex++;
+                        }
+                        break;
+                case 16:
+                        if(g_Motion.IsLastPosDone(Axis_Const::BPY))
+                        {
+                                g_Motion.AbsMove(Axis_Const::BPZ,g_IniFile.m_dBoatPickerPutPosZ );
+                                nThreadIndex++;
+                        }
+                        break;
+                case 17:
+                        if(g_Motion.IsLastPosDone(Axis_Const::BPZ))
+                        {
+                                g_DIO.SetDO(DO::BoatClampAOn,false);
+                                g_DIO.SetDO(DO::BoatClampAOff,true);
+                                tm1MS.timeStart(3000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 18:
+                        if(g_DIO.GetDI(DI::BoatClampAOpen))
+                        {
+                                tm1MS.timeStart(300);
+                                nThreadIndex++;
+                        }
+                        else if(tm1MS.timeUp())  g_IniFile.m_nErrorCode=801;
+                        break;
+                case 19:
+                        if(tm1MS.timeUp())
+                        {
+                                g_Motion.AbsMove(Axis_Const::BPZ,0.0);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 20:
+                        if(g_Motion.IsLastPosDone(Axis_Const::BPZ))
+                        {
+                                m_bBoatPickerReady=true;
+                                nThreadIndex++;
+                        }
+                        break;
+                default:
+                        nThreadIndex=0;
+                        break;
+        }
+}
+//---------------------------------------------------------------------------
+void __fastcall CMainThread::doBoatRailXX(int &nThreadIndex)
+{
+        static C_GetTime tm1MS(EX_SCALE::TIME_1MS,false);
+
+        const bool bStopperUp=true;
+        const bool bStopperDown=false;
+        static bool bIsNGBin=false;
+        static int nSubstrateIndex=0;
+
+        const int nTagAlignBoat=1000;
+        const int nTagPutSubstrate=2000;
+        const int nTagEjectBoat=3000;
+
+        switch(nThreadIndex)
+        {
+                case 0:
+                        if(!g_DIO.GetDI(DI::BR2_StopUp)) g_IniFile.m_nErrorCode=900;
+                        //else if(g_DIO.GetDI(DI::BR2_AlignOn)) g_IniFile.m_nErrorCode=901;
+                        else if(!g_DIO.GetDI(DI::BR2_LifterDown)) g_IniFile.m_nErrorCode=902;
+                        else if(g_DIO.GetDI(DI::BR2_Inp)) g_IniFile.m_nErrorCode=903;
+                        else
+                        {
+                                if(m_bBoatPickerReady && g_IniFile.m_bUseBoat)
+                                {
+                                        tm1MS.timeStart(3000);
+                                        nThreadIndex++;
+                                }
+                                else if(!g_IniFile.m_bUseBoat) nThreadIndex=nTagPutSubstrate;
+                        }
+                        break;
+                case 1:
+                        if(g_DIO.GetDI(DI::BR1_Exist))
+                        {
+                                g_DIO.SetDO(DO::BR1_RailStart,true);
+                                g_DIO.SetDO(DO::BR2_RailStart,true);
+                                tm1MS.timeStart(5000);
+                                nThreadIndex++;
+                        }
+                        else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=904;
+                        break;
+                case 2:
+                        if(g_DIO.GetDI(DI::BR2_Inp) && !g_DIO.GetDI(DI::BR2_Entry))
+                        {
+                                tm1MS.timeStart(500);
+                                nThreadIndex++;
+                        }
+                        else if(!g_DIO.GetDO(DO::BR1_RailStart) || !g_DIO.GetDO(DO::BR2_RailStart))
+                        {
+                                g_DIO.SetDO(DO::BR1_RailStart,true);
+                                g_DIO.SetDO(DO::BR2_RailStart,true);
+                                tm1MS.timeStart(5000);
+                        }
+                        else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=904;
+                        break;
+                case 3:
+                        if(tm1MS.timeUp())
+                        {
+                                g_DIO.SetDO(DO::BR1_RailStart,false);
+                                g_DIO.SetDO(DO::BR2_RailStart,false);
+                                m_bBoatPickerReady=false;
+                                bIsNGBin=false;
+
+                                tm1MS.timeStart(100);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 4:
+                        if(tm1MS.timeUp())
+                        {
+                                if(g_IniFile.m_bEAPBoatControl)
+                                {
+                                        m_listTX.push_back("BOAT_TRIG");
+                                        tm1MS.timeStart(3000);
+                                        nThreadIndex++;
+                                }
+                                else nThreadIndex=nTagAlignBoat;
+
+                        }
+                        break;
+                case 5:
+                        if(m_listCoverCodeReaderRX.size()>0)
+                        {
+                                if(m_listBoatCodeReaderRX.back()=="BOAT_READER_NOREAD")
+                                {
+                                        m_listLog.push_back("下蓋板2D讀取器 讀取失敗");
+                                        bIsNGBin=true;
+                                        nThreadIndex=nTagEjectBoat;
+                                }
+                                else
+                                {
+                                        //BOAT OK
+                                        bIsNGBin=false;
+                                        m_listLog.push_back("下蓋板放行");
+                                        nThreadIndex=nTagAlignBoat;
+                                }
+
+                                m_listCoverCodeReaderRX.clear();
+                        }
+                        else if(tm1MS.timeUp())
+                        {
+                                m_listLog.push_back("下蓋板2D讀取器 沒有回應");
+                                bIsNGBin=true;
+                                nThreadIndex=nTagEjectBoat;
+                        }
+
+
+                        break;
+
+                        //___________________________________________________________\\
+                case 6:
+                case nTagAlignBoat:nThreadIndex=6;
+                        g_DIO.SetDO(DO::BR2_Align2,true);
+                        tm1MS.timeStart(5000);
+                        nThreadIndex++;
+                        break;
+                case 7:
+                       if(/*g_DIO.GetDI(DI::BR2_AlignOn)*/true)
+                       {
+                                tm1MS.timeStart(500);
+                                g_DIO.SetDO(DO::BR2_Align,true);
+                                nThreadIndex++;
+                       }
+                       else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=905;
+                case 8:
+                        if(tm1MS.timeUp())
+                        {
+                                g_DIO.SetDO(DO::BR2_Align,false);
+                                //g_DIO.SetDO(DO::BR2_Align2,false);
+                                tm1MS.timeStart(5000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 9:
+                       if(/*g_DIO.GetDI(DI::BR2_AlignOff)*/true)
+                       {
+                                tm1MS.timeStart(500);
+                                nThreadIndex++;
+                       }
+                       else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=906;
+                       break;
+                case 10:
+                        if(tm1MS.timeUp())
+                        {
+                                g_DIO.SetDO(DO::BR2_Lifter,true);
+                                tm1MS.timeStart(5000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 11:
+                        if(g_DIO.GetDI(DI::BR2_LifterUp))
+                        {
+                                nSubstrateIndex=0;
+                                tm1MS.timeStart(100);
+                                nThreadIndex++;
+                        }
+                        else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=907;
+                        break;
+                case 12:
+                case nTagPutSubstrate:nThreadIndex=12;
+                        if(tm1MS.timeUp())
+                        {
+                                if(m_bSCPickerSSReady && (!g_IniFile.m_bUseCover || !g_IniFile.m_bUseBoat) )
+                                {
+                                        nThreadIndex++;
+                                }
+                                else if(m_bSCPickerSSReady && m_bSCPickerCoverReady && g_IniFile.m_bUseCover)
+                                {
+                                        nThreadIndex++;
+                                }
+
+
+                        }
+                        break;
+                case 13:
+                        if(!g_DIO.GetDI(DI::SC_SSuckerUp)) g_IniFile.m_nErrorCode=512;
+                        else if(!g_DIO.GetDI(DI::SC_CSuckerUp)) g_IniFile.m_nErrorCode=501;
+                        else if(g_Motion.GetFeedbackPos(Axis_Const::SCZ)>10.0) g_IniFile.m_nErrorCode=504;
+                        else
+                        {
+                                g_Motion.AbsMove(Axis_Const::SCY,g_IniFile.m_dSCPickerPutSSPosY[nSubstrateIndex]);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 14:
+                        if(g_Motion.IsLastPosDone(Axis_Const::SCY))
+                        {
+
+                                g_Motion.AbsMove(Axis_Const::SCZ,g_IniFile.m_dSCPickerPutSSPosZ[nSubstrateIndex]);
+                                nThreadIndex++;
+
+                        }
+                        break;
+                case 15:
+                        if(g_Motion.IsLastPosDone(Axis_Const::SCZ));
+                        {
+                                g_DIO.SetDO(DO::SC_SSucker,true);
+                                tm1MS.timeStart(3000);
+
+                                nThreadIndex++;
+                        }
+                        break;
+                case 16:
+                        if(g_DIO.GetDI(DI::SC_SSuckerDown))
+                        {
+                                tm1MS.timeStart(200);
+                                nThreadIndex++;
+                        }
+                        else if(!g_DIO.GetDO(DO::SC_SSucker))
+                        {
+                                g_DIO.SetDO(DO::SC_SSucker,true);
+                                tm1MS.timeStart(3000);
+                        }
+                        else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=507;
+                        break;
+                case 17:
+                        if(tm1MS.timeUp())
+                        {
+                                g_DIO.SetDO(DO::SC_SSuckerVacOff,true);
+                                g_DIO.SetDO(DO::SC_SSuckerVacOn,false);
+                                g_DIO.SetDO(DO::SC_SSuckerDeVac,true);
+                                if(g_IniFile.m_bUseBoat)
+                                {
+                                        if(nSubstrateIndex==0) g_DIO.SetDO(DO::BR2_Vac1,true);
+                                        else g_DIO.SetDO(DO::BR2_Vac2,true);
+                                        tm1MS.timeStart(3000);
+                                }
+                                nThreadIndex++;
+                        }
+                        break;
+                case 18:
+                       if((g_DIO.GetDI(DI::BR2_VacGauge1) && (nSubstrateIndex==0)) ||
+                                (g_DIO.GetDI(DI::BR2_VacGauge2) && (nSubstrateIndex==1)) || !g_IniFile.m_bUseBoat)
+                        {
+                                g_Motion.AbsMove(Axis_Const::SCZ,0.0);
+                                g_DIO.SetDO(DO::SC_SSucker,false);
+                                tm1MS.timeStart(3000);
+                                nSubstrateIndex++;
+                                nThreadIndex++;
+                        }
+                        else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=908;
+                        break;
+                case 19:
+                        if(g_DIO.GetDI(DI::SC_SSuckerUp))
+                        {
+                                m_nSubstrateRemains--;
+
+                                if(g_Motion.IsLastPosDone(Axis_Const::SCZ))
+                                {
+                                        if(g_IniFile.m_bIsSingleSubstrate ||
+                                                (nSubstrateIndex==2) ||
+                                                ((m_nSubstrateRemains<=0) && m_bStopLoad) )            //2: second
+                                        {
+
+                                                if(g_IniFile.m_bUseCover) nThreadIndex++;
+                                                else if(!g_IniFile.m_bUseCover || !g_IniFile.m_bUseBoat)
+                                                {
+                                                        m_listLog.push_back("AAA");
+                                                        m_bSCPickerSSReady=false;
+                                                        g_DIO.SetDO(DO::BR2_Vac1,false);
+                                                        g_DIO.SetDO(DO::BR2_Vac2,false);
+                                                        tm1MS.timeStart(1000);
+                                                        nThreadIndex=nTagEjectBoat;
+                                                }
+                                        }
+                                        else
+                                        {
+                                                m_bSCPickerSSReady=false;
+                                                m_listLog.push_back("BBB");
+                                                nThreadIndex=nTagPutSubstrate;
+                                        }
+                                }
+                        }
+                        else if(g_DIO.GetDO(DO::SC_SSucker))
+                        {
+                                g_DIO.SetDO(DO::SC_SSucker,false);
+                                tm1MS.timeStart(3000);
+                        }
+                        else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=513;
+                        break;
+                case 20:
+                        //Put Cover
+                        if(m_bSCPickerCoverReady)
+                        {
+                                g_Motion.AbsMove(Axis_Const::SCY,g_IniFile.m_dSCPickerPutCoverPosY);
+                                nThreadIndex++;
+                        }
+                        break;;
+                case 21:
+                        if(g_Motion.IsLastPosDone(Axis_Const::SCY))
+                        {
+
+                                g_Motion.AbsMove(Axis_Const::SCZ,g_IniFile.m_dSCPickerPutCoverPosZ);
+                                nThreadIndex++;
+
+                        }
+                        break;
+                case 22:
+                        if(g_Motion.IsLastPosDone(Axis_Const::SCZ))
+                        {
+                                g_DIO.SetDO(DO::SC_CSucker,true);
+                                tm1MS.timeStart(3000);
+
+                                nThreadIndex++;
+                        }
+                        break;
+                case 23:
+                        if(g_DIO.GetDI(DI::SC_CSuckerDown))
+                        {
+                                g_DIO.SetDO(DO::SC_CSuckerVacOff,true);
+                                g_DIO.SetDO(DO::SC_CSuckerVacOn,false);
+                                g_DIO.SetDO(DO::SC_CSuckerVac2On,false);
+                                g_DIO.SetDO(DO::SC_CSuckerDeVac,true);
+
+                                tm1MS.timeStart(100);
+                                nThreadIndex++;
+                        }
+                        else if(!g_DIO.GetDO(DO::SC_CSucker))
+                        {
+                                g_DIO.SetDO(DO::SC_CSucker,true);
+                                tm1MS.timeStart(3000);
+                        }
+                        else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=505;
+                        break;
+                case 24:
+                        if(tm1MS.timeUp())
+                        {
+                                g_Motion.AbsMove(Axis_Const::SCZ,0.0);
+                                g_DIO.SetDO(DO::SC_CSucker,false);
+                                tm1MS.timeStart(3000);
+                                nThreadIndex++;
+
+                        }
+                        break;
+                case 25:
+                        if(g_DIO.GetDI(DI::SC_CSuckerUp))
+                        {
+                                if(g_Motion.IsLastPosDone(Axis_Const::SCZ))
+                                {
+                                        g_DIO.SetDO(DO::BR2_Vac1,false);
+                                        g_DIO.SetDO(DO::BR2_Vac2,false);
+                                        m_bSCPickerSSReady=false;
+                                        m_listLog.push_back("CCC");
+                                        m_bSCPickerCoverReady=false;
+                                        tm1MS.timeStart(100);
+                                        nThreadIndex++;
+
+                                }
+                        }
+                        else if(g_DIO.GetDO(DO::SC_CSucker))
+                        {
+                                g_DIO.SetDO(DO::SC_CSucker,false);
+                                tm1MS.timeStart(3000);
+                        }
+                        else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=501;
+                        break;
+                case 26:
+                case nTagEjectBoat:nThreadIndex=26;
+                        if(tm1MS.timeUp())
+                        {
+                                g_DIO.SetDO(DO::BR2_Lifter,false);
+                                nSubstrateIndex=0;
+                                tm1MS.timeStart(5000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 27:
+                        if(g_DIO.GetDI(DI::BR2_LifterDown))
+                        {
+                                tm1MS.timeStart(100);
+                                nThreadIndex++;
+                        }
+                        else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=909;
+
+                        break;
+                case 28:
+                        if(tm1MS.timeUp())
+                        {
+
+                                m_bBoatRailReady=true;
+                                nThreadIndex++;
+                        }
+                        break;
+                case 29:
+                        if(!m_bBoatRailReady)
+                        {
+                                //g_DIO.SetDO(DO::BR2_RailStart,false);
+                                g_DIO.SetDO(DO::BR2_Stopper,bStopperUp);
+                                tm1MS.timeStart(3000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 30:
+                        if(g_DIO.GetDI(DI::BR2_StopUp))
+                        {
+                                tm1MS.timeStart(100);
+                                nThreadIndex++;
+                        }
+                        else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=900;
+                        break;
+               default:
+                        nThreadIndex=0;
+                        break;
+        }
+}
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+void __fastcall CMainThread::doBoatRail(int &nThreadIndex)
+{
+        static C_GetTime tm1MS(EX_SCALE::TIME_1MS,false);
+
+        const bool bStopperUp=true;
+        const bool bStopperDown=false;
+        static bool bIsNGBin=false;
+        static int nSubstrateIndex=0;
+
+        const int nTagAlignBoat=1000;
+        const int nTagPutSubstrate=2000;
+        const int nTagEjectBoat=3000;
+        const int nTagPutSubstrateEnd=4000;
+
+        switch(nThreadIndex)
+        {
+                case 0:
+                        if(!g_DIO.GetDI(DI::BR2_StopUp)) g_IniFile.m_nErrorCode=900;
+                        //else if(g_DIO.GetDI(DI::BR2_AlignOn)) g_IniFile.m_nErrorCode=901;
+                        else if(!g_DIO.GetDI(DI::BR2_LifterDown)) g_IniFile.m_nErrorCode=902;
+                        //else if(g_DIO.GetDI(DI::BR2_Inp)) g_IniFile.m_nErrorCode=903;        //for UPH
+                        else
+                        {
+                                 bIsNGBin=false;
+                                if(m_bBoatPickerReady && g_IniFile.m_bUseBoat)
+                                {
+                                        tm1MS.timeStart(3000);
+                                        nThreadIndex++;
+                                }
+                                else if(!g_IniFile.m_bUseBoat) nThreadIndex=nTagPutSubstrate;
+                        }
+                        break;
+                case 1:
+                        //if(g_DIO.GetDI(DI::BR1_Exist))            //for UPH
+                        {
+                                g_DIO.SetDO(DO::BR1_RailStart,true);
+                                g_DIO.SetDO(DO::BR2_RailStart,true);
+                                tm1MS.timeStart(5000);
+                                nThreadIndex++;
+                        }
+                        //else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=904;
+                        break;
+                case 2:
+                        if(g_DIO.GetDI(DI::BR2_Inp) && !g_DIO.GetDI(DI::BR2_Entry))
+                        {
+                                tm1MS.timeStart(500);
+                                nThreadIndex++;
+                        }
+                        else if(!g_DIO.GetDO(DO::BR1_RailStart) || !g_DIO.GetDO(DO::BR2_RailStart))
+                        {
+                                g_DIO.SetDO(DO::BR1_RailStart,true);
+                                g_DIO.SetDO(DO::BR2_RailStart,true);
+                                tm1MS.timeStart(5000);
+                        }
+                        else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=904;
+                        break;
+                case 3:
+                        if(tm1MS.timeUp())
+                        {
+                                g_DIO.SetDO(DO::BR1_RailStart,false);
+                                g_DIO.SetDO(DO::BR2_RailStart,false);
+                                m_bBoatPickerReady=false;
+                                bIsNGBin=false;
+
+                                tm1MS.timeStart(100);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 4:
+                        if(tm1MS.timeUp())
+                        {
+                                if(g_IniFile.m_bEAPBoatControl)
+                                {
+                                        m_listTX.push_back("BOAT_TRIG");
+                                        tm1MS.timeStart(3000);
+                                        nThreadIndex++;
+                                }
+                                else nThreadIndex=nTagAlignBoat;
+
+                        }
+                        break;
+                case 5:
+                        if(m_listCoverCodeReaderRX.size()>0)
+                        {
+                                if(m_listBoatCodeReaderRX.back()=="BOAT_READER_NOREAD")
+                                {
+                                        m_listLog.push_back("下蓋板2D讀取器 讀取失敗");
+                                        bIsNGBin=true;
+                                        nThreadIndex=nTagEjectBoat;
+                                }
+                                else if(m_listBoatCodeReaderRX.back()=="BOAT_READER_LENGHT_ERROR")
+                                {
+                                        m_listLog.push_back("下蓋板2D讀取器 字元長度不足");
+                                        bIsNGBin=true;
+                                        nThreadIndex=nTagEjectBoat;
+                                }
+                                else
+                                {
+                                        //BOAT OK
+                                        bIsNGBin=false;
+                                        m_listLog.push_back("下蓋板放行");
+                                        nThreadIndex=nTagAlignBoat;
+                                }
+
+                                m_listCoverCodeReaderRX.clear();
+                        }
+                        else if(tm1MS.timeUp())
+                        {
+                                m_listLog.push_back("下蓋板2D讀取器 沒有回應");
+                                bIsNGBin=true;
+                                nThreadIndex=nTagEjectBoat;
+                        }
+
+
+                        break;
+
+                        //___________________________________________________________\\
+                case 6:
+                case nTagAlignBoat:nThreadIndex=6;
+                        g_DIO.SetDO(DO::BR2_Align2,true);
+                        tm1MS.timeStart(5000);
+                        nThreadIndex++;
+                        break;
+                case 7:
+                       if(/*g_DIO.GetDI(DI::BR2_AlignOn)*/true)
+                       {
+                                tm1MS.timeStart(500);
+                                g_DIO.SetDO(DO::BR2_Align,true);
+                                nThreadIndex++;
+                       }
+                       else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=905;
+                case 8:
+                        if(tm1MS.timeUp())
+                        {
+                                g_DIO.SetDO(DO::BR2_Align,false);
+                                //g_DIO.SetDO(DO::BR2_Align2,false);
+                                tm1MS.timeStart(5000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 9:
+                       if(/*g_DIO.GetDI(DI::BR2_AlignOff)*/true)
+                       {
+                                tm1MS.timeStart(500);
+                                nThreadIndex++;
+                       }
+                       else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=906;
+                       break;
+                case 10:
+                        if(tm1MS.timeUp())
+                        {
+                                g_DIO.SetDO(DO::BR2_Lifter,true);
+                                tm1MS.timeStart(5000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 11:
+                        if(g_DIO.GetDI(DI::BR2_LifterUp))
+                        {
+                                nSubstrateIndex=0;
+                                tm1MS.timeStart(100);
+                                nThreadIndex++;
+                        }
+                        else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=907;
+                        break;
+                case 12:
+                case nTagPutSubstrate:nThreadIndex=12;
+                        if(tm1MS.timeUp())
+                        {
+                                if(m_bSCPickerSSReady && (!g_IniFile.m_bUseCover || !g_IniFile.m_bUseBoat) )
+                                {
+                                        nThreadIndex++;
+                                }
+                                else if(m_bSCPickerSSReady && m_bSCPickerCoverReady && g_IniFile.m_bUseCover)
+                                {
+                                        nThreadIndex++;
+                                }
+                                /*
+                                else if(m_nSubstrateRemains<=0 && m_bStopLoad)
+                                {
+                                        nThreadIndex=nTagPutSubstrateEnd;
+                                }
+                                */
+
+                        }
+                        break;
+                case 13:
+                        if(!g_DIO.GetDI(DI::SC_SSuckerUp)) g_IniFile.m_nErrorCode=512;
+                        else if(!g_DIO.GetDI(DI::SC_CSuckerUp)) g_IniFile.m_nErrorCode=501;
+                        else if(g_Motion.GetFeedbackPos(Axis_Const::SCZ)>10.0) g_IniFile.m_nErrorCode=504;
+                        else
+                        {
+                                g_Motion.AbsMove(Axis_Const::SCY,g_IniFile.m_dSCPickerPutSSPosY[nSubstrateIndex]);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 14:
+                        if(g_Motion.IsLastPosDone(Axis_Const::SCY))
+                        {
+
+                                g_Motion.AbsMove(Axis_Const::SCZ,g_IniFile.m_dSCPickerPutSSPosZ[nSubstrateIndex]);
+                                nThreadIndex++;
+
+                        }
+                        break;
+                case 15:
+                        if(g_Motion.IsLastPosDone(Axis_Const::SCZ));
+                        {
+                                g_DIO.SetDO(DO::SC_SSucker,true);
+                                tm1MS.timeStart(3000);
+
+                                nThreadIndex++;
+                        }
+                        break;
+                case 16:
+                        if(g_DIO.GetDI(DI::SC_SSuckerDown))
+                        {
+                                tm1MS.timeStart(500);
+                                nThreadIndex++;
+                        }
+                        else if(!g_DIO.GetDO(DO::SC_SSucker))
+                        {
+                                g_DIO.SetDO(DO::SC_SSucker,true);
+                                tm1MS.timeStart(3000);
+                        }
+                        else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=507;
+                        break;
+                case 17:
+                        if(tm1MS.timeUp()&& g_DIO.GetDI(DI::SC_SSuckerDown))
+                        {
+                                g_DIO.SetDO(DO::SC_SSuckerVacOff,true);
+                                g_DIO.SetDO(DO::SC_SSuckerVacOn,false);
+                                g_DIO.SetDO(DO::SC_SSuckerDeVac,true);
+                                if(g_IniFile.m_bUseBoat)
+                                {
+                                        if(nSubstrateIndex==0) g_DIO.SetDO(DO::BR2_Vac1,true);
+                                        else g_DIO.SetDO(DO::BR2_Vac2,true);
+                                        tm1MS.timeStart(3000);
+                                }
+
+                                nThreadIndex++;
+                        }
+                        else if(!g_DIO.GetDO(DO::SC_SSucker))
+                        {
+                                g_DIO.SetDO(DO::SC_SSucker,true);
+                                tm1MS.timeStart(3000);
+                        }
+                        else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=507;
+                        break;
+                case 18:
+                       if((g_DIO.GetDI(DI::BR2_VacGauge1) && (nSubstrateIndex==0)) ||
+                                (g_DIO.GetDI(DI::BR2_VacGauge2) && (nSubstrateIndex==1)) || !g_IniFile.m_bUseBoat)
+                        {
+                                g_Motion.AbsMove(Axis_Const::SCZ,0.0);
+                                g_DIO.SetDO(DO::SC_SSucker,false);
+                                tm1MS.timeStart(3000);
+                                nSubstrateIndex++;
+                                nThreadIndex++;
+                        }
+                        else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=908;
+                        break;
+                case 19:
+                case nTagPutSubstrateEnd:
+                        if(g_DIO.GetDI(DI::SC_SSuckerUp))
+                        {
+                                if(g_Motion.IsLastPosDone(Axis_Const::SCZ))
+                                {
+                                         if(m_nSubstrateRemains>0) m_nSubstrateRemains--;
+
+                                        if(g_IniFile.m_bIsSingleSubstrate || (nSubstrateIndex==2) || (m_nSubstrateRemains<=0 && m_bStopLoad)  )            //2: second
+                                        {
+                                                if(g_IniFile.m_bUseCover) nThreadIndex++;
+                                                else if(!g_IniFile.m_bUseCover || !g_IniFile.m_bUseBoat)
+                                                {
+                                                        m_listLog.push_back("AAA");
+                                                        m_bSCPickerSSReady=false;
+                                                        g_DIO.SetDO(DO::BR2_Vac1,false);
+                                                        g_DIO.SetDO(DO::BR2_Vac2,false);
+                                                        tm1MS.timeStart(1000);
+                                                        nThreadIndex=nTagEjectBoat;
+                                                }
+                                        }
+                                        else
+                                        {
+                                                m_bSCPickerSSReady=false;
+                                                m_listLog.push_back("BBB");
+                                                nThreadIndex=nTagPutSubstrate;
+                                        }
+                                }
+                        }
+                        else if(g_DIO.GetDO(DO::SC_SSucker))
+                        {
+                                g_DIO.SetDO(DO::SC_SSucker,false);
+                                tm1MS.timeStart(3000);
+                        }
+                        else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=513;
+                        break;
+                case 20:
+                        //Put Cover
+                        if(m_bSCPickerCoverReady)
+                        {
+                                g_Motion.AbsMove(Axis_Const::SCY,g_IniFile.m_dSCPickerPutCoverPosY);
+                                nThreadIndex++;
+                        }
+                        break;;
+                case 21:
+                        if(g_Motion.IsLastPosDone(Axis_Const::SCY))
+                        {
+                                g_Motion.AbsMove(Axis_Const::SCZ,g_IniFile.m_dSCPickerPutCoverPosZ);
+                                nThreadIndex++;
+
+                        }
+                        break;
+                case 22:
+                        if(g_Motion.IsLastPosDone(Axis_Const::SCZ))
+                        {
+                                g_DIO.SetDO(DO::SC_CSucker,true);
+                                tm1MS.timeStart(3000);
+
+                                nThreadIndex++;
+                        }
+                        break;
+                case 23:
+                        if(g_DIO.GetDI(DI::SC_CSuckerDown))
+                        {
+                                g_DIO.SetDO(DO::SC_CSuckerVacOff,true);
+                                g_DIO.SetDO(DO::SC_CSuckerVacOn,false);
+                                g_DIO.SetDO(DO::SC_CSuckerVac2On,false);
+                                g_DIO.SetDO(DO::SC_CSuckerDeVac,true);
+
+                                tm1MS.timeStart(1000);
+                                nThreadIndex++;
+                        }
+                        else if(!g_DIO.GetDO(DO::SC_CSucker))
+                        {
+                                g_DIO.SetDO(DO::SC_CSucker,true);
+                                tm1MS.timeStart(3000);
+                        }
+                        else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=505;
+                        break;
+                case 24:
+                        if(tm1MS.timeUp())
+                        {
+                                g_Motion.AbsMove(Axis_Const::SCZ,0.0);
+                                g_DIO.SetDO(DO::SC_CSucker,false);
+                                tm1MS.timeStart(3000);
+                                nThreadIndex++;
+
+                        }
+                        break;
+                case 25:
+                        if(g_DIO.GetDI(DI::SC_CSuckerUp))
+                        {
+                                if(g_Motion.IsLastPosDone(Axis_Const::SCZ))
+                                {
+                                        g_DIO.SetDO(DO::BR2_Vac1,false);
+                                        g_DIO.SetDO(DO::BR2_Vac2,false);
+                                        m_bSCPickerSSReady=false;
+                                        m_listLog.push_back("CCC");
+                                        m_bSCPickerCoverReady=false;
+                                        tm1MS.timeStart(100);
+                                        nThreadIndex++;
+
+                                }
+                        }
+                        else if(g_DIO.GetDO(DO::SC_CSucker))
+                        {
+                                g_DIO.SetDO(DO::SC_CSucker,false);
+                                tm1MS.timeStart(3000);
+                        }
+                        else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=501;
+                        break;
+                case 26:
+                case nTagEjectBoat:nThreadIndex=26;
+                        if(tm1MS.timeUp())
+                        {
+                                g_DIO.SetDO(DO::BR2_Lifter,false);
+                                nSubstrateIndex=0;
+                                tm1MS.timeStart(5000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 27:
+                        if(g_DIO.GetDI(DI::BR2_LifterDown))
+                        {
+                                tm1MS.timeStart(100);
+                                nThreadIndex++;
+                        }
+                        else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=909;
+
+                        break;
+                case 28:
+
+                        if(g_DIO.GetDI(DI::OutReady) || g_IniFile.m_bForceEject)
+                        {
+                                if(!g_DIO.GetDI(DI::BR2_Exit))
+                                {
+                                        if(!bIsNGBin)     //false: means has substrate on boat
+                                        {
+                                                if(m_listProductInfo.size()>0)
+                                                {
+                                                        if(g_IniFile.m_bUseLaserCodeReader && !m_listProductInfo.front().m_bIsSBT2DOK) bIsNGBin=true;
+                                                        m_listProductInfo.pop_front();
+                                                }
+
+                                                if(m_listProductInfo.size()>0 && !g_IniFile.m_bIsSingleSubstrate)
+                                                {
+                                                        if(g_IniFile.m_bUseLaserCodeReader && !m_listProductInfo.front().m_bIsSBT2DOK) bIsNGBin=true;
+                                                        m_listProductInfo.pop_front();
+                                                }
+                                        }
+
+                                        g_DIO.SetDO(DO::BR2_Stopper,bStopperDown);
+                                        g_DIO.SetDO(DO::BR2_RailStart,true);
+                                        g_DIO.SetDO(DO::BR1_RailStart,true);
+                                        g_DIO.SetDO(DO::UnLoadNGBin,bIsNGBin);
+
+                                        bIsNGBin ? m_listLog.push_back("NG BIN"):m_listLog.push_back("OK BIN");
+
+                                        tm1MS.timeStart(300);
+                                        nThreadIndex++;
+                                }
+                                else g_IniFile.m_nErrorCode=903;
+                        }
+                        break;
+                case 29:
+                        if(/*g_DIO.GetDI(DI::BR2_StopDown)*/tm1MS.timeUp())
+                        {
+                                tm1MS.timeStart(100);
+                                nThreadIndex++;
+                        }
+                        //else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=910;
+                        break;
+                case 30:
+                        if(tm1MS.timeUp())
+                        {
+                                g_DIO.SetDO(DO::BR2_RailStart,true);
+                                tm1MS.timeStart(10000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 31:
+                        //if(!g_DIO.GetDI(DI::BR2_Inp) && !g_DIO.GetDI(DI::BR2_Exit))
+                        if(g_DIO.GetDI(DI::BR2_Exit))
+                        {
+                                tm1MS.timeStart(1000);
+                                nThreadIndex++;
+                        }
+                        else if(!g_DIO.GetDO(DO::BR2_RailStart))
+                        {
+                                g_DIO.SetDO(DO::BR2_RailStart,true);
+                                tm1MS.timeStart(10000);
+                        }
+                        else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=911;
+                        break;
+                 case 32:
+                        if(tm1MS.timeUp())
+                        {
+                                //g_DIO.SetDO(DO::BR2_RailStart,false);     //for UPH
+                                g_DIO.SetDO(DO::BR2_Stopper,bStopperUp);
+                                tm1MS.timeStart(3000);
+                                nThreadIndex++;
+                        }
+                        break;
+                  case 33:
+                        if(g_DIO.GetDI(DI::BR2_StopUp))
+                        {
+                                if(m_nSubstrateRemains<=0 && m_bStopLoad)
+                                {
+                                        //clear User Data
+                                        g_IniFile.m_strSMSPartNo="";
+                                        g_IniFile.m_strSBTLotNo="";
+                                        g_IniFile.m_strProductID="";
+                                        g_IniFile.m_nErrorCode=913;    //Lot Complete
+                                }
+
+                                tm1MS.timeStart(100);
+                                nThreadIndex++;
+                        }
+                        else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=900;
+                        break;
+               default:
+                        nThreadIndex=0;
+                        break;
+        }
+}
+//---------------------------------------------------------------------------
+void __fastcall CMainThread::doBoatRailBuffer(int &nThreadIndex)
+{
+        const bool bStopperUp=true;
+        const bool bStopperDown=false;
+
+        static C_GetTime tm1MS(EX_SCALE::TIME_1MS,false); 
+
+        switch(nThreadIndex)
+        {
+                case 0:
+                        if(g_DIO.GetDI(DI::Buffer_StopperUp))
+                        {
+                                nThreadIndex++;
+                        }
+                        else g_IniFile.m_nErrorCode=912;
+                        break;
+                case 1:
+                        if(m_bBoatRailReady)
+                        {
+                                g_DIO.SetDO(DO::BR2_Stopper,bStopperDown);
+                                tm1MS.timeStart(300);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 2:
+                        if(tm1MS.timeUp())
+                        {
+                                g_DIO.SetDO(DO::BR2_RailStart,true);
+                                g_DIO.SetDO(DO::BR1_RailStart,true);   //debug
+                                tm1MS.timeStart(10000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 3:
+                        if(g_DIO.GetDI(DI::BR2_Exit))
+                        {
+                                m_bBoatRailReady=false;
+                                g_DIO.SetDO(DO::BR2_RailStart,false);
+                                g_DIO.SetDO(DO::BR1_RailStart,false);   //debug
+                                nThreadIndex++;
+                        }
+                        else if(!g_DIO.GetDO(DO::BR2_RailStart))
+                        {
+                                g_DIO.SetDO(DO::BR2_RailStart,true);
+                                g_DIO.SetDO(DO::BR1_RailStart,true);   //debug
+                                tm1MS.timeStart(10000);
+                        }
+                        else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=911;
+                        break;
+                case 4:
+                        if(g_DIO.GetDI(DI::OutReady) || g_IniFile.m_bForceEject)
+                        {
+                                g_DIO.SetDO(DO::Buffer_Stopper,false);
+                                tm1MS.timeStart(300);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 5:
+                        if(tm1MS.timeUp())
+                        {
+                                g_DIO.SetDO(DO::BR2_RailStart,true);
+                                //g_DIO.SetDO(DO::BR2_Stopper,bStopperDown);//debbug
+                                tm1MS.timeStart(10000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 6:
+                        if(!g_DIO.GetDI(DI::BR2_Inp) && !g_DIO.GetDI(DI::BR2_Exit))
+                        {
+                                tm1MS.timeStart(1000);
+                                nThreadIndex++;
+                        }
+                        else if(!g_DIO.GetDO(DO::BR2_RailStart))
+                        {
+                                g_DIO.SetDO(DO::BR2_RailStart,true);
+                                tm1MS.timeStart(10000);
+                        }
+                        else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=911;
+                        break;
+                 case 7:
+                        if(tm1MS.timeUp())
+                        {
+                                g_DIO.SetDO(DO::Buffer_Stopper,true);
+                                tm1MS.timeStart(3000);
+                                nThreadIndex++;
+                        }
+                        break;
+                 case 8:
+                        if(g_DIO.GetDI(DI::Buffer_StopperUp))
+                        {
+                                g_DIO.SetDO(DO::BR2_RailStart,false);
+                                nThreadIndex++;
+                        }
+                        else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=912;
+                        break;
+                default:
+                        nThreadIndex=0;
+                        break;
+        }
+}
+//---------------------------------------------------------------------------
+bool __fastcall CMainThread::doPreAuto(int &nThreadIndex)
+{
+        static C_GetTime tm1MS(EX_SCALE::TIME_1MS,false);
+
+
+        switch(nThreadIndex)
+        {
+                case 0:
+                        if(!g_DIO.GetDI(DI::SS_SSuckerUp)) g_IniFile.m_nErrorCode=28;
+                        else if(!g_DIO.GetDI(DI::SS_SpaSuckerUp)) g_IniFile.m_nErrorCode=29;
+                        else if(!g_DIO.GetDI(DI::SC_SSuckerUp)) g_IniFile.m_nErrorCode=19;
+                        else if(!g_DIO.GetDI(DI::SC_CSuckerUp)) g_IniFile.m_nErrorCode=20;
+                        else if(!g_DIO.GetDI(DI::LEDUp)) g_IniFile.m_nErrorCode=23;
+                        else if(!g_Motion.IsLastPosDone(Axis_Const::BPY))
+                        {
+                                m_listLog.push_back("先前Y軸位置為->"+FormatFloat("0.000",g_Motion.m_dLastTargetPos[Axis_Const::BPY]));
+                                g_IniFile.m_nErrorCode=38;
+                        }
+                        else if(!g_Motion.IsLastPosDone(Axis_Const::BPZ))
+                        {
+                                m_listLog.push_back("先前Z軸位置為->"+FormatFloat("0.000",g_Motion.m_dLastTargetPos[Axis_Const::BPZ]));
+                                g_IniFile.m_nErrorCode=39;
+                        }
+                        else
+                        {
+                                //g_Motion.AbsMove(Axis_Const::SCZ,0.0);
+                                g_Motion.StartJog(Axis_Const::SCZ,false);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 1:
+                        //if(g_Motion.IsPosDone(Axis_Const::SCZ,0.0))
+                        if(g_Motion.GetAxisStatus(Axis_Const::SCZ,Axis_Const::ORG) || g_Motion.GetAxisStatus(Axis_Const::SCZ,Axis_Const::MEL))
+                        {
+                                //BPZ=0,BLZ,SCZ,CCD,SCY,CRD,BPY,SSY,RTX,FTX
+                                g_Motion.StopMove(Axis_Const::SCZ);
+                                g_Motion.AbsMove(Axis_Const::CCD,g_Motion.m_dLastTargetPos[Axis_Const::CCD]);
+                                g_Motion.AbsMove(Axis_Const::SCY,g_Motion.m_dLastTargetPos[Axis_Const::SCY]);
+                                g_Motion.AbsMove(Axis_Const::CRD,g_Motion.m_dLastTargetPos[Axis_Const::CRD]);
+                                g_Motion.AbsMove(Axis_Const::SSY,g_Motion.m_dLastTargetPos[Axis_Const::SSY]);
+                                g_Motion.AbsMove(Axis_Const::RTX,g_Motion.m_dLastTargetPos[Axis_Const::RTX]);
+                                g_Motion.AbsMove(Axis_Const::FTX,g_Motion.m_dLastTargetPos[Axis_Const::FTX]);
+
+                                nThreadIndex++;
+                        }
+                        /*
+                        else if(g_Motion.IsMotionDone(Axis_Const::SCZ))
+                        {
+                                g_Motion.AbsMove(Axis_Const::SCZ,0.0);
+                        }
+                        */
+                        break;
+                case 2:
+                        if(g_Motion.IsPosDone(Axis_Const::CCD,g_Motion.m_dLastTargetPos[Axis_Const::CCD]) &&
+                           g_Motion.IsPosDone(Axis_Const::SCY,g_Motion.m_dLastTargetPos[Axis_Const::SCY]) &&
+                           g_Motion.IsPosDone(Axis_Const::CRD,g_Motion.m_dLastTargetPos[Axis_Const::CRD]) &&
+                           g_Motion.IsPosDone(Axis_Const::SSY,g_Motion.m_dLastTargetPos[Axis_Const::SSY]) &&
+                           g_Motion.IsPosDone(Axis_Const::RTX,g_Motion.m_dLastTargetPos[Axis_Const::RTX]) &&
+                           g_Motion.IsPosDone(Axis_Const::FTX,g_Motion.m_dLastTargetPos[Axis_Const::FTX])  &&
+                           g_Motion.IsMotionDone(Axis_Const::SCZ))
+                        {
+                                tm1MS.timeStart(1000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 3:
+                        if(tm1MS.timeUp())
+                        {
+                                g_Motion.AbsMove(Axis_Const::SCZ,g_Motion.m_dLastTargetPos[Axis_Const::SCZ]);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 4:
+                        if(g_Motion.IsPosDone(Axis_Const::SCZ,g_Motion.m_dLastTargetPos[Axis_Const::SCZ]))
+                        {
+                                /*
+                                g_DIO.SetDO(DO::SS_SSucker,m_bSSPickerDown);
+                                g_DIO.SetDO(DO::SS_SpaSucker,m_bSpaPickerDown);
+                                g_DIO.SetDO(DO::SC_SSucker,m_bSSPicker2Down);
+                                g_DIO.SetDO(DO::SC_CSucker,m_bCoverPickerDown);
+                                g_DIO.SetDO(DO::LEDDown,m_bLEDDown);
+                                */
+                                tm1MS.timeStart(1000);
+                                nThreadIndex++;
+                        }
+                        else if(g_Motion.IsMotionDone(Axis_Const::SCZ)) g_Motion.AbsMove(Axis_Const::SCZ,g_Motion.m_dLastTargetPos[Axis_Const::SCZ]);
+                        break;
+                case 5:
+                        if(tm1MS.timeUp())
+                        {
+                                nThreadIndex++;
+                        }
+                        break;
+                default:
+                        nThreadIndex=0;
+                        return true;
+                        break;
+        }
+
+        return false;
+}
+//---------------------------------------------------------------------------
+void __fastcall CMainThread::ThreadTrace()
+{
+        if(m_listThreadTrace.size()>50) m_listThreadTrace.pop_front();
+
+        AnsiString strMsg;
+        AnsiString strMsgA;
+
+        for(int nIndex=1;nIndex<=11;nIndex++)
+        {
+                strMsg+=strMsgA.sprintf("[%02d]%03d ",nIndex,nThreadIndex[nIndex]);
+        }
+
+        m_listThreadTrace.push_back(strMsg);
+
+}
+
+/*
+
+
+                                doLoadRail(nThreadIndex[1]);
+                                doSSPickerFromRail(nThreadIndex[2]);
+                                doLoadLifter(nThreadIndex[3]);
+                                doSSPickerFromLifter(nThreadIndex[4]);
+                                doTable(nThreadIndex[5],true);
+                                doTable(nThreadIndex[6],false);
+
+                                doSCPicker(nThreadIndex[7]);
+                                doCoverLifter(nThreadIndex[8]);
+                                doBoatLifter(nThreadIndex[9]);
+                                doBoatPicker(nThreadIndex[10]);
+                                doBoatRail(nThreadIndex[11]);
+*/
+
+
+
+

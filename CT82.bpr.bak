@@ -1,0 +1,233 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!-- C++Builder XML Project -->
+<PROJECT>
+  <MACROS>
+    <VERSION value="BCB.06.00"/>
+    <PROJECT value="exe\CT82.exe"/>
+    <OBJFILES value="temp\CT82.obj temp\PCIM114GL.obj temp\fmChoiceMotor.obj temp\fmIOCheck.obj 
+      temp\fmMachinParam.obj temp\fmMotorCheck.obj temp\fmPassword.obj 
+      temp\fmProductParam.obj temp\frmMain.obj temp\tinyxml.obj 
+      temp\CtkLedControll.obj temp\SerialPort.obj temp\KenenceLaser.obj 
+      temp\MainThread.obj temp\CEVision.obj temp\DominoVision.obj 
+      temp\IniFile.obj temp\GlobalFunction.obj temp\C_GetTime.obj 
+      temp\frmPrivilege.obj temp\frmManual.obj temp\frmOption.obj 
+      temp\SMSXML.obj temp\tinyxmlparser.obj temp\tinystr.obj 
+      temp\tinyxmlerror.obj temp\fmUserID.obj"/>
+    <RESFILES value="CT77.res"/>
+    <IDLFILES value=""/>
+    <IDLGENFILES value=""/>
+    <DEFFILE value=""/>
+    <RESDEPEN value="$(RESFILES) fmChoiceMotor.dfm fmIOCheck.dfm fmMachinParam.dfm 
+      fmMotorCheck.dfm fmPassword.dfm fmProductParam.dfm frmMain.dfm 
+      frmPrivilege.dfm frmManual.dfm frmOption.dfm fmUserID.dfm"/>
+    <LIBFILES value="extern\PICM114GL\Lib\CMnetBCB.lib extern\PICM114GL\Lib\PCI_M114GLCBCB.lib 
+      extern\Pcom\Pcommb.lib extern\EVision\BcB6\EOcvBcB6.lib 
+      extern\EVision\BcB6\EasyBcB6.lib extern\EVision\BcB6\EAviBcB6.lib 
+      extern\EVision\BcB6\EBgaBcB6.lib extern\EVision\BcB6\EBrcBcB6.lib 
+      extern\EVision\BcB6\EClrBcB6.lib extern\EVision\BcB6\EEmcBcB6.lib 
+      extern\EVision\BcB6\EFndBcB6.lib extern\EVision\BcB6\EGgeBcB6.lib 
+      extern\EVision\BcB6\EImgBcB6.lib extern\EVision\BcB6\EInsBcB6.lib 
+      extern\EVision\BcB6\EMchBcB6.lib extern\EVision\BcB6\EMsrBcB6.lib 
+      extern\EVision\BcB6\EMxcBcB6.lib extern\EVision\BcB6\EObjBcB6.lib 
+      extern\EVision\BcB6\EOcrBcB6.lib extern\MultiCam282\Lib\multicam_bcb.lib"/>
+    <LIBRARIES value=""/>
+    <SPARELIBS value="vcl.lib rtl.lib nmfast.lib vclx.lib"/>
+    <PACKAGES value="vcl.bpi rtl.bpi dbrtl.bpi adortl.bpi vcldb.bpi vclx.bpi bdertl.bpi 
+      vcldbx.bpi ibxpress.bpi dsnap.bpi cds.bpi bdecds.bpi qrpt.bpi teeui.bpi 
+      teedb.bpi tee.bpi dss.bpi teeqr.bpi visualclx.bpi visualdbclx.bpi 
+      dsnapcrba.bpi dsnapcon.bpi bcbsmp.bpi vclie.bpi xmlrtl.bpi inet.bpi 
+      inetdbbde.bpi inetdbxpress.bpi inetdb.bpi nmfast.bpi webdsnap.bpi 
+      bcbie.bpi websnap.bpi soaprtl.bpi dclocx.bpi dbexpress.bpi dbxcds.bpi 
+      indy.bpi bcb2kaxserver.bpi MSMQ20.bpi"/>
+    <PATHCPP value=".;extern\TinyXML;extern\CTKLED;extern\SerialPort;extern\KenenceLaser;extern\EVision;extern\DominoGrabber;extern\General;extern\SMSXML;extern\TinyXML;extern\TinyXML;extern\TinyXML"/>
+    <PATHPAS value=".;"/>
+    <PATHRC value=".;"/>
+    <PATHASM value=".;"/>
+    <DEBUGLIBPATH value="$(BCB)\lib\debug"/>
+    <RELEASELIBPATH value="$(BCB)\lib\release"/>
+    <LINKER value="ilink32"/>
+    <USERDEFINES value="_DEBUG;_WINDOWS;STRICT"/>
+    <SYSDEFINES value="_RTLDLL;NO_STRICT;USEPACKAGES"/>
+    <MAINSOURCE value="CT77.cpp"/>
+    <INCLUDEPATH value="extern\SMSXML;extern\General;extern\DominoGrabber;extern\EVision;extern\KenenceLaser;extern\SerialPort;extern\CTKLED;extern\TinyXML;extern\EQPXML;extern\Domino;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;C:\Work\CLARE_PROGRAM\C77\CT77;$(BCB)\include;$(BCB)\include\vcl;extern\PICM114GL\Include;extern\EVision\Include;extern\Pcom;extern\Multicam282\Include"/>
+    <LIBPATH value="extern\SMSXML;extern\General;extern\DominoGrabber;extern\EVision;extern\KenenceLaser;extern\SerialPort;extern\CTKLED;extern\TinyXML;extern\EQPXML;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;C:\Work\CLARE_PROGRAM\C77\CT77;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib;extern\EVision\BcB6"/>
+    <WARNINGS value="-w-par"/>
+    <OTHERFILES value=""/>
+  </MACROS>
+  <OPTIONS>
+    <IDLCFLAGS value="-Iextern\SMSXML -Iextern\General -Iextern\DominoGrabber -Iextern\EVision 
+      -Iextern\KenenceLaser -Iextern\SerialPort -Iextern\CTKLED -Iextern\TinyXML 
+      -Iextern\EQPXML -Iextern\Domino 
+      -I&quot;C:\Program Files\Borland\CBuilder6\Projects&quot; 
+      -IC:\Work\CLARE_PROGRAM\C77\CT77 -I$(BCB)\include -I$(BCB)\include\vcl 
+      -Iextern\PICM114GL\Include -Iextern\EVision\Include -Iextern\Pcom 
+      -Iextern\Multicam282\Include -src_suffix cpp -D_DEBUG -D_WINDOWS -DSTRICT 
+      -boa"/>
+    <CFLAG1 value="-Od -H=$(BCB)\lib\vcl60.csm -Hc -Vx -Ve -X- -r- -a8 -b- -k -y -v -vi- -c 
+      -tW -tWM"/>
+    <PFLAGS value="-N2temp -N0temp -$YD -$W -$O- -$A8 -v -JPHNE -M"/>
+    <RFLAGS value=""/>
+    <AFLAGS value="/mx /w2 /zd"/>
+    <LFLAGS value="-Itemp -D&quot;&quot; -aa -Tpe -x -Gn -v"/>
+    <OTHERFILES value=""/>
+  </OPTIONS>
+  <LINKER>
+    <ALLOBJ value="c0w32.obj $(PACKAGES) Memmgr.Lib sysinit.obj $(OBJFILES)"/>
+    <ALLRES value="$(RESFILES)"/>
+    <ALLLIB value="$(LIBFILES) $(LIBRARIES) import32.lib cp32mti.lib"/>
+    <OTHERFILES value=""/>
+  </LINKER>
+  <FILELIST>
+      <FILE FILENAME="CT77.res" FORMNAME="" UNITNAME="CT77.res" CONTAINERID="ResTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="CT77.cpp" FORMNAME="" UNITNAME="CT77" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="PCIM114GL.cpp" FORMNAME="" UNITNAME="PCIM114GL.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="fmChoiceMotor.cpp" FORMNAME="frmChoiceMotor" UNITNAME="fmChoiceMotor" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="fmIOCheck.cpp" FORMNAME="IOCheckDlg" UNITNAME="fmIOCheck" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="fmMachinParam.cpp" FORMNAME="frmMachineParam" UNITNAME="fmMachinParam" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="fmMotorCheck.cpp" FORMNAME="frmMotorCheck" UNITNAME="fmMotorCheck" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="fmPassword.cpp" FORMNAME="frmPassword" UNITNAME="fmPassword" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="fmProductParam.cpp" FORMNAME="frmProductParam" UNITNAME="fmProductParam" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="frmMain.cpp" FORMNAME="fmMain" UNITNAME="frmMain" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\TinyXML\tinyxml.cpp" FORMNAME="" UNITNAME="tinyxml" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\CTKLED\CtkLedControll.cpp" FORMNAME="" UNITNAME="CtkLedControll" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\SerialPort\SerialPort.cpp" FORMNAME="" UNITNAME="SerialPort" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\KenenceLaser\KenenceLaser.cpp" FORMNAME="" UNITNAME="KenenceLaser" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="MainThread.cpp" FORMNAME="" UNITNAME="MainThread" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\EVision\CEVision.cpp" FORMNAME="" UNITNAME="CEVision" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\DominoGrabber\DominoVision.cpp" FORMNAME="" UNITNAME="DominoVision" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\PICM114GL\Lib\CMnetBCB.lib" FORMNAME="" UNITNAME="CMnetBCB.lib" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\PICM114GL\Lib\PCI_M114GLCBCB.lib" FORMNAME="" UNITNAME="PCI_M114GLCBCB.lib" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="IniFile.cpp" FORMNAME="" UNITNAME="IniFile" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="GlobalFunction.cpp" FORMNAME="" UNITNAME="GlobalFunction" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\General\C_GetTime.cpp" FORMNAME="" UNITNAME="C_GetTime" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\Pcom\Pcommb.lib" FORMNAME="" UNITNAME="Pcommb.lib" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="frmPrivilege.cpp" FORMNAME="fmPrivilege" UNITNAME="frmPrivilege" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\EVision\BcB6\EOcvBcB6.lib" FORMNAME="" UNITNAME="EOcvBcB6.lib" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\EVision\BcB6\EasyBcB6.lib" FORMNAME="" UNITNAME="EasyBcB6.lib" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\EVision\BcB6\EAviBcB6.lib" FORMNAME="" UNITNAME="EAviBcB6.lib" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\EVision\BcB6\EBgaBcB6.lib" FORMNAME="" UNITNAME="EBgaBcB6.lib" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\EVision\BcB6\EBrcBcB6.lib" FORMNAME="" UNITNAME="EBrcBcB6.lib" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\EVision\BcB6\EClrBcB6.lib" FORMNAME="" UNITNAME="EClrBcB6.lib" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\EVision\BcB6\EEmcBcB6.lib" FORMNAME="" UNITNAME="EEmcBcB6.lib" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\EVision\BcB6\EFndBcB6.lib" FORMNAME="" UNITNAME="EFndBcB6.lib" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\EVision\BcB6\EGgeBcB6.lib" FORMNAME="" UNITNAME="EGgeBcB6.lib" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\EVision\BcB6\EImgBcB6.lib" FORMNAME="" UNITNAME="EImgBcB6.lib" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\EVision\BcB6\EInsBcB6.lib" FORMNAME="" UNITNAME="EInsBcB6.lib" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\EVision\BcB6\EMchBcB6.lib" FORMNAME="" UNITNAME="EMchBcB6.lib" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\EVision\BcB6\EMsrBcB6.lib" FORMNAME="" UNITNAME="EMsrBcB6.lib" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\EVision\BcB6\EMxcBcB6.lib" FORMNAME="" UNITNAME="EMxcBcB6.lib" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\EVision\BcB6\EObjBcB6.lib" FORMNAME="" UNITNAME="EObjBcB6.lib" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\EVision\BcB6\EOcrBcB6.lib" FORMNAME="" UNITNAME="EOcrBcB6.lib" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="frmManual.cpp" FORMNAME="fmManual" UNITNAME="frmManual" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\MultiCam282\Lib\multicam_bcb.lib" FORMNAME="" UNITNAME="multicam_bcb.lib" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="frmOption.cpp" FORMNAME="fmOption" UNITNAME="frmOption" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\SMSXML\SMSXML.cpp" FORMNAME="" UNITNAME="SMSXML" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\TinyXML\tinyxmlparser.cpp" FORMNAME="" UNITNAME="tinyxmlparser.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\TinyXML\tinystr.cpp" FORMNAME="" UNITNAME="tinystr.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="extern\TinyXML\tinyxmlerror.cpp" FORMNAME="" UNITNAME="tinyxmlerror.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="fmUserID.cpp" FORMNAME="frmUserID" UNITNAME="fmUserID" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+  </FILELIST>
+  <BUILDTOOLS>
+  </BUILDTOOLS>
+
+  <IDEOPTIONS>
+[Version Info]
+IncludeVerInfo=0
+AutoIncBuild=0
+MajorVer=1
+MinorVer=0
+Release=0
+Build=0
+Debug=0
+PreRelease=0
+Special=0
+Private=0
+DLL=0
+Locale=1028
+CodePage=950
+
+[Version Info Keys]
+CompanyName=
+FileDescription=
+FileVersion=1.0.0.0
+InternalName=
+LegalCopyright=
+LegalTrademarks=
+OriginalFilename=
+ProductName=
+ProductVersion=1.0.0.0
+Comments=
+
+[HistoryLists\hlIncludePath]
+Count=11
+Item0=extern\General;extern\DominoGrabber;extern\EVision;extern\KenenceLaser;extern\SerialPort;extern\CTKLED;extern\TinyXML;extern\EQPXML;extern\Domino;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C77\CT77;$(BCB)\include;$(BCB)\include\vcl;extern\PICM114GL\Include;extern\EVision\Include;extern\Pcom;extern\Multicam282\Include
+Item1=extern\DominoGrabber;extern\EVision;extern\KenenceLaser;extern\SerialPort;extern\CTKLED;extern\TinyXML;extern\EQPXML;extern\Domino;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C77\CT77;$(BCB)\include;$(BCB)\include\vcl;extern\PICM114GL\Include;extern\EVision\Include;extern\Pcom;extern\Multicam282\Include
+Item2=extern\DominoGrabber;extern\EVision;extern\KenenceLaser;extern\SerialPort;extern\CTKLED;extern\TinyXML;extern\EQPXML;extern\Domino;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C77\CT77;$(BCB)\include;$(BCB)\include\vcl;extern\PICM114GL\Include;extern\EVision\Include;extern\Pcom;extern\Multicam690\Include
+Item3=extern\SerialPort;extern\CTKLED;extern\TinyXML;extern\EQPXML;extern\Domino;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C77\CT77;$(BCB)\include;$(BCB)\include\vcl;extern\PICM114GL\Include;extern\EVision\Include;extern\Pcom;extern\Multicam690\Include
+Item4=extern\SerialPort;extern\CTKLED;extern\TinyXML;extern\EQPXML;extern\Domino;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C77\CT77;$(BCB)\include;$(BCB)\include\vcl;extern\PICM114GL\Include;extern\EVision\Include;extern\Pcom
+Item5=extern\SerialPort;extern\CTKLED;extern\TinyXML;extern\EQPXML;extern\Domino;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C77\CT77;$(BCB)\include;$(BCB)\include\vcl;extern\PICM114GL\Include;extern\EVision\Include
+Item6=extern\Domino;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C77\CT77;$(BCB)\include;$(BCB)\include\vcl;extern\PICM114GL\Include;extern\EVision\Include
+Item7=extern\Domino;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C77\CT77;$(BCB)\include;$(BCB)\include\vcl;extern\PICM114GL\Include;extern\MultiCam282\Include
+Item8=C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C77\CT77;$(BCB)\include;$(BCB)\include\vcl;extern\PICM114GL\Include;extern\MultiCam282\Include
+Item9=C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C77\CT77;$(BCB)\include;$(BCB)\include\vcl;extern\PICM114GL\Include;extern\MultiCam282\Include;C:\Work\CLARE_PROGRAM\C77\CT77\extern\EQPXML
+Item10=C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C77\CT77;$(BCB)\include;$(BCB)\include\vcl
+
+[HistoryLists\hlLibraryPath]
+Count=7
+Item0=extern\General;extern\DominoGrabber;extern\EVision;extern\KenenceLaser;extern\SerialPort;extern\CTKLED;extern\TinyXML;extern\EQPXML;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C77\CT77;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib;extern\EVision\BcB6
+Item1=extern\DominoGrabber;extern\EVision;extern\KenenceLaser;extern\SerialPort;extern\CTKLED;extern\TinyXML;extern\EQPXML;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C77\CT77;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib;extern\EVision\BcB6
+Item2=extern\DominoGrabber;extern\EVision;extern\KenenceLaser;extern\SerialPort;extern\CTKLED;extern\TinyXML;extern\EQPXML;extern\Domino;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C77\CT77;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib;extern\EVision\BcB6
+Item3=extern\SerialPort;extern\CTKLED;extern\TinyXML;extern\EQPXML;extern\Domino;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C77\CT77;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib;extern\EVision\BcB6
+Item4=extern\Domino;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C77\CT77;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib;extern\EVision\BcB6
+Item5=extern\Domino;C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C77\CT77;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib
+Item6=C:\Program Files\Borland\CBuilder6\Projects;C:\Work\CLARE_PROGRAM\C77\CT77;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib
+
+[HistoryLists\hlDebugSourcePath]
+Count=1
+Item0=$(BCB)\source\vcl
+
+[HistoryLists\hlConditionals]
+Count=2
+Item0=_DEBUG;_WINDOWS;STRICT
+Item1=_DEBUG
+
+[HistoryLists\hlIntOutputDir]
+Count=1
+Item0=temp
+
+[HistoryLists\hlFinalOutputDir]
+Count=2
+Item0=exe\
+Item1=exe
+
+[Debugging]
+DebugSourceDirs=$(BCB)\source\vcl
+
+[Parameters]
+RunParams=
+Launcher=
+UseLauncher=0
+DebugCWD=
+HostApplication=
+RemoteHost=
+RemotePath=
+RemoteLauncher=
+RemoteCWD=
+RemoteDebug=0
+
+[Compiler]
+ShowInfoMsgs=0
+LinkDebugVcl=0
+LinkCGLIB=0
+
+[CORBA]
+AddServerUnit=1
+AddClientUnit=1
+PrecompiledHeaders=1
+
+[Language]
+ActiveLang=
+ProjectLang=
+RootDir=
+  </IDEOPTIONS>
+</PROJECT>

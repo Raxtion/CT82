@@ -1,0 +1,716 @@
+//---------------------------------------------------------------------------
+
+
+#pragma hdrstop
+#include <vcl>
+#include "DominoVision.h"
+#include "stdio.h"
+#include "malloc.h"
+#include "frmMain.h"
+#include "LicenseMediator.h"
+#include "dir.h"
+#include "math.h"
+#include "CEVision.h"
+
+#define EURESYS_PROGRAM_CREATION_MODEL_X "ALPHA_X"
+#define EURESYS_PROGRAM_CREATION_MODEL_Y "ALPHA_Y"
+#define EURESYS_PROGRAM_CAM_FILENAME_X "STC-A152A_P15SA_NEW"//"XC-ST50_FACTORY"//"STC-A152A_P15SA"//"Std_BW_EIA_I60SA"//"KP-F3_P30SA"     //KP-F3_P30RM is Frame On Demand,No-Interlaced
+#define EURESYS_PROGRAM_CAM_FILENAME_Y "XC-ST50_FACTORY" //K7
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+
+extern TfmMain *fmMain;
+extern CEVision theVision;
+bool g_bOnRefresh=false;
+bool g_bOnRefreshScale=false;
+DominoVision g_Grabber;
+//---------------------------------------------------------------------------
+void __fastcall DominoVision::ErrorDisplay(const char *Msg, int Code)
+{
+	AnsiString Txt;
+	Txt.sprintf("\"%s\" Return value = %d", Msg, Code);
+	Application->MessageBox(Txt.c_str(),"Vision System Error",MB_ICONERROR | MB_OK);
+}
+//---------------------------------------------------------------------------
+void WINAPI GlobalCallbackFunctionX (PMCCALLBACKINFO CbInfo)
+{
+	// Retreive the image buffer
+	PUINT8 * pData = NULL;
+       
+	MCHANDLE hSurface = (MCHANDLE) CbInfo->SignalInfo ;
+	McGetParamInt(hSurface,MC_SurfaceContext,(PINT32)&pData);
+
+        //if(theVision.GetGrabCount()>0) theVision.LightOnOff(false);
+	// Image Processing 
+
+	if(pData!=NULL)
+	{
+                //MbufPut(theVision.MilImage,pData);    //Copy pData to MilImage
+                /*
+                theVision.m_ImageBW8tmp.SetSize(theVision.m_ImageBW8.GetWidth(),theVision.m_ImageBW8tmp.GetHeight());
+
+                ImgScaleRotate(&theVision.m_ImageBW8,theVision.m_ImageBW8.GetWidth()/2,
+                        theVision.m_ImageBW8.GetHeight()/2,theVision.m_ImageBW8tmp.GetWidth()/2,
+                        theVision.m_ImageBW8tmp.GetHeight()/2, 1.f, 1.f, 180.0, &theVision.m_ImageBW8tmp, 0);
+                theVision.m_ImageBW8tmp.CopyTo(&theVision.m_ImageBW8,false);
+                */
+                theVision.m_ImageBW8.SetImagePtr(
+                        g_Grabber.m_ImageSizeX[0], g_Grabber.m_ImageSizeY[0], pData, g_Grabber.m_ImageSizeX[0]*8);
+
+                //theVision.m_ImageTmpBW8.SetSize(g_Grabber.m_ImageSizeX[0],g_Grabber.m_ImageSizeY[0]);
+                theVision.m_ImageTmpBW8.SetSize(g_Grabber.m_ImageSizeX[0]*4,g_Grabber.m_ImageSizeY[0]);
+                theVision.m_ImageSizeX=g_Grabber.m_ImageSizeX[0];
+                theVision.m_ImageSizeY=g_Grabber.m_ImageSizeY[0];
+
+                theVision.RotateImage(0.0);                
+
+                // insert image processing here
+                g_Grabber.m_bValidImage[0]=true;
+        }
+	// Post refresh command
+	if(!g_bOnRefresh)
+	{
+		g_bOnRefresh = true;
+                fmMain->RefreshImage();
+		//MainWnd->ImagePaintBox->Repaint();//Invalidate(),refresh()
+                //Do not use repaint function , the screen will flash and flash
+	}
+  
+}
+//---------------------------------------------------------------------------
+void WINAPI GlobalCallbackFunctionY (PMCCALLBACKINFO CbInfo)
+{
+	// Retreive the image buffer
+	PUINT8 * pData = NULL;
+       
+	MCHANDLE hSurface = (MCHANDLE) CbInfo->SignalInfo ;
+	McGetParamInt(hSurface,MC_SurfaceContext,(PINT32)&pData);
+
+	if(pData!=NULL)
+	{
+                theVision.m_ImageBW8.SetImagePtr(
+                        g_Grabber.m_ImageSizeX[1], g_Grabber.m_ImageSizeY[1], pData, g_Grabber.m_ImageSizeX[1]*8);
+
+                //theVision.m_ImageTmpBW8.SetSize(g_Grabber.m_ImageSizeX[1],g_Grabber.m_ImageSizeY[1]);
+                theVision.m_ImageTmpBW8.SetSize(g_Grabber.m_ImageSizeX[0]*4,g_Grabber.m_ImageSizeY[0]);
+                theVision.m_ImageSizeX=g_Grabber.m_ImageSizeX[1];
+                theVision.m_ImageSizeY=g_Grabber.m_ImageSizeY[1];
+
+                theVision.RotateImage(180.0);
+
+                // insert image processing here
+                g_Grabber.m_bValidImage[1]=true;
+        }
+	// Post refresh command
+	if(!g_bOnRefresh)
+	{
+		g_bOnRefresh = true;
+                fmMain->RefreshImage();
+		//MainWnd->ImagePaintBox->Repaint();//Invalidate(),refresh()
+                //Do not use repaint function , the screen will flash and flash
+	}
+
+
+}
+//---------------------------------------------------------------------------
+__fastcall DominoVision::DominoVision()
+{
+ // bool bInitial;
+ 
+        m_ImageSizeX[0] = 640 ;
+	m_ImageSizeY[0] = 480 ;
+	m_PixelSize[0] = 1 ;
+        m_ImageSizeX[1] = 640 ;
+	m_ImageSizeY[1] = 480 ;
+	m_PixelSize[1] = 1 ;
+
+	m_ImageBuffer[0] = NULL ;
+        m_ImageBufferScale[0] = NULL ;
+        m_ImageBuffer[1] = NULL ;
+        m_ImageBufferScale[1] = NULL ;
+
+	m_ChannelInstance[0] = NULL ;
+        m_ChannelInstance[1] = NULL ;
+	m_SurfaceInstance[0] = NULL ;
+        m_SurfaceInstance[1] = NULL ;
+
+        m_bValidImage[0]=true;
+        m_bValidImage[1]=true;
+
+        //---debug---
+        /*
+        {
+                ShowMessage("Vision Not Initial");
+        }
+        */
+        
+        bInitial=Initial();
+        if(!bInitial)
+	{
+		Application->MessageBox("Error: Cannot initial MultiCam application.",
+                        "Vision System Error",MB_OK | MB_ICONERROR);
+	}
+
+        CreateGrayBitmapInfo();
+        CreateGrayPalette();
+
+
+        //delete below when
+        //---debug---
+        if(!bInitial)
+        {
+                ShowMessage("Allocate Image Buffer for debug");
+                INT32 imageSize;
+	        imageSize = m_ImageSizeY[0] * m_ImageSizeX[0] * m_PixelSize[1];
+	        m_ImageBuffer[0] = (PUINT8)VirtualAlloc(NULL, imageSize, MEM_COMMIT, PAGE_READWRITE);
+                m_ImageBufferScale[0] = (PUINT8)VirtualAlloc(NULL, imageSize, MEM_COMMIT, PAGE_READWRITE);
+        }      
+ 
+}
+
+
+//---------------------------------------------------------------------------
+__fastcall DominoVision::~DominoVision()
+{
+        if (!Terminate())
+	{
+		Application->MessageBox("Error: Cannot terminate MultiCam application.",
+                        "Vision System Error",MB_OK | MB_ICONERROR);
+	}
+
+        if(m_pGrayBitmapInfo) delete m_pGrayBitmapInfo;
+}
+//---------------------------------------------------------------------------
+bool __fastcall DominoVision::Initial()
+{
+        MCSTATUS Status ;
+	char pText[128];
+
+	// Establish communication with the driver
+	Status = McOpenDriver (NULL);
+	if (Status != MC_OK)
+	{
+		ErrorDisplay("Error: McOpenDriver failed.", Status);
+		return false;
+	}
+
+	//Selecting the Domino board
+	Status = McSetParamInt(MC_CONFIGURATION, MC_DriverIndex, 0);
+	if (Status != MC_OK)
+	{
+		ErrorDisplay("Error: Configuration object failed.", Status);
+		return false;
+	}
+
+        
+	//Declaring the topology only for domino alpha gama serial 
+	Status = McSetParamStr(MC_CONFIGURATION, MC_BoardTopology, "1_1");
+	if (Status != MC_OK)
+	{
+		ErrorDisplay("Error: Topology setup failed.", Status);
+		return false;
+	}
+
+        InitChannel(0);
+        InitSurface(0);
+        InitChannel(1);
+        InitSurface(1);
+
+	// Enable image acquisitions
+	Status = McStartAcq();
+	if (Status != MC_OK)
+	{
+		ErrorDisplay("Error: McStartAcq failed.", Status);
+		return false;
+	}
+
+        /*
+        //if(Application->MessageBox("Set Exposure Time 1000uS ?","Choice",MB_OKCANCEL)==IDOK)
+        {
+                // Set Camera Exposure Time,100 uS
+	        Status = McSetParamInt (m_ChannelInstance[0], MC_Expose_us,100);
+	        if (Status != MC_OK)
+	        {
+		        ErrorDisplay("Error: Cannot Set Camera Exposure Time.", Status);
+		        return false;
+                }
+        }
+        */
+
+        /*
+
+        //Set ExposeOverlap to forbid ,used for line scane
+        Status = McSetParamInt (m_ChannelInstance,MC_ExposeOverlap,MC_ExposeOverlap_FORBID);
+	if (Status != MC_OK)
+	{
+		ErrorDisplay("Error: Cannot Set Expose OverLap Mode to forbid.", Status);
+		return false;
+	}
+        */
+
+        if(!SetTrigMode(0,false)) return false;
+        if(!SetTrigMode(1,false)) return false;
+
+
+
+	return true ;
+}
+//---------------------------------------------------------------------------
+bool __fastcall DominoVision::SetTrigMode(int nCH,bool bHard)
+{
+
+    //if(!bInitial) return false;
+  MCSTATUS Status ;
+  
+  if(bHard)
+  {
+     // Set Trigger Mode ,Hard & Soft Combine
+	  Status = McSetParamInt (m_ChannelInstance[nCH],MC_TrigMode,MC_TrigMode_HARD);                //MC_TrigMode_IMMEDIATE
+	  if (Status != MC_OK)
+	  {
+		  ErrorDisplay("Error: Cannot Set Trigger Mode.", Status);
+		  return false;
+	  }
+
+
+    Status = McSetParamInt (m_ChannelInstance[nCH],MC_NextTrigMode,MC_NextTrigMode_HARD);            //MC_NextTrigMode_COMBINED
+	  if (Status != MC_OK)
+	  {
+		  ErrorDisplay("Error: Cannot Set Next Trigger Mode.", Status);
+		  return false;
+	  }
+  }
+  else
+  {
+      // Set Trigger Mode ,Hard & Soft Combine
+	  Status = McSetParamInt (m_ChannelInstance[nCH],MC_TrigMode,MC_TrigMode_IMMEDIATE);
+	  if (Status != MC_OK)
+	  {
+		  ErrorDisplay("Error: Cannot Set Trigger Mode.", Status);
+		  return false;
+	  }
+
+
+    Status = McSetParamInt (m_ChannelInstance[nCH],MC_NextTrigMode,MC_NextTrigMode_SAME);
+	  if (Status != MC_OK)
+	  {
+		  ErrorDisplay("Error: Cannot Set Next Trigger Mode.", Status);
+		  return false;
+	  }
+  }
+
+  return true;
+}
+//---------------------------------------------------------------------------
+bool __fastcall DominoVision::InitChannel(int nCH)
+{
+        char pText[128]={0};
+        MCSTATUS Status ;
+        // Create a channel
+        char *strModel[2]={EURESYS_PROGRAM_CREATION_MODEL_X,EURESYS_PROGRAM_CREATION_MODEL_Y};
+	Status = McCreateNm (strModel[nCH], &m_ChannelInstance[nCH]);
+	if (Status != MC_OK)
+	{
+		sprintf (pText, "Error: McCreateNm Channel %s failed.",strModel[nCH]);
+		ErrorDisplay(pText, Status);
+		return false;
+	}
+
+
+	// Associate a MultiCam board with the channel
+	Status = McSetParamInt (m_ChannelInstance[nCH], MC_DriverIndex, 0);
+	if (Status != MC_OK)
+	{
+		ErrorDisplay("Error: McSetParamInt MC_DriverIndex failed.", Status);
+		return false;
+	}
+
+         char *strXY[2]={"X","Y"};
+        McSetParamStr(m_ChannelInstance[nCH], MC_Connector, strXY[nCH]);
+
+        char *strCamFile[2]={EURESYS_PROGRAM_CAM_FILENAME_X,EURESYS_PROGRAM_CAM_FILENAME_Y};
+	// Associate a camera file to the channel
+	Status = McSetParamStr (m_ChannelInstance[nCH], MC_CamFile,strCamFile[nCH] );
+	if (Status != MC_OK)
+	{
+		sprintf (pText, "Error: McSetParamStr MC_CamFile %s failed.", strCamFile[nCH]);
+		ErrorDisplay(pText, Status);
+		return false;
+	}
+
+	// Register callback
+        PMCCALLBACK theCallbackFun[2];
+        theCallbackFun[0]=GlobalCallbackFunctionX;
+        theCallbackFun[1]=GlobalCallbackFunctionY;
+
+
+	Status = McRegisterCallback (m_ChannelInstance[nCH],theCallbackFun[nCH] , this);                   //here
+	if (Status != MC_OK)
+	{
+		ErrorDisplay("Error: McRegisterCallback failed.", Status);
+		return false;
+	}
+
+	// Enable event
+	Status = McSetParamInt(m_ChannelInstance[nCH], MC_SignalEnable, MC_SignalEnable_FILLED);
+	if (Status != MC_OK) 
+	{
+		ErrorDisplay("Error: McSetParamInt MC_SignalEnable failed.", Status);
+		return false;
+	}
+
+	// Retrieve image parameters
+	Status = McGetParamInt(m_ChannelInstance[nCH], MC_ImageSizeY, &m_ImageSizeY[nCH]);
+	if (Status != MC_OK)
+	{
+		ErrorDisplay("Error: McGetParamInt MC_ImageSizeY failed.", Status);
+		return false;
+	}
+
+	Status = McGetParamInt(m_ChannelInstance[nCH], MC_ImageSizeX, &m_ImageSizeX[nCH]);
+	if (Status != MC_OK)
+	{
+		ErrorDisplay("Error: McGetParamInt MC_ImageSizeX failed.", Status);
+		return false;
+	}
+
+	// Check the pixel-size
+	Status = McGetParamInt(m_ChannelInstance[nCH], MC_ImagePixelSize, &m_PixelSize[nCH]);
+	if (Status != MC_OK)
+	{
+		ErrorDisplay("Error: McGetParamInt MC_ImagePixelSize failed.", Status);
+		return false;
+	}
+	if (m_PixelSize[nCH]>1)
+	{
+		  Application->MessageBox("This program was designed to operate a MultiCam compliant frame-grabber\n"
+					  "and perform image acquisitions with 8 bits per pixel format.\n\n"
+					  "You selected to operate a mode with more than 8 bits per pixel.\n\n"
+					  "Please use another sample program supporting wide pixel format."
+					  ,"Vision System Error",MB_OK | MB_ICONINFORMATION);
+		return false ;
+	}
+
+        // Set Channel to Idle state
+	Status = McSetParamInt (m_ChannelInstance[nCH], MC_ChannelState, MC_ChannelState_IDLE);
+	if (Status != MC_OK)
+	{
+		ErrorDisplay("Error: Cannot put channel in IDLE state.", Status);
+		return false;
+	}
+
+        return true;
+}
+//---------------------------------------------------------------------------
+bool __fastcall DominoVision::InitSurface(int nCH)
+{
+        MCSTATUS Status ;
+        
+        // Create an image buffer
+	INT32 imageSize ;
+	imageSize = m_ImageSizeY[nCH] * m_ImageSizeX[nCH] * m_PixelSize[nCH];
+	m_ImageBuffer[nCH] = (PUINT8)VirtualAlloc(NULL, imageSize, MEM_COMMIT, PAGE_READWRITE);
+
+	if (m_ImageBuffer[nCH] == NULL)
+	{
+		ErrorDisplay("Error: Cannot allocate image buffer.", 0);
+		return false;
+	}
+
+        m_ImageBufferScale[nCH] = (PUINT8)VirtualAlloc(NULL, imageSize, MEM_COMMIT, PAGE_READWRITE);
+        if (m_ImageBufferScale[nCH] == NULL)
+	{
+		ErrorDisplay("Error: Cannot allocate scale image buffer.", 0);
+		return false;
+	}
+	// Create a surface
+	Status = McCreate (MC_DEFAULT_SURFACE_HANDLE, &m_SurfaceInstance[nCH]);
+	if (Status != MC_OK)
+	{
+		ErrorDisplay("Error: McCreate Surface failed.", Status);
+		return false;
+	}
+
+	// Set surface parameters
+	Status = McSetParamInt(m_SurfaceInstance[nCH], MC_SurfaceSize, imageSize);
+	if (Status != MC_OK)
+	{
+		ErrorDisplay("Error: Cannot set surface size.", Status);
+		return false;
+	}
+
+	Status = McSetParamInt(m_SurfaceInstance[nCH], MC_SurfacePitch, m_ImageSizeX[nCH] * m_PixelSize[nCH]);
+	if (Status != MC_OK)
+	{
+		ErrorDisplay("Error: Cannot set surface pitch.", Status);
+		return false;
+	}
+
+	Status = McSetParamInt(m_SurfaceInstance[nCH], MC_SurfaceAddr, (INT32)m_ImageBuffer[nCH]);
+	if (Status != MC_OK)
+	{
+		ErrorDisplay("Error: Cannot set surface buffer.", Status);
+		return false;
+	}
+
+	// Surface Context Information
+	Status = McSetParamInt(m_SurfaceInstance[nCH], MC_SurfaceContext, (INT32)m_ImageBuffer[nCH] );
+	if (Status != MC_OK)
+	{
+		ErrorDisplay("Error: Cannot set surface context information.", Status);
+		return false;
+	}
+
+        // Associate surface with channel
+	Status = McSetParamInst(m_ChannelInstance[nCH], MC_Cluster, m_SurfaceInstance[nCH]);
+	if (Status != MC_OK)
+	{
+		ErrorDisplay("Error: Cannot add surface to cluster", Status);
+		return false;
+	}
+
+}
+//---------------------------------------------------------------------------
+bool __fastcall DominoVision::Terminate()
+{
+  MCSTATUS Status ;
+
+	// Disable image acquisitions
+	Status = McStopAcq();
+	if (Status != MC_OK) 
+		ErrorDisplay("Error: McStartAcq failed.", Status);
+
+	// Delete Channel Instance
+	if (m_ChannelInstance[0])
+	{
+		Status = McDelete (m_ChannelInstance[0]);
+		if (Status != MC_OK)
+			ErrorDisplay("Error: McDelete m_ChannelInstance failed.", Status);
+	}
+
+        if (m_ChannelInstance[1])
+	{
+		Status = McDelete (m_ChannelInstance[1]);
+		if (Status != MC_OK)
+			ErrorDisplay("Error: McDelete m_ChannelInstance failed.", Status);
+	}
+
+	// Delete Surface Instance
+	if (m_SurfaceInstance[0])
+	{
+		Status = McDelete (m_SurfaceInstance[0]);
+		if (Status != MC_OK)
+			ErrorDisplay("Error: McDelete m_SurfaceInstance failed.", Status);
+	}
+
+        if (m_SurfaceInstance[1])
+	{
+		Status = McDelete (m_SurfaceInstance[1]);
+		if (Status != MC_OK)
+			ErrorDisplay("Error: McDelete m_SurfaceInstance failed.", Status);
+	}
+
+	// Free allocated memory
+	if (m_ImageBuffer[0])
+		VirtualFree((void *)m_ImageBuffer[0], 0, MEM_RELEASE);
+
+        if (m_ImageBufferScale[0])
+		VirtualFree((void *)m_ImageBufferScale[0], 0, MEM_RELEASE);
+
+        if (m_ImageBuffer[1])
+		VirtualFree((void *)m_ImageBuffer[1], 0, MEM_RELEASE);
+
+        if (m_ImageBufferScale[1])
+		VirtualFree((void *)m_ImageBufferScale[1], 0, MEM_RELEASE);
+
+	// Terminate communication with the driver
+	Status = McCloseDriver ();
+	if ( Status != MC_OK )
+		ErrorDisplay("Error: McCloseDriver failed.", Status);
+
+	return true ;
+}
+//---------------------------------------------------------------------------
+bool __fastcall DominoVision::StartLive(int nCH)
+{
+    //if(!bInitial) return false;
+  MCSTATUS Status ;
+
+  
+
+	// Set Channel to Idle state
+	Status = McSetParamInt (m_ChannelInstance[nCH], MC_ChannelState, MC_ChannelState_IDLE);
+	if (Status != MC_OK) 
+	{
+		ErrorDisplay("Error: Cannot put channel in IDLE state.", Status);
+		return false;
+	}
+
+	// Set GrabCount to "-1" -> infinite acquisitions 
+	Status = McSetParamInt (m_ChannelInstance[nCH], MC_GrabCount, -1);
+	if (Status != MC_OK)
+	{
+		ErrorDisplay("Error: Cannot set GrabCount.", Status);
+		return false;
+	}
+
+	// Set Channel to Active state
+	Status = McSetParamInt (m_ChannelInstance[nCH], MC_ChannelState, MC_ChannelState_ACTIVE);
+	if (Status != MC_OK)
+	{
+		ErrorDisplay("Error: Cannot put channel in ACTIVE state.", Status);
+		return false;
+	}
+
+	return true;
+}
+//---------------------------------------------------------------------------
+bool __fastcall DominoVision::StopLive(int nCH)
+{
+    if(!bInitial) return false;
+  MCSTATUS Status ;
+  //LightOnOff(false);
+	// Set Channel to Idle state
+	Status = McSetParamInt (m_ChannelInstance[nCH], MC_ChannelState, MC_ChannelState_IDLE);
+	if (Status != MC_OK) 
+	{
+		ErrorDisplay("Error: Cannot put channel in IDLE mode.", Status);
+		return false;
+	}
+
+	return true;
+}
+//---------------------------------------------------------------------------
+bool __fastcall DominoVision::Grab(int nCH)
+{
+    if(!bInitial) return false;
+  MCSTATUS Status ;
+
+  //LightOnOff(true);
+        m_bValidImage[nCH]=false;
+	// Set Channel to Idle state
+	Status = McSetParamInt (m_ChannelInstance[nCH], MC_ChannelState, MC_ChannelState_IDLE);
+	if (Status != MC_OK)
+	{
+		ErrorDisplay("Error: Cannot put channel in IDLE state.", Status);
+		return false;
+	}
+
+	// Set GrabCount to "1" -> one single acquisition
+	Status = McSetParamInt (m_ChannelInstance[nCH], MC_GrabCount,1);
+	if (Status != MC_OK)
+	{
+		ErrorDisplay("Error: Cannot set GrabCount.", Status);
+		return false;
+	}
+
+	// Set Channel to Active state
+	Status = McSetParamInt (m_ChannelInstance[nCH], MC_ChannelState, MC_ChannelState_ACTIVE);
+	if (Status != MC_OK)
+	{
+		ErrorDisplay("Error: Cannot put channel in ACTIVE state.", Status);
+		return false;
+	}
+
+	return true;
+}
+//---------------------------------------------------------------------------
+void __fastcall DominoVision::CreateGrayPalette()
+{
+  UINT32 i;
+  LOGPALETTE *pGrayPalette;
+  
+  pGrayPalette=(LOGPALETTE *)alloca(sizeof(LOGPALETTE) + 256*sizeof(PALETTEENTRY));
+
+	// Fill
+	pGrayPalette->palNumEntries = 256;
+	pGrayPalette->palVersion = 0x300;		// version number defined by Windows (must be 0x300)
+
+	for (i = 0 ; i < 256 ; i++)
+        {
+		pGrayPalette->palPalEntry[i].peRed = (BYTE)i;
+		pGrayPalette->palPalEntry[i].peGreen = (BYTE)i;
+		pGrayPalette->palPalEntry[i].peBlue = (BYTE)i;
+		pGrayPalette->palPalEntry[i].peFlags = NULL;
+	}
+
+	// Create the standard application palette
+	m_hGrayPalette=CreatePalette(pGrayPalette);
+}
+//---------------------------------------------------------------------------
+void __fastcall DominoVision::CreateGrayBitmapInfo()
+{
+  DWORD bitmapInfoSize,i;
+
+	// Bitmap info structure for the image
+	bitmapInfoSize = sizeof(BITMAPINFO) + 255*sizeof(RGBQUAD);
+  m_pGrayBitmapInfo =(BITMAPINFO*)new BYTE[bitmapInfoSize];
+
+
+	m_pGrayBitmapInfo->bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+	m_pGrayBitmapInfo->bmiHeader.biPlanes = 1;
+	m_pGrayBitmapInfo->bmiHeader.biBitCount = 8;
+	m_pGrayBitmapInfo->bmiHeader.biCompression = BI_RGB;
+	m_pGrayBitmapInfo->bmiHeader.biSizeImage = 0;
+	m_pGrayBitmapInfo->bmiHeader.biXPelsPerMeter = 0;
+	m_pGrayBitmapInfo->bmiHeader.biYPelsPerMeter = 0;
+	m_pGrayBitmapInfo->bmiHeader.biClrUsed = 0;
+	m_pGrayBitmapInfo->bmiHeader.biClrImportant = 0;
+
+	m_pGrayBitmapInfo->bmiHeader.biWidth = m_ImageSizeX[0];
+	m_pGrayBitmapInfo->bmiHeader.biHeight = -m_ImageSizeY[0];
+
+
+	for (i = 0 ; i < 256 ; i++) {
+		m_pGrayBitmapInfo->bmiColors[i].rgbBlue = (BYTE)i;
+		m_pGrayBitmapInfo->bmiColors[i].rgbGreen = (BYTE)i;
+		m_pGrayBitmapInfo->bmiColors[i].rgbRed = (BYTE)i;
+		m_pGrayBitmapInfo->bmiColors[i].rgbReserved = 0;
+	}
+
+
+}
+//---------------------------------------------------------
+int __fastcall DominoVision::GetGrabCount(int nCH)
+{
+  MCSTATUS Status;
+  int nCnt;
+  Status = McGetParamInt (m_ChannelInstance[nCH], MC_GrabCount,&nCnt);
+	if (Status != MC_OK)
+  {
+		ErrorDisplay("Error: Cannot set GrabCount.", Status);
+    return -1;
+   }
+  return nCnt;
+}
+//---------------------------------------------------------
+void __fastcall DominoVision::WaitValidImage(int nCH)
+{
+  DWORD dwStartTime=GetTickCount();
+
+  while(!m_bValidImage[nCH])
+  {
+   if((GetTickCount()-dwStartTime)>1000)
+    {
+      ShowMessage("Grab Image Timeout!!!");
+      break;
+    }
+  }
+  m_bValidImage[nCH]=true;
+}
+
+//---------------------------------------------------------
+void __fastcall DominoVision::SetExposureTime(int nCH,int nUs)
+{
+        //if(Application->MessageBox("Set Exposure Time 1000uS ?","Choice",MB_OKCANCEL)==IDOK)
+        {
+                // Set Camera Exposure Time,100 uS
+	        int Status = McSetParamInt (m_ChannelInstance[nCH], MC_Expose_us,nUs);
+	        if (Status != MC_OK)
+	        {
+		        ErrorDisplay("Error: Cannot Set Camera Exposure Time.", Status);
+		        return ;
+                }
+        }
+}
+

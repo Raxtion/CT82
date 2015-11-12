@@ -1,0 +1,33 @@
+//---------------------------------------------------------------------------
+
+#ifndef SMSXMLH
+#define SMSXMLH
+#include <vcl>
+#include "tinyxml.h"
+#include "tinystr.h"
+
+#include <ScktComp.hpp>
+#include <vector>
+#include <list>
+//---------------------------------------------------------------------------
+class CSMSXML
+{
+private:
+        
+
+public:
+        bool m_bOnLine;
+        AnsiString m_EqpStatus;       //I:Idle R:Run D:Down
+        AnsiString m_CIMStatus;       //0:Offline 1:online/local 2:online/remote
+       
+        
+public:
+        __fastcall CSMSXML();
+        __fastcall ~CSMSXML();       
+
+private:        
+        void __fastcall SendXML(TiXmlDocument &theDoc,bool bAdd=false);
+
+
+};
+#endif

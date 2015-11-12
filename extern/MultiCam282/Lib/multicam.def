@@ -1,0 +1,27 @@
+IMPORTS
+	McOpenDriver=MULTI._McOpenDriver@4
+	McCloseDriver=MULTI._McCloseDriver@0
+	McCreate=MULTI._McCreate@8
+	McCreateNm=MULTI._McCreateNm@8
+	McDelete=MULTI._McDelete@4
+	McStartAcq=MULTI._McStartAcq@0
+	McStopAcq=MULTI._McStopAcq@0
+	McSetParamInt=MULTI._McSetParamInt@12
+	McSetParamNmInt=MULTI._McSetParamNmInt@12
+	McSetParamStr=MULTI._McSetParamStr@12
+	McSetParamNmStr=MULTI._McSetParamNmStr@12
+	McSetParamFloat=MULTI._McSetParamFloat@16
+	McSetParamNmFloat=MULTI._McSetParamNmFloat@16
+	McSetParamInst=MULTI._McSetParamInst@12
+	McSetParamNmInst=MULTI._McSetParamNmInst@12
+	McGetParamInt=MULTI._McGetParamInt@12
+	McGetParamNmInt=MULTI._McGetParamNmInt@12
+	McGetParamStr=MULTI._McGetParamStr@16
+	McGetParamNmStr=MULTI._McGetParamNmStr@16
+	McGetParamFloat=MULTI._McGetParamFloat@12
+	McGetParamNmFloat=MULTI._McGetParamNmFloat@12
+	McGetParamInst=MULTI._McGetParamInst@12
+	McGetParamNmInst=MULTI._McGetParamNmInst@12
+	McRegisterCallback=MULTI._McRegisterCallback@12
+	McWaitSignal=MULTI._McWaitSignal@16
+	McGetSignalInfo=MULTI._McGetSignalInfo@12

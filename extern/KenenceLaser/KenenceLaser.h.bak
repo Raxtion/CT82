@@ -1,0 +1,31 @@
+//---------------------------------------------------------------------------
+
+#ifndef KenenceLaserH
+#define KenenceLaserH
+#include <vcl>
+#include "SerialPort.h"
+//---------------------------------------------------------------------------
+class CKeyenceLaser :private CSerialPort
+{
+public:
+        __fastcall CKeyenceLaser();
+        __fastcall ~CKeyenceLaser();
+
+        bool __fastcall OpenPort(int nPort);
+
+        bool __fastcall IsLaserReady();
+        bool __fastcall OpenProgram(int nNo);
+        bool __fastcall FireLaser();
+        bool __fastcall SetText(int nPgmNo,int nTextNo,char *strText);
+        void __fastcall SetPalette(int nPgmNo,int nSizeX,int nSizeY,char bResult[100][100]);
+        bool __fastcall SetTextPos(int nPgmNo,int nTextNo,double dPosX,double dPosY);
+        bool __fastcall SetAllTextPosOffset(int nPgmNo,double dOffsetX,double dOffsetY,double dOffsetZ=0,int nSpotOffset=0);
+
+
+
+};
+
+
+//---------------------------------------------------------------------------
+#endif
+ 
