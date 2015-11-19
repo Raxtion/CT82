@@ -31,10 +31,10 @@ object IOCheckDlg: TIOCheckDlg
       Top = 5
       Width = 1006
       Height = 568
-      ActivePage = dfasdf
+      ActivePage = TabSheet2
       Align = alClient
       Style = tsFlatButtons
-      TabIndex = 5
+      TabIndex = 2
       TabOrder = 0
       object TabSheet1: TTabSheet
         Caption = 'X000'
@@ -2229,7 +2229,7 @@ object IOCheckDlg: TIOCheckDlg
         end
         object Panel22: TPanel
           Left = 536
-          Top = 296
+          Top = 232
           Width = 209
           Height = 33
           Caption = 'X0000'
@@ -2255,7 +2255,7 @@ object IOCheckDlg: TIOCheckDlg
         end
         object Panel23: TPanel
           Left = 536
-          Top = 360
+          Top = 296
           Width = 209
           Height = 33
           Caption = 'X0000'
@@ -2281,7 +2281,7 @@ object IOCheckDlg: TIOCheckDlg
         end
         object Panel24: TPanel
           Left = 536
-          Top = 424
+          Top = 360
           Width = 209
           Height = 33
           Caption = 'X0000'
@@ -2307,7 +2307,7 @@ object IOCheckDlg: TIOCheckDlg
         end
         object Panel25: TPanel
           Left = 536
-          Top = 488
+          Top = 424
           Width = 209
           Height = 33
           Caption = 'X0000'
@@ -2333,7 +2333,7 @@ object IOCheckDlg: TIOCheckDlg
         end
         object Panel26: TPanel
           Left = 536
-          Top = 232
+          Top = 488
           Width = 209
           Height = 33
           Caption = 'X0000'

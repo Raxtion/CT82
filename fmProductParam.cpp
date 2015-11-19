@@ -26,6 +26,7 @@ void __fastcall TfrmProductParam::trackLED0Change(TObject *Sender)
         g_LED.SetCurrent(0,0,trackLED0->Position,0);
 
         labelLED0->Caption=trackLED0->Position;
+        labelLED1->Caption=trackLED1->Position;
 }
 //---------------------------------------------------------------------------
 

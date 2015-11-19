@@ -114,6 +114,7 @@ void __fastcall CEVision::AddRectGauge()
          m_frameShape.SetDragable(true,true);
          m_frameShape.SetResizable(true,true);
          m_frameShape.SetRotatable(true,true);
+
          m_frameShape.SetLabeled(true,true);
 
 }

@@ -1,11 +1,11 @@
 object fmMain: TfmMain
-  Left = 44
-  Top = 189
+  Left = 842
+  Top = 147
   BorderIcons = [biMinimize, biMaximize]
   BorderStyle = bsSingle
   Caption = 'fmMain'
-  ClientHeight = 587
-  ClientWidth = 1321
+  ClientHeight = 569
+  ClientWidth = 921
   Color = 13430215
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -22,24 +22,24 @@ object fmMain: TfmMain
   TextHeight = 13
   object Splitter1: TSplitter
     Left = 0
-    Top = 506
-    Width = 1321
+    Top = 488
+    Width = 921
     Height = 8
     Cursor = crVSplit
     Align = alBottom
   end
   object Splitter2: TSplitter
-    Left = 879
+    Left = 479
     Top = 0
     Width = 5
-    Height = 506
+    Height = 488
     Cursor = crHSplit
     Align = alRight
   end
   object listHistory: TListBox
     Left = 0
-    Top = 514
-    Width = 1321
+    Top = 496
+    Width = 921
     Height = 73
     Align = alBottom
     Color = clBlack
@@ -55,14 +55,14 @@ object fmMain: TfmMain
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 879
-    Height = 506
+    Width = 479
+    Height = 488
     Align = alClient
     TabOrder = 1
     object Splitter3: TSplitter
       Left = 1
       Top = 489
-      Width = 877
+      Width = 477
       Height = 5
       Cursor = crVSplit
       Align = alTop
@@ -72,8 +72,8 @@ object fmMain: TfmMain
     object paintMap: TPaintBox
       Left = 1
       Top = 494
-      Width = 877
-      Height = 11
+      Width = 477
+      Height = 458
       Align = alClient
       Color = clBtnFace
       ParentColor = False
@@ -82,7 +82,7 @@ object fmMain: TfmMain
     object ScrollBox1: TScrollBox
       Left = 1
       Top = 1
-      Width = 877
+      Width = 477
       Height = 488
       Align = alTop
       TabOrder = 0
@@ -97,10 +97,10 @@ object fmMain: TfmMain
     end
   end
   object Panel2: TPanel
-    Left = 884
+    Left = 484
     Top = 0
     Width = 437
-    Height = 506
+    Height = 488
     Align = alRight
     TabOrder = 2
     object SpeedButton6: TSpeedButton
@@ -134,15 +134,15 @@ object fmMain: TfmMain
       Top = 8
       Width = 425
       Height = 577
-      ActivePage = tabInfo
-      TabIndex = 4
+      ActivePage = tabCCD
+      TabIndex = 0
       TabOrder = 0
       OnChange = PageControl1Change
       object tabCCD: TTabSheet
         Caption = #38651#30524
         object SpeedButton16: TSpeedButton
           Left = 312
-          Top = 80
+          Top = 336
           Width = 97
           Height = 65
           Caption = 'To Start Pos.'
@@ -151,7 +151,7 @@ object fmMain: TfmMain
         end
         object SpeedButton17: TSpeedButton
           Left = 312
-          Top = 160
+          Top = 416
           Width = 97
           Height = 65
           Caption = 'Take Full Image'
@@ -160,7 +160,7 @@ object fmMain: TfmMain
         end
         object SpeedButton18: TSpeedButton
           Left = 312
-          Top = 336
+          Top = 72
           Width = 97
           Height = 65
           Caption = 'To FM. Pos.'
@@ -168,7 +168,7 @@ object fmMain: TfmMain
         end
         object SpeedButton22: TSpeedButton
           Left = 312
-          Top = 416
+          Top = 160
           Width = 97
           Height = 65
           Caption = #31227#33267#35036#27491
@@ -332,7 +332,7 @@ object fmMain: TfmMain
         end
         object GroupBox1: TGroupBox
           Left = 16
-          Top = 48
+          Top = 344
           Width = 281
           Height = 169
           Caption = #40670#37327' CCD'
@@ -702,9 +702,82 @@ object fmMain: TfmMain
             OnChange = TrackBar1Change
           end
         end
+        object radioTable: TRadioGroup
+          Left = 312
+          Top = 8
+          Width = 97
+          Height = 49
+          Caption = #31227#21205#24179#21488
+          Columns = 2
+          ItemIndex = 1
+          Items.Strings = (
+            #24460
+            #21069)
+          TabOrder = 6
+        end
+        object GroupBox3: TGroupBox
+          Left = 16
+          Top = 288
+          Width = 281
+          Height = 105
+          Caption = #22522#26495#26041#21521#27298#28204
+          TabOrder = 7
+          Visible = False
+          object BitBtn9: TBitBtn
+            Tag = 1
+            Left = 8
+            Top = 28
+            Width = 113
+            Height = 29
+            Caption = #25945'  '#23566
+            TabOrder = 0
+            OnClick = BitBtn7Click
+          end
+          object BitBtn10: TBitBtn
+            Left = 8
+            Top = 60
+            Width = 113
+            Height = 29
+            Caption = #28204'  '#35430
+            TabOrder = 1
+            OnClick = BitBtn10Click
+          end
+          object checkShowSearchROI1: TCheckBox
+            Tag = 1
+            Left = 136
+            Top = 24
+            Width = 129
+            Height = 17
+            Caption = 'Show Search ROI'
+            TabOrder = 2
+            OnClick = checkShowSearchROI0Click
+          end
+          object checkShowPatternROI1: TCheckBox
+            Tag = 1
+            Left = 136
+            Top = 48
+            Width = 121
+            Height = 17
+            Caption = 'Show Pattern ROI'
+            TabOrder = 3
+            OnClick = checkShowPatternROI0Click
+          end
+          object checkShowResult1: TCheckBox
+            Tag = 1
+            Left = 136
+            Top = 72
+            Width = 89
+            Height = 17
+            Caption = #39023#31034#32080#26524
+            Checked = True
+            State = cbChecked
+            TabOrder = 4
+            OnClick = checkShowResult0Click
+          end
+        end
         object GroupBox2: TGroupBox
           Left = 16
-          Top = 336
+          Top = 48
           Width = 281
           Height = 201
           Caption = #23450#20301' CCD'
@@ -1068,79 +1141,6 @@ object fmMain: TfmMain
             TickMarks = tmBottomRight
             TickStyle = tsAuto
             OnChange = TrackBar2Change
-          end
-        end
-        object radioTable: TRadioGroup
-          Left = 312
-          Top = 24
-          Width = 97
-          Height = 49
-          Caption = #31227#21205#24179#21488
-          Columns = 2
-          ItemIndex = 1
-          Items.Strings = (
-            #24460
-            #21069)
-          TabOrder = 6
-        end
-        object GroupBox3: TGroupBox
-          Left = 16
-          Top = 224
-          Width = 281
-          Height = 105
-          Caption = #22522#26495#26041#21521#27298#28204
-          TabOrder = 7
-          Visible = False
-          object BitBtn9: TBitBtn
-            Tag = 1
-            Left = 8
-            Top = 28
-            Width = 113
-            Height = 29
-            Caption = #25945'  '#23566
-            TabOrder = 0
-            OnClick = BitBtn7Click
-          end
-          object BitBtn10: TBitBtn
-            Left = 8
-            Top = 60
-            Width = 113
-            Height = 29
-            Caption = #28204'  '#35430
-            TabOrder = 1
-            OnClick = BitBtn10Click
-          end
-          object checkShowSearchROI1: TCheckBox
-            Tag = 1
-            Left = 136
-            Top = 24
-            Width = 129
-            Height = 17
-            Caption = 'Show Search ROI'
-            TabOrder = 2
-            OnClick = checkShowSearchROI0Click
-          end
-          object checkShowPatternROI1: TCheckBox
-            Tag = 1
-            Left = 136
-            Top = 48
-            Width = 121
-            Height = 17
-            Caption = 'Show Pattern ROI'
-            TabOrder = 3
-            OnClick = checkShowPatternROI0Click
-          end
-          object checkShowResult1: TCheckBox
-            Tag = 1
-            Left = 136
-            Top = 72
-            Width = 89
-            Height = 17
-            Caption = #39023#31034#32080#26524
-            Checked = True
-            State = cbChecked
-            TabOrder = 4
-            OnClick = checkShowResult0Click
           end
         end
       end

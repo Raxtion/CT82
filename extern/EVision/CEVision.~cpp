@@ -133,7 +133,7 @@ void __fastcall CEVision::LoadTool(char *strFileName,AnsiString strSch,bool bFil
         //m_frameShape.Load(strFileName,true);
         ESerializer *pSerializer = ESerializer::CreateFileReader( strFileName);
 
-        if(pSerializer==NULL || pSerializer->handle_==NULL)
+        if(pSerializer==NULL /*|| pSerializer->handle_==NULL*/)
         {
                 ShowMessage("視覺檔案開啟失敗");
                 return;

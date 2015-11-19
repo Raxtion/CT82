@@ -12,7 +12,7 @@
 
 __fastcall CTK_Led::CTK_Led()
 {
-int a=0;
+
 }
 //---------------------------------------------------------------------------
 __fastcall CTK_Led::~CTK_Led()
@@ -52,6 +52,24 @@ bool __fastcall CTK_Led::SetCurrent(int nCh,int nM,int nC,int nP)
         if(ReadData(strReceive,0x00))
         {
 
+                return true;
+        }
+        else return false;
+}
+//---------------------------------------------------------------------------
+bool __fastcall CTK_Led::SetVoltage(int nCh,int nValue)
+{
+        char strSend[100]={0};
+
+        int nByte5 = (nValue & 0x00ff) >> 8;
+        int nByte6 = (nValue & 0xff);
+        int nCks=(0x89+0x55+0xaa+0x23+nCh+nByte5+nByte6+0x00) & 0xff;
+        sprintf(strSend,"%c%c%c%c%c%c%c%c%c",0x89,0x55,0xaa,0x23,nCh,nByte5,nByte6,0x00,nCks);
+        WriteData(strSend,0x89-0x80);
+        char strReceive[100]={0};
+
+        if(ReadData(strReceive,0x00))
+        {
                 return true;
         }
         else return false;

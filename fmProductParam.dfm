@@ -1,6 +1,6 @@
 object frmProductParam: TfrmProductParam
-  Left = 263
-  Top = 150
+  Left = 147
+  Top = 25
   BorderStyle = bsDialog
   Caption = 'frmProductParam'
   ClientHeight = 607
@@ -37,8 +37,8 @@ object frmProductParam: TfrmProductParam
     Top = 0
     Width = 761
     Height = 601
-    ActivePage = TabSheet2
-    TabIndex = 1
+    ActivePage = TabSheet1
+    TabIndex = 0
     TabOrder = 2
     object TabSheet1: TTabSheet
       Caption = #29986#21697#35215#26684
@@ -192,7 +192,7 @@ object frmProductParam: TfrmProductParam
         Top = 136
         Width = 393
         Height = 105
-        Caption = #36984#29992#38647#21051#27284#26696#32232#34399
+        Caption = #27491#38754#36984#29992#38647#21051#27284#26696#32232#34399
         TabOrder = 1
         object m_nLaserProgramNo0: TEdit
           Left = 144
@@ -314,7 +314,7 @@ object frmProductParam: TfrmProductParam
         Top = 248
         Width = 393
         Height = 105
-        Caption = #36984#29992#38647#21051#27284#26696#32232#34399
+        Caption = #21453#38754#36984#29992#38647#21051#27284#26696#32232#34399
         TabOrder = 5
         object m_nLaserProgramNo2: TEdit
           Left = 144
@@ -528,6 +528,7 @@ object frmProductParam: TfrmProductParam
         Height = 121
         Caption = #40670#37327'CCD '#21443#25976
         TabOrder = 1
+        Visible = False
         object Label2: TLabel
           Left = 21
           Top = 32
@@ -572,6 +573,7 @@ object frmProductParam: TfrmProductParam
           Width = 8
           Height = 16
           Caption = '0'
+          Visible = False
         end
         object trackLED0: TTrackBar
           Left = 32
@@ -603,6 +605,7 @@ object frmProductParam: TfrmProductParam
           TabOrder = 1
           TickMarks = tmBottomRight
           TickStyle = tsAuto
+          Visible = False
           OnChange = trackLED1Change
         end
       end

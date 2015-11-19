@@ -190,6 +190,10 @@ __published:	// IDE-managed Components
     TSpeedButton *SpeedButton6;
         TSpeedButton *SpeedButton8;
         TSpeedButton *SpeedButton33;
+        TSpeedButton *SpeedButton35;
+        TSpeedButton *SpeedButton36;
+        TSpeedButton *SpeedButton37;
+        TSpeedButton *SpeedButton38;
         void __fastcall SpeedButton1Click(TObject *Sender);
         void __fastcall SpeedButton2Click(TObject *Sender);
         void __fastcall btnSSYClick(TObject *Sender);

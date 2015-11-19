@@ -1,6 +1,6 @@
 object IOCheckDlg: TIOCheckDlg
-  Left = 324
-  Top = 98
+  Left = 555
+  Top = 183
   BorderStyle = bsDialog
   Caption = #36664#20986#20837#35037#32622#27298#26597
   ClientHeight = 619
@@ -31,10 +31,10 @@ object IOCheckDlg: TIOCheckDlg
       Top = 5
       Width = 1006
       Height = 568
-      ActivePage = TabSheet2
+      ActivePage = TabSheet3
       Align = alClient
       Style = tsFlatButtons
-      TabIndex = 2
+      TabIndex = 3
       TabOrder = 0
       object TabSheet1: TTabSheet
         Caption = 'X000'

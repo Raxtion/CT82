@@ -504,7 +504,6 @@ void __fastcall CMainThread::doLoadRail(int &nThreadIndex)
                         }
                         break;
                 case 1:
-                        //if(g_DIO.GetDI(DI::SR_Entry) || g_DIO.GetDI(DI::SR_Exist) || g_DIO.GetDI(DI::SR_Inp))
                         if(g_DIO.GetDI(DI::SR_Entry) && !g_DIO.GetDI(DI::SR_Exist) && !g_DIO.GetDI(DI::SR_Inp))
                         {
                                 m_nSubstrateRemains++;
@@ -551,7 +550,7 @@ void __fastcall CMainThread::doLoadRail(int &nThreadIndex)
                         {
                                 g_DIO.SetDO(DO::SR_Start,false);
                                 g_DIO.SetDO(DO::SR_Align,true);
-                                tm1MS.timeStart(1000);
+                                tm1MS.timeStart(500);
                                 nThreadIndex++;
                         }
                         break;
@@ -1109,14 +1108,14 @@ void __fastcall CMainThread::doSSPickerFromRail(int &nThreadIndex)
                         else if(!g_DIO.GetDI(DI::SS_SpaSuckerUp)) g_IniFile.m_nErrorCode=308;
                         else if(g_DIO.GetDI(DI::SS_SSuckerVacGauge)) g_IniFile.m_nErrorCode=309;
                         else if(g_DIO.GetDI(DI::SS_SpaSuckerVacGauge)) g_IniFile.m_nErrorCode=310;
-                        else if(m_bLoadRailReady)
+                        else
                         {
                                 g_Motion.AbsMove(Axis_Const::SSY,g_IniFile.m_dSSPickerPickRailPos) ;
                                 nThreadIndex++;
                         }
                         break;
                 case 1:
-                        if(g_Motion.IsLastPosDone(Axis_Const::SSY))
+                        if(g_Motion.IsLastPosDone(Axis_Const::SSY) && m_bLoadRailReady)
                         {
                                 tm1MS.timeStart(300);
                                 nThreadIndex++;
