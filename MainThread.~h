@@ -50,6 +50,7 @@ public:
         std::list<AnsiString> m_listThreadTrace;
         std::list<AnsiString> m_listVisionLog;  
         std::list<AnsiString> m_listPickTable;
+        std::list<AnsiString> m_listPutTable;
 
         std::list<ProductInfo> m_listProductInfo;            
         ProductInfo m_tmpProductInfo[2];

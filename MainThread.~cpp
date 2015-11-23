@@ -418,6 +418,7 @@ bool __fastcall CMainThread::InitialMachine(int &nThreadIndex)
                         m_bIsSSPickeLocked=false;
                         m_bIsMapCCDLocked=false;
 
+                        m_listPutTable.clear();
                         m_listPickTable.clear();
                         m_listProductInfo.clear();
 
@@ -1026,12 +1027,13 @@ void __fastcall CMainThread::doSSPickerFromLifter(int &nThreadIndex)
                                                 g_Motion.AbsMove(Axis_Const::SSY,g_IniFile.m_dSSPickerPutPos[false]);
                                                 break;
                                          case 2:
-                                                if(m_listPickTable.size()>0)
+                                                if(m_listPutTable.size()>0)
                                                 {
-                                                        if((m_listPickTable.back()=="REAR")) bFrontTable=true;
-                                                        else if( (m_listPickTable.back()=="FRONT")) bFrontTable=false;
+                                                        if((m_listPutTable.front()=="REAR")) bFrontTable=true;
+                                                        else if( (m_listPutTable.front()=="FRONT")) bFrontTable=false;
                                                         else bFrontTable=true;
                                                         g_Motion.AbsMove(Axis_Const::SSY,g_IniFile.m_dSSPickerPutPos[bFrontTable]);
+                                                        m_listPutTable.pop_front();
                                                 }
                                                 else
                                                 {
@@ -1217,18 +1219,18 @@ void __fastcall CMainThread::doSSPickerFromRail(int &nThreadIndex)
                                 g_Motion.AbsMove(Axis_Const::SSY,g_IniFile.m_dSSPickerPutPos[false]);
                                 break;
                         case 2:
-                                if(m_listPickTable.size()>0)
+                                if(m_listPutTable.size()>0)
                                 {
-                                        if((m_listPickTable.back()=="REAR")) bFrontTable=true;
-                                        else if( (m_listPickTable.back()=="FRONT")) bFrontTable=false;
+                                        if((m_listPutTable.front()=="REAR")) bFrontTable=true;
+                                        else if( (m_listPutTable.front()=="FRONT")) bFrontTable=false;
                                         else bFrontTable=true;
                                         g_Motion.AbsMove(Axis_Const::SSY,g_IniFile.m_dSSPickerPutPos[bFrontTable]);
+                                        m_listPutTable.pop_front();
                                 }
                                 else
                                 {
-                                        //double Pos =  (g_IniFile.m_dSSPickerPutPos[true]+g_IniFile.m_dSSPickerPutPos[false])/2;
-                                        //g_Motion.AbsMove(Axis_Const::SSY,Pos);
-                                        g_Motion.AbsMove(Axis_Const::SSY,g_IniFile.m_dSSPickerPutPos[false]);
+                                        bFrontTable=true;
+                                        g_Motion.AbsMove(Axis_Const::SSY,g_IniFile.m_dSSPickerPutPos[bFrontTable]);
                                 }
                                 break;
                         }
@@ -1349,7 +1351,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                         {
                                 g_DIO.SetDO(oTableClamp,btableClampOff);
                                 g_Motion.AbsMove(nAxisTable,g_IniFile.m_dTablePutDownPos[bFront]);
-                                p_tm1MS->timeStart(3000);
+                                p_tm1MS->timeStart(10000);
                                  nThreadIndex++;
                         }
                         break;
@@ -1363,7 +1365,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                         {
                                 g_Motion.StopMove(nAxisTable);
                                  g_Motion.AbsMove(nAxisTable,g_IniFile.m_dTablePutDownPos[bFront]);
-                                 p_tm1MS->timeStart(3000);
+                                 p_tm1MS->timeStart(10000);
                         }
                         break;
                 case 4:
@@ -1437,7 +1439,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                                 g_DIO.SetDO(DO::SS_SSucker,false);
                                 //m_nStripCount++;
                                 bFront ? m_listPickTable.push_back("FRONT"):m_listPickTable.push_back("REAR");
-
+                                bFront ? m_listPutTable.push_back("FRONT"):m_listPutTable.push_back("REAR");
 
                                 p_tm1MS->timeStart(5000);
                                 nThreadIndex++;

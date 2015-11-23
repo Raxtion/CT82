@@ -37,8 +37,8 @@ object frmProductParam: TfrmProductParam
     Top = 0
     Width = 761
     Height = 601
-    ActivePage = TabSheet1
-    TabIndex = 0
+    ActivePage = TabSheet2
+    TabIndex = 1
     TabOrder = 2
     object TabSheet1: TTabSheet
       Caption = #29986#21697#35215#26684
@@ -580,7 +580,7 @@ object frmProductParam: TfrmProductParam
           Top = 40
           Width = 41
           Height = 241
-          Max = 255
+          Max = 70
           Orientation = trVertical
           Frequency = 10
           Position = 0

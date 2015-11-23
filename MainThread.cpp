@@ -878,8 +878,7 @@ void __fastcall CMainThread::doSSPickerFromLifter(int &nThreadIndex)
                 case 3:
                         if(bIsSubstrate & g_DIO.GetDI(DI::SS_SSuckerDown))
                         {
-                                //if (g_DIO.GetDI(DI::SS_SSuckerColorSensor))
-                                if (true)
+                                if (!g_DIO.GetDI(DI::SS_SSuckerColorSensor))
                                 {
                                         tm1MS.timeStart(300);
                                         nThreadIndex++;
@@ -1136,8 +1135,7 @@ void __fastcall CMainThread::doSSPickerFromRail(int &nThreadIndex)
                 case 3:
                         if( g_DIO.GetDI(DI::SS_SSuckerDown))
                         {
-                                //if (g_DIO.GetDI(DI::SS_SSuckerColorSensor))
-                                if (true)
+                                if (!g_DIO.GetDI(DI::SS_SSuckerColorSensor))
                                 {
                                         tm1MS.timeStart(300);
                                         nThreadIndex++;
@@ -1351,7 +1349,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                         {
                                 g_DIO.SetDO(oTableClamp,btableClampOff);
                                 g_Motion.AbsMove(nAxisTable,g_IniFile.m_dTablePutDownPos[bFront]);
-                                p_tm1MS->timeStart(3000);
+                                p_tm1MS->timeStart(10000);
                                  nThreadIndex++;
                         }
                         break;
@@ -1365,7 +1363,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                         {
                                 g_Motion.StopMove(nAxisTable);
                                  g_Motion.AbsMove(nAxisTable,g_IniFile.m_dTablePutDownPos[bFront]);
-                                 p_tm1MS->timeStart(3000);
+                                 p_tm1MS->timeStart(10000);
                         }
                         break;
                 case 4:
