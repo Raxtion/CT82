@@ -1902,6 +1902,7 @@ void __fastcall TfmMain::TrackBar2Change(TObject *Sender)
         labelLED1->Caption=TrackBar2->Position;
         g_IniFile.m_nLEDDimmer[1]=TrackBar2->Position;
         g_LED.SetVoltage(0,TrackBar2->Position);
+        
 }
 //---------------------------------------------------------------------------
 void __fastcall TfmMain::SetLEDDimmer()

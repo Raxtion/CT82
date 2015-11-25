@@ -878,8 +878,7 @@ void __fastcall CMainThread::doSSPickerFromLifter(int &nThreadIndex)
                 case 3:
                         if(bIsSubstrate & g_DIO.GetDI(DI::SS_SSuckerDown))
                         {
-                                //if (g_DIO.GetDI(DI::SS_SSuckerColorSensor))
-                                if (true)
+                                if (!g_DIO.GetDI(DI::SS_SSuckerColorSensor))
                                 {
                                         tm1MS.timeStart(300);
                                         nThreadIndex++;
@@ -1136,8 +1135,7 @@ void __fastcall CMainThread::doSSPickerFromRail(int &nThreadIndex)
                 case 3:
                         if( g_DIO.GetDI(DI::SS_SSuckerDown))
                         {
-                                //if (g_DIO.GetDI(DI::SS_SSuckerColorSensor))
-                                if (true)
+                                if (!g_DIO.GetDI(DI::SS_SSuckerColorSensor))
                                 {
                                         tm1MS.timeStart(300);
                                         nThreadIndex++;
@@ -1937,7 +1935,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                         else if(p_tm1MS->timeUp()) g_IniFile.m_nErrorCode=416;
                         break;
                 case 50:
-                        g_SMSXML.QueryID();
+                        //g_SMSXML.QueryID();          翻面不在取得id
                         p_tm1MS->timeStart(10000);
                         nThreadIndex++;
                         break;

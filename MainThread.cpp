@@ -1935,7 +1935,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                         else if(p_tm1MS->timeUp()) g_IniFile.m_nErrorCode=416;
                         break;
                 case 50:
-                        g_SMSXML.QueryID();
+                        //g_SMSXML.QueryID();          翻面不在取得lot member
                         p_tm1MS->timeStart(10000);
                         nThreadIndex++;
                         break;

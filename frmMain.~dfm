@@ -1,6 +1,6 @@
 object fmMain: TfmMain
-  Left = 426
-  Top = 216
+  Left = 386
+  Top = 198
   BorderIcons = [biMinimize, biMaximize]
   BorderStyle = bsSingle
   Caption = 'fmMain'
@@ -73,7 +73,7 @@ object fmMain: TfmMain
       Left = 1
       Top = 494
       Width = 477
-      Height = 458
+      Height = 278
       Align = alClient
       Color = clBtnFace
       ParentColor = False

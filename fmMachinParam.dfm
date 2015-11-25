@@ -35,8 +35,8 @@ object frmMachineParam: TfrmMachineParam
     Top = 0
     Width = 969
     Height = 713
-    ActivePage = TabSheet4
-    TabIndex = 0
+    ActivePage = TabSheet5
+    TabIndex = 1
     TabOrder = 3
     object TabSheet4: TTabSheet
       Caption = #39340#36948#36895#24230
