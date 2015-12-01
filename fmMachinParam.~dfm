@@ -1,7 +1,7 @@
 object frmMachineParam: TfrmMachineParam
-  Left = 322
-  Top = 113
-  Width = 1170
+  Left = 441
+  Top = 86
+  Width = 1013
   Height = 756
   Caption = 'frmMachineParam'
   Color = 13430215
@@ -15,7 +15,7 @@ object frmMachineParam: TfrmMachineParam
   PixelsPerInch = 96
   TextHeight = 16
   object BitBtn1: TBitBtn
-    Left = 1008
+    Left = 864
     Top = 40
     Width = 121
     Height = 41
@@ -23,7 +23,7 @@ object frmMachineParam: TfrmMachineParam
     Kind = bkOK
   end
   object BitBtn2: TBitBtn
-    Left = 1008
+    Left = 864
     Top = 128
     Width = 121
     Height = 41
@@ -33,10 +33,10 @@ object frmMachineParam: TfrmMachineParam
   object PageControl1: TPageControl
     Left = 0
     Top = 0
-    Width = 969
+    Width = 841
     Height = 713
-    ActivePage = TabSheet4
-    TabIndex = 0
+    ActivePage = TabSheet5
+    TabIndex = 1
     TabOrder = 3
     object TabSheet4: TTabSheet
       Caption = #39340#36948#36895#24230
@@ -44,7 +44,7 @@ object frmMachineParam: TfrmMachineParam
       object GroupBox1: TGroupBox
         Left = 11
         Top = 6
-        Width = 878
+        Width = 814
         Height = 267
         Caption = #39340#36948#36895#24230
         TabOrder = 0
@@ -753,7 +753,6 @@ object frmMachineParam: TfrmMachineParam
           Width = 122
           Height = 28
           Hint = 'm_dSSPickerPickPos'
-          Alignment = taRightJustify
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft
@@ -795,7 +794,6 @@ object frmMachineParam: TfrmMachineParam
           Width = 122
           Height = 28
           Hint = 'm_dSSPickerPickRailPos'
-          Alignment = taRightJustify
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft
@@ -837,7 +835,6 @@ object frmMachineParam: TfrmMachineParam
           Width = 122
           Height = 28
           Hint = 'm_dSSPickerPutPos0'
-          Alignment = taRightJustify
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft
@@ -879,7 +876,6 @@ object frmMachineParam: TfrmMachineParam
           Width = 122
           Height = 28
           Hint = 'm_dSpaPickerPickPos'
-          Alignment = taRightJustify
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft
@@ -944,7 +940,6 @@ object frmMachineParam: TfrmMachineParam
           Width = 122
           Height = 28
           Hint = 'm_dSpaPickerThrowPos'
-          Alignment = taRightJustify
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft
@@ -963,7 +958,6 @@ object frmMachineParam: TfrmMachineParam
           Width = 122
           Height = 28
           Hint = 'm_dSSPickerPutPos1'
-          Alignment = taRightJustify
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft
@@ -1008,11 +1002,10 @@ object frmMachineParam: TfrmMachineParam
         TabOrder = 1
         Visible = False
         object StaticText51: TStaticText
-          Left = 8
+          Left = 40
           Top = 30
-          Width = 122
+          Width = 65
           Height = 28
-          Alignment = taRightJustify
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft
@@ -1024,7 +1017,7 @@ object frmMachineParam: TfrmMachineParam
           TabOrder = 0
         end
         object editCheckSSPlacePos1: TEdit
-          Left = 136
+          Left = 112
           Top = 30
           Width = 81
           Height = 24
@@ -1032,9 +1025,9 @@ object frmMachineParam: TfrmMachineParam
           Text = 'editPickSpacerPosY'
         end
         object StaticText52: TStaticText
-          Left = 224
+          Left = 200
           Top = 30
-          Width = 57
+          Width = 33
           Height = 28
           AutoSize = False
           BevelInner = bvSpace
@@ -1047,11 +1040,10 @@ object frmMachineParam: TfrmMachineParam
           TabOrder = 2
         end
         object StaticText53: TStaticText
-          Left = 8
+          Left = 40
           Top = 62
-          Width = 122
+          Width = 65
           Height = 28
-          Alignment = taRightJustify
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft
@@ -1063,7 +1055,7 @@ object frmMachineParam: TfrmMachineParam
           TabOrder = 3
         end
         object editCheckSSPlacePos2: TEdit
-          Left = 136
+          Left = 112
           Top = 62
           Width = 81
           Height = 24
@@ -1071,9 +1063,9 @@ object frmMachineParam: TfrmMachineParam
           Text = 'editPickSpacerPosY'
         end
         object StaticText54: TStaticText
-          Left = 224
+          Left = 200
           Top = 62
-          Width = 57
+          Width = 33
           Height = 28
           AutoSize = False
           BevelInner = bvSpace
@@ -1086,11 +1078,10 @@ object frmMachineParam: TfrmMachineParam
           TabOrder = 5
         end
         object StaticText55: TStaticText
-          Left = 8
+          Left = 40
           Top = 94
-          Width = 122
+          Width = 65
           Height = 28
-          Alignment = taRightJustify
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft
@@ -1102,7 +1093,7 @@ object frmMachineParam: TfrmMachineParam
           TabOrder = 6
         end
         object editCheckSSPlacePos3: TEdit
-          Left = 136
+          Left = 112
           Top = 94
           Width = 81
           Height = 24
@@ -1110,9 +1101,9 @@ object frmMachineParam: TfrmMachineParam
           Text = 'editPickSpacerPosY'
         end
         object StaticText56: TStaticText
-          Left = 224
+          Left = 200
           Top = 94
-          Width = 57
+          Width = 33
           Height = 28
           AutoSize = False
           BevelInner = bvSpace
@@ -1125,11 +1116,10 @@ object frmMachineParam: TfrmMachineParam
           TabOrder = 8
         end
         object StaticText57: TStaticText
-          Left = 8
+          Left = 40
           Top = 126
-          Width = 122
+          Width = 65
           Height = 28
-          Alignment = taRightJustify
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft
@@ -1141,7 +1131,7 @@ object frmMachineParam: TfrmMachineParam
           TabOrder = 9
         end
         object editCheckSSPlacePos4: TEdit
-          Left = 136
+          Left = 112
           Top = 126
           Width = 81
           Height = 24
@@ -1149,9 +1139,9 @@ object frmMachineParam: TfrmMachineParam
           Text = 'editPickSpacerPosY'
         end
         object StaticText58: TStaticText
-          Left = 224
+          Left = 200
           Top = 126
-          Width = 57
+          Width = 33
           Height = 28
           AutoSize = False
           BevelInner = bvSpace
@@ -1178,7 +1168,6 @@ object frmMachineParam: TfrmMachineParam
           Width = 122
           Height = 28
           Hint = 'm_dTablePutDownPos1'
-          Alignment = taRightJustify
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft
@@ -1220,7 +1209,6 @@ object frmMachineParam: TfrmMachineParam
           Width = 122
           Height = 28
           Hint = 'm_dTableMarkPosX1'
-          Alignment = taRightJustify
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft
@@ -1262,7 +1250,6 @@ object frmMachineParam: TfrmMachineParam
           Width = 122
           Height = 28
           Hint = 'm_dTableMarkPosY1'
-          Alignment = taRightJustify
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft
@@ -1304,7 +1291,6 @@ object frmMachineParam: TfrmMachineParam
           Width = 122
           Height = 28
           Hint = 'm_dTableVenderCodePosX1'
-          Alignment = taRightJustify
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft
@@ -1324,7 +1310,6 @@ object frmMachineParam: TfrmMachineParam
           Width = 122
           Height = 28
           Hint = 'm_dTableVenderCodePosY1'
-          Alignment = taRightJustify
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft
@@ -1394,7 +1379,6 @@ object frmMachineParam: TfrmMachineParam
           Width = 122
           Height = 28
           Hint = 'm_dTableLaserPos1'
-          Alignment = taRightJustify
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft
@@ -1436,7 +1420,6 @@ object frmMachineParam: TfrmMachineParam
           Width = 122
           Height = 28
           Hint = 'm_dTableLaserCodePosX1'
-          Alignment = taRightJustify
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft
@@ -1455,7 +1438,6 @@ object frmMachineParam: TfrmMachineParam
           Width = 122
           Height = 28
           Hint = 'm_dTableLaserCodePosY1'
-          Alignment = taRightJustify
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft
@@ -1520,7 +1502,6 @@ object frmMachineParam: TfrmMachineParam
           Width = 122
           Height = 28
           Hint = 'm_dTablePickUpPos1'
-          Alignment = taRightJustify
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft
@@ -1570,7 +1551,6 @@ object frmMachineParam: TfrmMachineParam
           Width = 122
           Height = 28
           Hint = 'm_dTablePutDownPos0'
-          Alignment = taRightJustify
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft
@@ -1612,7 +1592,6 @@ object frmMachineParam: TfrmMachineParam
           Width = 122
           Height = 28
           Hint = 'm_dTableMarkPosX0'
-          Alignment = taRightJustify
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft
@@ -1654,7 +1633,6 @@ object frmMachineParam: TfrmMachineParam
           Width = 122
           Height = 28
           Hint = 'm_dTableMarkPosY0'
-          Alignment = taRightJustify
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft
@@ -1696,7 +1674,6 @@ object frmMachineParam: TfrmMachineParam
           Width = 122
           Height = 28
           Hint = 'm_dTableVenderCodePosX0'
-          Alignment = taRightJustify
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft
@@ -1716,7 +1693,6 @@ object frmMachineParam: TfrmMachineParam
           Width = 122
           Height = 28
           Hint = 'm_dTableVenderCodePosY0'
-          Alignment = taRightJustify
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft
@@ -1786,7 +1762,6 @@ object frmMachineParam: TfrmMachineParam
           Width = 122
           Height = 28
           Hint = 'm_dTableLaserPos0'
-          Alignment = taRightJustify
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft
@@ -1828,7 +1803,6 @@ object frmMachineParam: TfrmMachineParam
           Width = 122
           Height = 28
           Hint = 'm_dTableLaserCodePosX0'
-          Alignment = taRightJustify
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft
@@ -1847,7 +1821,6 @@ object frmMachineParam: TfrmMachineParam
           Width = 122
           Height = 28
           Hint = 'm_dTableLaserCodePosY0'
-          Alignment = taRightJustify
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft
@@ -1912,7 +1885,6 @@ object frmMachineParam: TfrmMachineParam
           Width = 122
           Height = 28
           Hint = 'm_dTablePickUpPos0'
-          Alignment = taRightJustify
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft
@@ -2241,9 +2213,8 @@ object frmMachineParam: TfrmMachineParam
         object StaticText28: TStaticText
           Left = 21
           Top = 32
-          Width = 124
+          Width = 76
           Height = 25
-          Alignment = taRightJustify
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft
@@ -2255,7 +2226,7 @@ object frmMachineParam: TfrmMachineParam
           TabOrder = 0
         end
         object m_dTableMapCCDPosX1: TEdit
-          Left = 146
+          Left = 106
           Top = 31
           Width = 81
           Height = 24
@@ -2263,7 +2234,7 @@ object frmMachineParam: TfrmMachineParam
           Text = 'editCycleTimeOut'
         end
         object StaticText29: TStaticText
-          Left = 228
+          Left = 188
           Top = 32
           Width = 33
           Height = 25
@@ -2280,9 +2251,8 @@ object frmMachineParam: TfrmMachineParam
         object StaticText17: TStaticText
           Left = 21
           Top = 56
-          Width = 124
+          Width = 76
           Height = 25
-          Alignment = taRightJustify
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft
@@ -2294,7 +2264,7 @@ object frmMachineParam: TfrmMachineParam
           TabOrder = 3
         end
         object m_dTableMapCCDPosY1: TEdit
-          Left = 146
+          Left = 106
           Top = 55
           Width = 81
           Height = 24
@@ -2302,7 +2272,7 @@ object frmMachineParam: TfrmMachineParam
           Text = 'editCycleTimeOut'
         end
         object StaticText18: TStaticText
-          Left = 228
+          Left = 188
           Top = 56
           Width = 33
           Height = 25
@@ -2319,9 +2289,8 @@ object frmMachineParam: TfrmMachineParam
         object StaticText19: TStaticText
           Left = 21
           Top = 88
-          Width = 124
+          Width = 76
           Height = 25
-          Alignment = taRightJustify
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft
@@ -2335,9 +2304,8 @@ object frmMachineParam: TfrmMachineParam
         object StaticText20: TStaticText
           Left = 21
           Top = 112
-          Width = 124
+          Width = 76
           Height = 25
-          Alignment = taRightJustify
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft
@@ -2349,7 +2317,7 @@ object frmMachineParam: TfrmMachineParam
           TabOrder = 7
         end
         object m_dTableMapCCDPosX0: TEdit
-          Left = 146
+          Left = 106
           Top = 87
           Width = 81
           Height = 24
@@ -2357,7 +2325,7 @@ object frmMachineParam: TfrmMachineParam
           Text = 'editCycleTimeOut'
         end
         object m_dTableMapCCDPosY0: TEdit
-          Left = 146
+          Left = 106
           Top = 111
           Width = 81
           Height = 24
@@ -2365,7 +2333,7 @@ object frmMachineParam: TfrmMachineParam
           Text = 'editCycleTimeOut'
         end
         object StaticText21: TStaticText
-          Left = 228
+          Left = 188
           Top = 88
           Width = 33
           Height = 25
@@ -2380,7 +2348,7 @@ object frmMachineParam: TfrmMachineParam
           TabOrder = 10
         end
         object StaticText22: TStaticText
-          Left = 228
+          Left = 188
           Top = 112
           Width = 33
           Height = 25
@@ -2397,9 +2365,8 @@ object frmMachineParam: TfrmMachineParam
         object StaticText24: TStaticText
           Left = 21
           Top = 144
-          Width = 124
+          Width = 76
           Height = 25
-          Alignment = taRightJustify
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft
@@ -2411,7 +2378,7 @@ object frmMachineParam: TfrmMachineParam
           TabOrder = 12
         end
         object m_dTableMapCCDPitch: TEdit
-          Left = 146
+          Left = 106
           Top = 143
           Width = 81
           Height = 24
@@ -2419,7 +2386,7 @@ object frmMachineParam: TfrmMachineParam
           Text = 'editCycleTimeOut'
         end
         object StaticText25: TStaticText
-          Left = 228
+          Left = 188
           Top = 144
           Width = 33
           Height = 25
@@ -2444,9 +2411,8 @@ object frmMachineParam: TfrmMachineParam
         object StaticText26: TStaticText
           Left = 21
           Top = 32
-          Width = 124
+          Width = 108
           Height = 25
-          Alignment = taRightJustify
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft
@@ -2458,7 +2424,7 @@ object frmMachineParam: TfrmMachineParam
           TabOrder = 0
         end
         object m_dFMCCDResolution0: TEdit
-          Left = 146
+          Left = 137
           Top = 31
           Width = 95
           Height = 24
@@ -2466,7 +2432,7 @@ object frmMachineParam: TfrmMachineParam
           Text = 'editCycleTimeOut'
         end
         object StaticText27: TStaticText
-          Left = 248
+          Left = 239
           Top = 32
           Width = 73
           Height = 25
@@ -2483,9 +2449,8 @@ object frmMachineParam: TfrmMachineParam
         object StaticText30: TStaticText
           Left = 21
           Top = 56
-          Width = 124
+          Width = 108
           Height = 25
-          Alignment = taRightJustify
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft
@@ -2497,7 +2462,7 @@ object frmMachineParam: TfrmMachineParam
           TabOrder = 3
         end
         object m_dFMCCDResolution1: TEdit
-          Left = 146
+          Left = 137
           Top = 55
           Width = 95
           Height = 24
@@ -2505,7 +2470,7 @@ object frmMachineParam: TfrmMachineParam
           Text = 'editCycleTimeOut'
         end
         object StaticText31: TStaticText
-          Left = 248
+          Left = 239
           Top = 56
           Width = 73
           Height = 25
@@ -2652,7 +2617,7 @@ object frmMachineParam: TfrmMachineParam
         object StaticText32: TStaticText
           Left = 21
           Top = 32
-          Width = 124
+          Width = 116
           Height = 25
           Alignment = taRightJustify
           AutoSize = False
@@ -2666,7 +2631,7 @@ object frmMachineParam: TfrmMachineParam
           TabOrder = 0
         end
         object m_nCoverVacTime: TEdit
-          Left = 146
+          Left = 138
           Top = 31
           Width = 81
           Height = 24
@@ -2674,7 +2639,7 @@ object frmMachineParam: TfrmMachineParam
           Text = 'editCycleTimeOut'
         end
         object StaticText33: TStaticText
-          Left = 228
+          Left = 220
           Top = 32
           Width = 33
           Height = 25
@@ -2691,7 +2656,7 @@ object frmMachineParam: TfrmMachineParam
         object StaticText34: TStaticText
           Left = 21
           Top = 64
-          Width = 124
+          Width = 116
           Height = 25
           Alignment = taRightJustify
           AutoSize = False
@@ -2705,7 +2670,7 @@ object frmMachineParam: TfrmMachineParam
           TabOrder = 3
         end
         object m_nSubstrateVacTime: TEdit
-          Left = 146
+          Left = 138
           Top = 63
           Width = 81
           Height = 24
@@ -2713,7 +2678,7 @@ object frmMachineParam: TfrmMachineParam
           Text = 'editCycleTimeOut'
         end
         object StaticText35: TStaticText
-          Left = 228
+          Left = 220
           Top = 64
           Width = 33
           Height = 25
@@ -2731,7 +2696,7 @@ object frmMachineParam: TfrmMachineParam
     end
   end
   object m_bForceEject: TCheckBox
-    Left = 1032
+    Left = 880
     Top = 680
     Width = 97
     Height = 17

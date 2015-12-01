@@ -1,6 +1,6 @@
 object IOCheckDlg: TIOCheckDlg
-  Left = 555
-  Top = 183
+  Left = 301
+  Top = 158
   BorderStyle = bsDialog
   Caption = #36664#20986#20837#35037#32622#27298#26597
   ClientHeight = 619

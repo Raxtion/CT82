@@ -204,3 +204,4 @@ void __fastcall TfrmMotorCheck::BitBtn1Click(TObject *Sender)
 
 
 
+

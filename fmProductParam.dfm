@@ -1,6 +1,6 @@
 object frmProductParam: TfrmProductParam
-  Left = 147
-  Top = 25
+  Left = 366
+  Top = 203
   BorderStyle = bsDialog
   Caption = 'frmProductParam'
   ClientHeight = 607
@@ -52,9 +52,9 @@ object frmProductParam: TfrmProductParam
         ParentColor = False
         TabOrder = 0
         object StaticText35: TStaticText
-          Left = 16
+          Left = 32
           Top = 62
-          Width = 122
+          Width = 74
           Height = 28
           Alignment = taRightJustify
           AutoSize = False
@@ -68,9 +68,9 @@ object frmProductParam: TfrmProductParam
           TabOrder = 0
         end
         object m_strSBTSize: TEdit
-          Left = 144
+          Left = 112
           Top = 62
-          Width = 217
+          Width = 241
           Height = 24
           TabOrder = 1
           Text = '13 X 13 * 0.9'
@@ -163,9 +163,9 @@ object frmProductParam: TfrmProductParam
           Text = '6000'
         end
         object StaticText58: TStaticText
-          Left = 16
+          Left = 32
           Top = 22
-          Width = 122
+          Width = 74
           Height = 28
           Alignment = taRightJustify
           AutoSize = False
@@ -179,9 +179,9 @@ object frmProductParam: TfrmProductParam
           TabOrder = 9
         end
         object m_strSBTType: TEdit
-          Left = 144
+          Left = 112
           Top = 22
-          Width = 217
+          Width = 241
           Height = 24
           TabOrder = 10
           Text = 'XL MAP'
@@ -195,17 +195,17 @@ object frmProductParam: TfrmProductParam
         Caption = #27491#38754#36984#29992#38647#21051#27284#26696#32232#34399
         TabOrder = 1
         object m_nLaserProgramNo0: TEdit
-          Left = 144
+          Left = 96
           Top = 56
-          Width = 73
+          Width = 121
           Height = 24
           TabOrder = 0
           Text = '0'
         end
         object StaticText33: TStaticText
-          Left = 16
+          Left = 32
           Top = 54
-          Width = 122
+          Width = 58
           Height = 28
           Alignment = taRightJustify
           AutoSize = False
@@ -231,9 +231,9 @@ object frmProductParam: TfrmProductParam
           Wrap = False
         end
         object StaticText28: TStaticText
-          Left = 16
+          Left = 32
           Top = 22
-          Width = 122
+          Width = 58
           Height = 28
           Alignment = taRightJustify
           AutoSize = False
@@ -247,9 +247,9 @@ object frmProductParam: TfrmProductParam
           TabOrder = 3
         end
         object m_nLaserProgramNo1: TEdit
-          Left = 144
+          Left = 96
           Top = 24
-          Width = 73
+          Width = 121
           Height = 24
           TabOrder = 4
           Text = '0'
@@ -317,17 +317,17 @@ object frmProductParam: TfrmProductParam
         Caption = #21453#38754#36984#29992#38647#21051#27284#26696#32232#34399
         TabOrder = 5
         object m_nLaserProgramNo2: TEdit
-          Left = 144
+          Left = 96
           Top = 56
-          Width = 73
+          Width = 121
           Height = 24
           TabOrder = 0
           Text = '0'
         end
         object StaticText1: TStaticText
-          Left = 16
+          Left = 32
           Top = 54
-          Width = 122
+          Width = 58
           Height = 28
           Alignment = taRightJustify
           AutoSize = False
@@ -353,9 +353,9 @@ object frmProductParam: TfrmProductParam
           Wrap = False
         end
         object StaticText2: TStaticText
-          Left = 16
+          Left = 32
           Top = 22
-          Width = 122
+          Width = 58
           Height = 28
           Alignment = taRightJustify
           AutoSize = False
@@ -369,9 +369,9 @@ object frmProductParam: TfrmProductParam
           TabOrder = 3
         end
         object m_nLaserProgramNo3: TEdit
-          Left = 144
+          Left = 96
           Top = 24
-          Width = 73
+          Width = 121
           Height = 24
           TabOrder = 4
           Text = '0'
@@ -401,11 +401,10 @@ object frmProductParam: TfrmProductParam
         Caption = #22522#26495#21443#25976
         TabOrder = 0
         object StaticText23: TStaticText
-          Left = 16
+          Left = 32
           Top = 30
-          Width = 122
+          Width = 97
           Height = 28
-          Alignment = taRightJustify
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft
@@ -417,11 +416,10 @@ object frmProductParam: TfrmProductParam
           TabOrder = 0
         end
         object StaticText24: TStaticText
-          Left = 16
+          Left = 32
           Top = 62
-          Width = 122
+          Width = 97
           Height = 28
-          Alignment = taRightJustify
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft
@@ -433,7 +431,7 @@ object frmProductParam: TfrmProductParam
           TabOrder = 1
         end
         object m_nPackageX: TEdit
-          Left = 144
+          Left = 136
           Top = 30
           Width = 81
           Height = 24
@@ -441,7 +439,7 @@ object frmProductParam: TfrmProductParam
           Text = 'editPickSpacerPosY'
         end
         object m_nPackageY: TEdit
-          Left = 144
+          Left = 136
           Top = 62
           Width = 81
           Height = 24
@@ -449,11 +447,10 @@ object frmProductParam: TfrmProductParam
           Text = 'editDotPosition'
         end
         object StaticText25: TStaticText
-          Left = 16
+          Left = 32
           Top = 150
-          Width = 122
+          Width = 97
           Height = 28
-          Alignment = taRightJustify
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft
@@ -465,7 +462,7 @@ object frmProductParam: TfrmProductParam
           TabOrder = 4
         end
         object m_nDeviceX: TEdit
-          Left = 144
+          Left = 136
           Top = 150
           Width = 81
           Height = 24
@@ -473,11 +470,10 @@ object frmProductParam: TfrmProductParam
           Text = 'editDotPosition'
         end
         object StaticText26: TStaticText
-          Left = 16
+          Left = 32
           Top = 182
-          Width = 122
+          Width = 97
           Height = 28
-          Alignment = taRightJustify
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft
@@ -489,7 +485,7 @@ object frmProductParam: TfrmProductParam
           TabOrder = 6
         end
         object m_nDeviceY: TEdit
-          Left = 144
+          Left = 136
           Top = 182
           Width = 81
           Height = 24
@@ -497,11 +493,10 @@ object frmProductParam: TfrmProductParam
           Text = 'editDotPosition'
         end
         object StaticText27: TStaticText
-          Left = 16
+          Left = 32
           Top = 94
-          Width = 122
+          Width = 97
           Height = 28
-          Alignment = taRightJustify
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft
@@ -513,7 +508,7 @@ object frmProductParam: TfrmProductParam
           TabOrder = 8
         end
         object m_nPackageGap: TEdit
-          Left = 144
+          Left = 136
           Top = 94
           Width = 81
           Height = 24

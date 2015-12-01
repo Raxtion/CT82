@@ -7,7 +7,8 @@
 #include "PCIM114GL.h"
 #include "IniFile.h"
 #include "C_GetTime.h"
-#include "fmMotorCheck.h"
+#include "fmMotorCheck.h" 
+#include "math.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
@@ -290,7 +291,25 @@ void __fastcall TfmManual::SpeedButton14Click(TObject *Sender)
 {
         TSpeedButton *pBtn=(TSpeedButton *)Sender;
 
-        g_MNet.SetDO(pBtn->Tag,!g_MNet.GetDO(pBtn->Tag));
+        if (pBtn->Tag == 0 || pBtn->Tag == 8)
+        {
+                //g_Motion.AbsMove(Axis_Const::SSY, 878.460);
+                if (g_MNet.GetAxisStatus(Axis_Const::SSY,Axis_Const::PEL) && g_MNet.GetDI(DI::FT_LockerOff) && !g_MNet.GetDI(DI::FT_Align2Off) && g_MNet.GetDI(DI::FT_AlignOff) && pBtn->Tag == 0 && (fabs(g_MNet.GetFeedbackPos(Axis_Const::FTX)-g_IniFile.m_dTableLaserPos[1])<=5 || fabs(g_MNet.GetFeedbackPos(Axis_Const::FTX)-g_IniFile.m_dTablePutDownPos[1])<=5))
+                {
+                        g_MNet.SetDO(pBtn->Tag,!g_MNet.GetDO(pBtn->Tag));
+                }
+                else if (g_MNet.GetAxisStatus(Axis_Const::SSY,Axis_Const::PEL) && g_MNet.GetDI(DI::RT_LockerOff) && !g_MNet.GetDI(DI::RT_Align2Off) && g_MNet.GetDI(DI::RT_AlignOff) && pBtn->Tag == 8 && (fabs(g_MNet.GetFeedbackPos(Axis_Const::RTX)-g_IniFile.m_dTableLaserPos[0])<=5 || fabs(g_MNet.GetFeedbackPos(Axis_Const::RTX)-g_IniFile.m_dTablePutDownPos[0])<=5))
+                {
+                        g_MNet.SetDO(pBtn->Tag,!g_MNet.GetDO(pBtn->Tag));
+                }
+                else g_IniFile.m_nErrorCode=438;
+
+        }
+        else
+        {
+                g_MNet.SetDO(pBtn->Tag,!g_MNet.GetDO(pBtn->Tag));
+        }
+
 }
 //---------------------------------------------------------------------------
 

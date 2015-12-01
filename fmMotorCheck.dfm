@@ -1,6 +1,6 @@
 object frmMotorCheck: TfrmMotorCheck
-  Left = 731
-  Top = 274
+  Left = 743
+  Top = 262
   BorderStyle = bsDialog
   Caption = #39340#36948#28204#35430
   ClientHeight = 509
