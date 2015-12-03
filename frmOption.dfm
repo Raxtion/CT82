@@ -1,6 +1,6 @@
 object fmOption: TfmOption
-  Left = 490
-  Top = 180
+  Left = 924
+  Top = 73
   BorderStyle = bsDialog
   Caption = 'fmOption'
   ClientHeight = 414
@@ -178,5 +178,6 @@ object fmOption: TfmOption
     Height = 17
     Caption = 'PQC'#20316#26989
     TabOrder = 4
+    Visible = False
   end
 end

@@ -1462,49 +1462,56 @@ void __fastcall TfmMain::timerMessageTimer(TObject *Sender)
 
         //Caption = DateTimeToStr(Now());
 
-        if(tm1MSLogOut.timeDevEnd()>300000)
+        // 20 min SetPrivilege 0 to OP
+        if(tm1MSLogOut.timeDevEnd()>1200000)
         {
                 SetPrivilege(0);
                 tm1MSLogOut.timeDevStart();
         }
+        /*if (g_pMainThread->m_bIsAutoMode == true)
+        {
+                SetPrivilege(0);
+                tm1MSLogOut.timeDevStart();
+        }*/
+
         //--Thread Log---
         if(g_pMainThread->m_listLog.size()>0)
         {
                 AnsiString strLog=g_pMainThread->m_listLog.front();
+                AddActionLog(strLog);
                 AddList(strLog);
-
                 g_pMainThread->m_listLog.pop_front();
-
         }
         //---Vision Log
         if(theVision.m_listLog.size()>0)
         {
                 AnsiString strLog=theVision.m_listLog.front();
+
                 AddList(strLog);
-
                 theVision.m_listLog.pop_front();
-
         }
-         if(g_pMainThread->m_listVisionLog.size()>0)
+        if(g_pMainThread->m_listVisionLog.size()>0)
         {
                 AnsiString strLog=g_pMainThread->m_listVisionLog.front();
                 AddVisionLog(strLog);
                 AddList(strLog);
                 g_pMainThread->m_listVisionLog.pop_front();
-
         }
-
+        //---Marker Code
+        if (g_pMainThread->m_listMarkerLog.size()>0)
+        {
+                AnsiString strLog = g_pMainThread->m_listMarkerLog.front();
+                AddMarkerLog(strLog);
+                AddList(strLog);
+                g_pMainThread->m_listMarkerLog.pop_front();
+        }
         //---Error Code
-	if(g_IniFile.m_nErrorCode>0 && (nErrorCode!=g_IniFile.m_nErrorCode))
-	{
-		//if(m_pMessageDlg)
-		{
-			AnsiString strMsg=g_IniFile.GetErrorString("SYSTEM",g_IniFile.m_nErrorCode);
-                        AddList(strMsg);
-
-		}
-	}
-
+	    if(g_IniFile.m_nErrorCode>0 && (nErrorCode!=g_IniFile.m_nErrorCode))
+	    {
+                AnsiString strMsg=g_IniFile.GetErrorString("SYSTEM",g_IniFile.m_nErrorCode);
+                AddErrorLog(strMsg);
+                AddList(strMsg);
+	    }
 
 
         if(g_DIO.GetDO(DO::Buzzer)) listHistory->Color=clRed;
@@ -1523,10 +1530,26 @@ void __fastcall TfmMain::timerMessageTimer(TObject *Sender)
                 g_pMainThread->m_bRefresh=false;
         }
 
-	nErrorCode=g_IniFile.m_nErrorCode;
+        nErrorCode=g_IniFile.m_nErrorCode;
 
         if(g_pMainThread->m_bStopLoad) SpeedButton9->Down=true;
-       
+
+        //show Option status
+        this->m_bIsRailLoad->Checked = g_IniFile.m_bIsRailLoad;
+        this->m_bShakeSubstarte->Checked = g_IniFile.m_bShakeSubstarte;
+        this->m_bUseFMCCD->Checked = g_IniFile.m_bUseFMCCD;
+        this->m_bUseLaserMark->Checked = g_IniFile.m_bUseLaserMark;
+        this->m_bDoubleSide->Checked = g_IniFile.m_bDoubleSide;
+        this->m_bUseLaserCodeReader->Checked = g_IniFile.m_bUseLaserCodeReader;
+
+        //Synchronize MainForm Object
+        ScrollBox1->Height = Splitter1->Top;
+        PageControl1->Width = Panel2->Width-20;
+        listMarkerLog->Width = tabMarker->Width-50;
+        listActionLog->Width = tabAction->Width-50;
+        listErrorLog->Width = tabError->Width-50;
+
+
 
         timerMessage->Enabled=true;
 }
@@ -1543,13 +1566,31 @@ void __fastcall TfmMain::AddList(AnsiString strMessage)
         g_IniFile.AddLog(strMessage.c_str(),strMessage.Length());
 
 }
-
 //---------------------------------------------------------------------------
 void __fastcall TfmMain::AddVisionLog(AnsiString strLog)
 {
         listVisionLog->AddItem(strLog,NULL);
         listVisionLog->ItemIndex=listVisionLog->Count-1;
 }
+//---------------------------------------------------------------------------
+void __fastcall TfmMain::AddMarkerLog(AnsiString strLog)
+{
+        listMarkerLog->AddItem(DateTimeToStr(Now())+"-->"+strLog,NULL);
+        listMarkerLog->ItemIndex=listMarkerLog->Count-1;
+}
+//---------------------------------------------------------------------------
+void __fastcall TfmMain::AddActionLog(AnsiString strLog)
+{
+        listActionLog->AddItem(DateTimeToStr(Now())+"-->"+strLog,NULL);
+        listActionLog->ItemIndex=listActionLog->Count-1;
+}
+//---------------------------------------------------------------------------
+void __fastcall TfmMain::AddErrorLog(AnsiString strLog)
+{
+        listErrorLog->AddItem(DateTimeToStr(Now())+"-->"+strLog,NULL);
+        listErrorLog->ItemIndex=listErrorLog->Count-1;
+}
+
 //---------------------------------------------------------------------------
 void __fastcall TfmMain::timerCommTimer(TObject *Sender)
 {
@@ -2127,11 +2168,11 @@ void __fastcall TfmMain::SpeedButton22Click(TObject *Sender)
          C_GetTime tm1MS(EX_SCALE::TIME_1MS,false);
         tm1MS.timeStart(10000);
 
-        //g_MNet.AbsMove(Axis_Const::FTX,g_IniFile.m_dTableMarkPosX[nTable]-dX*g_IniFile.m_dFMCCDResolution[0]);
-        //g_MNet.AbsMove(Axis_Const::CCD,g_IniFile.m_dTableMarkPosY[nTable]+dY*g_IniFile.m_dFMCCDResolution[1]);
+        g_MNet.AbsMove(Axis_Const::FTX,g_IniFile.m_dTableMarkPosX[nTable]-dX*g_IniFile.m_dFMCCDResolution[0]);
+        g_MNet.AbsMove(Axis_Const::CCD,g_IniFile.m_dTableMarkPosY[nTable]+dY*g_IniFile.m_dFMCCDResolution[1]);
 
-        g_MNet.AbsMove(Axis_Const::FTX,g_IniFile.m_dTableMarkPosX[nTable]+dX*g_IniFile.m_dFMCCDResolution[0]);
-        g_MNet.AbsMove(Axis_Const::CCD,g_IniFile.m_dTableMarkPosY[nTable]-dY*g_IniFile.m_dFMCCDResolution[1]);
+        //g_MNet.AbsMove(Axis_Const::FTX,g_IniFile.m_dTableMarkPosX[nTable]+dX*g_IniFile.m_dFMCCDResolution[0]);
+        //g_MNet.AbsMove(Axis_Const::CCD,g_IniFile.m_dTableMarkPosY[nTable]-dY*g_IniFile.m_dFMCCDResolution[1]);
 
         while(1)
         {
@@ -2705,21 +2746,35 @@ void __fastcall TfmMain::PageControl1Change(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TfmMain::btnClearVisionLogClick(TObject *Sender)
+void __fastcall TfmMain::btnClearLogClick(TObject *Sender)
 {
+
+        TSpeedButton *pBtn=(TSpeedButton *)Sender;
+
         if(Application->MessageBox("即將清除所有紀錄", "Look", MB_OKCANCEL)==IDCANCEL) return;
 
-        listVisionLog->Clear();
-        g_pMainThread->m_listVisionLog.clear();
+        if (pBtn->Hint == "Vision")
+        {
+            listVisionLog->Clear();
+            g_pMainThread->m_listVisionLog.clear();
 
-        g_pMainThread->m_listVisionLog.push_back("Lot No :"+g_IniFile.m_strSMSLotNo);
-        g_pMainThread->m_listVisionLog.push_back("Part No:"+g_IniFile.m_strSMSPartNo);
-        g_pMainThread->m_listVisionLog.push_back("User ID:"+g_IniFile.m_strSMSUserID);
-        g_pMainThread->m_listVisionLog.push_back("***********************************");
+            g_pMainThread->m_listVisionLog.push_back("Lot No :"+g_IniFile.m_strSMSLotNo);
+            g_pMainThread->m_listVisionLog.push_back("Part No:"+g_IniFile.m_strSMSPartNo);
+            g_pMainThread->m_listVisionLog.push_back("User ID:"+g_IniFile.m_strSMSUserID);
+            g_pMainThread->m_listVisionLog.push_back("***********************************");
+        }
+        else if (pBtn->Hint == "Marker")
+        {
 
+        }
+        else if (pBtn->Hint == "Action")
+        {
 
+        }
+        else if (pBtn->Hint == "Error")
+        {
 
-
+        }
 }
 //---------------------------------------------------------------------------
 
@@ -2962,4 +3017,5 @@ void __fastcall TfmMain::SpeedButton38Click(TObject *Sender)
 
 }
 //---------------------------------------------------------------------------
+
 

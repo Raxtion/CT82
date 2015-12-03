@@ -40,6 +40,7 @@ protected:
         void __fastcall Execute();
 public:
         std::list<AnsiString> m_listLog;
+        std::list<AnsiString> m_listMarkerLog;
         std::list<AnsiString> m_listTX;     //for all serial command
         std::list<AnsiString> m_listVenderCodeReaderRX;
         std::list<AnsiString> m_listLaserRX;

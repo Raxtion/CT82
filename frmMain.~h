@@ -184,6 +184,21 @@ __published:	// IDE-managed Components
         TSpeedButton *SpeedButton34;
         TStaticText *StaticText2;
         TLabel *labelSBTLotNo;
+        TCheckBox *m_bIsRailLoad;
+        TCheckBox *m_bUseFMCCD;
+        TCheckBox *m_bUseLaserMark;
+        TCheckBox *m_bUseLaserCodeReader;
+        TCheckBox *m_bShakeSubstarte;
+        TCheckBox *m_bDoubleSide;
+    TTabSheet *tabAction;
+    TTabSheet *tabMarker;
+    TTabSheet *tabError;
+    TListBox *listMarkerLog;
+    TListBox *listActionLog;
+    TListBox *listErrorLog;
+    TBitBtn *btnClearMarkerLog;
+    TBitBtn *btnClearActionLog;
+    TBitBtn *btnClearErrorLog;
         void __fastcall ImagePaintBoxMouseMove(TObject *Sender,
           TShiftState Shift, int X, int Y);
         void __fastcall btnFileOpenClick(TObject *Sender);
@@ -298,7 +313,7 @@ __published:	// IDE-managed Components
         void __fastcall Version1Click(TObject *Sender);
         void __fastcall SpeedButton31Click(TObject *Sender);
         void __fastcall PageControl1Change(TObject *Sender);
-        void __fastcall btnClearVisionLogClick(TObject *Sender);
+        void __fastcall btnClearLogClick(TObject *Sender);
         void __fastcall SpeedButton34Click(TObject *Sender);
         void __fastcall SpeedButton35Click(TObject *Sender);
         void __fastcall SpeedButton36Click(TObject *Sender);
@@ -331,6 +346,9 @@ public:		// User declarations
         void __fastcall SetPrivilege(int nLevel);
         void __fastcall AddList(AnsiString strMessage);
         void __fastcall AddVisionLog(AnsiString strLog);
+        void __fastcall AddMarkerLog(AnsiString strLog);
+        void __fastcall AddActionLog(AnsiString strLog);
+        void __fastcall AddErrorLog(AnsiString strLog);
 
         int m_nUserLevel; //0:OP 1:Engineer 2:adm
         C_GetTime tm1MSLogOut;

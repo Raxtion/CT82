@@ -1763,6 +1763,11 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                                 m_listLog.push_back("¨ú±o¹p¨èID "+g_SMSXML.m_strSerialID);
                                 m_tmpProductInfo[bFront].m_strLotID=g_SMSXML.m_strSerialID;
 
+                                //Add to Marker Log
+                                AnsiString strLog;
+                                strLog="["+m_tmpProductInfo[bFront].m_strLotID+"]-->"+g_SMSXML.m_strSerialID;
+                                m_listMarkerLog.push_back(strLog);
+
                                 nThreadIndex++;
                         }
                         else if(g_SMSXML.m_strSerialID=="FAIL")

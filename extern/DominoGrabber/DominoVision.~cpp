@@ -58,7 +58,7 @@ void WINAPI GlobalCallbackFunctionX (PMCCALLBACKINFO CbInfo)
                         g_Grabber.m_ImageSizeX[0], g_Grabber.m_ImageSizeY[0], pData, g_Grabber.m_ImageSizeX[0]*8);
 
                 //theVision.m_ImageTmpBW8.SetSize(g_Grabber.m_ImageSizeX[0],g_Grabber.m_ImageSizeY[0]);
-                //theVision.m_ImageTmpBW8.SetSize(g_Grabber.m_ImageSizeX[0]*4,g_Grabber.m_ImageSizeY[0]);
+                theVision.m_ImageTmpBW8.SetSize(g_Grabber.m_ImageSizeX[0]*4,g_Grabber.m_ImageSizeY[0]);
                 theVision.m_ImageSizeX=g_Grabber.m_ImageSizeX[0];
                 theVision.m_ImageSizeY=g_Grabber.m_ImageSizeY[0];
 
@@ -92,6 +92,7 @@ void WINAPI GlobalCallbackFunctionY (PMCCALLBACKINFO CbInfo)
                         g_Grabber.m_ImageSizeX[1], g_Grabber.m_ImageSizeY[1], pData, g_Grabber.m_ImageSizeX[1]*8);
 
                 //theVision.m_ImageTmpBW8.SetSize(g_Grabber.m_ImageSizeX[1],g_Grabber.m_ImageSizeY[1]);
+                theVision.m_ImageTmpBW8.SetSize(g_Grabber.m_ImageSizeX[0]*4,g_Grabber.m_ImageSizeY[0]);
                 theVision.m_ImageSizeX=g_Grabber.m_ImageSizeX[1];
                 theVision.m_ImageSizeY=g_Grabber.m_ImageSizeY[1];
 

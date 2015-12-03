@@ -37,8 +37,8 @@ object frmProductParam: TfrmProductParam
     Top = 0
     Width = 761
     Height = 601
-    ActivePage = TabSheet1
-    TabIndex = 0
+    ActivePage = TabSheet2
+    TabIndex = 1
     TabOrder = 2
     object TabSheet1: TTabSheet
       Caption = #29986#21697#35215#26684
@@ -280,6 +280,7 @@ object frmProductParam: TfrmProductParam
           #24038#19979
           #21491#19979)
         TabOrder = 2
+        Visible = False
       end
       object m_nSBTColWord: TRadioGroup
         Left = 8
@@ -294,6 +295,7 @@ object frmProductParam: TfrmProductParam
           'A,B,C,D,........'
           '..........D,C,B,A')
         TabOrder = 3
+        Visible = False
       end
       object m_nSBTRowWord: TRadioGroup
         Left = 296
@@ -308,6 +310,7 @@ object frmProductParam: TfrmProductParam
           'A,B,C,D,........'
           '..........D,C,B,A')
         TabOrder = 4
+        Visible = False
       end
       object GroupBox1: TGroupBox
         Left = 8
@@ -395,11 +398,12 @@ object frmProductParam: TfrmProductParam
       ImageIndex = 1
       object GroupBox3: TGroupBox
         Left = 16
-        Top = 9
+        Top = 169
         Width = 257
         Height = 241
         Caption = #22522#26495#21443#25976
         TabOrder = 0
+        Visible = False
         object StaticText23: TStaticText
           Left = 32
           Top = 30
@@ -518,7 +522,7 @@ object frmProductParam: TfrmProductParam
       end
       object GroupBox4: TGroupBox
         Left = 16
-        Top = 264
+        Top = 416
         Width = 257
         Height = 121
         Caption = #40670#37327'CCD '#21443#25976
@@ -606,11 +610,12 @@ object frmProductParam: TfrmProductParam
       end
       object GroupBox12: TGroupBox
         Left = 16
-        Top = 392
+        Top = 88
         Width = 257
         Height = 73
         Caption = #22522#26495#27491#21453#38754'CCD '#21443#25976
         TabOrder = 3
+        Visible = False
         object Label1: TLabel
           Left = 21
           Top = 32
@@ -629,7 +634,7 @@ object frmProductParam: TfrmProductParam
       end
       object GroupBox13: TGroupBox
         Left = 16
-        Top = 472
+        Top = 8
         Width = 257
         Height = 73
         Caption = #23450#20301'CCD '#21443#25976

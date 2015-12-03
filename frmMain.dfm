@@ -1,11 +1,11 @@
 object fmMain: TfmMain
-  Left = 439
-  Top = 215
+  Left = 679
+  Top = 299
   BorderIcons = [biMinimize, biMaximize]
   BorderStyle = bsSingle
   Caption = 'fmMain'
-  ClientHeight = 569
-  ClientWidth = 921
+  ClientHeight = 566
+  ClientWidth = 1340
   Color = 13430215
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -22,25 +22,25 @@ object fmMain: TfmMain
   TextHeight = 13
   object Splitter1: TSplitter
     Left = 0
-    Top = 488
-    Width = 921
-    Height = 8
+    Top = 495
+    Width = 1340
+    Height = 9
     Cursor = crVSplit
     Align = alBottom
   end
   object Splitter2: TSplitter
-    Left = 479
+    Left = 835
     Top = 0
     Width = 5
-    Height = 488
+    Height = 495
     Cursor = crHSplit
     Align = alRight
   end
   object listHistory: TListBox
     Left = 0
-    Top = 496
-    Width = 921
-    Height = 73
+    Top = 504
+    Width = 1340
+    Height = 62
     Align = alBottom
     Color = clBlack
     Font.Charset = DEFAULT_CHARSET
@@ -55,15 +55,15 @@ object fmMain: TfmMain
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 479
-    Height = 488
+    Width = 835
+    Height = 495
     Align = alClient
     TabOrder = 1
     object Splitter3: TSplitter
       Left = 1
-      Top = 489
-      Width = 477
-      Height = 5
+      Top = 601
+      Width = 833
+      Height = 8
       Cursor = crVSplit
       Align = alTop
       Color = clMoneyGreen
@@ -71,9 +71,9 @@ object fmMain: TfmMain
     end
     object paintMap: TPaintBox
       Left = 1
-      Top = 494
-      Width = 477
-      Height = 278
+      Top = 609
+      Width = 833
+      Height = 77
       Align = alClient
       Color = clBtnFace
       ParentColor = False
@@ -82,39 +82,39 @@ object fmMain: TfmMain
     object ScrollBox1: TScrollBox
       Left = 1
       Top = 1
-      Width = 477
-      Height = 488
+      Width = 833
+      Height = 600
       Align = alTop
       TabOrder = 0
       object ImagePaintBox: TPaintBox
-        Left = 8
+        Left = 0
         Top = 0
         Width = 680
-        Height = 512
+        Height = 513
         OnMouseMove = ImagePaintBoxMouseMove
         OnPaint = ImagePaintBoxPaint
       end
     end
   end
   object Panel2: TPanel
-    Left = 484
+    Left = 840
     Top = 0
-    Width = 437
-    Height = 488
+    Width = 500
+    Height = 495
     Align = alRight
     TabOrder = 2
     object SpeedButton6: TSpeedButton
       Left = 8
-      Top = 600
-      Width = 129
+      Top = 544
+      Width = 121
       Height = 57
       Caption = #35036#20805' '#22522#26495' SBT'
       OnClick = SpeedButton6Click
     end
     object SpeedButton9: TSpeedButton
-      Left = 152
-      Top = 600
-      Width = 129
+      Left = 136
+      Top = 544
+      Width = 121
       Height = 57
       AllowAllUp = True
       GroupIndex = 1
@@ -122,8 +122,8 @@ object fmMain: TfmMain
       OnClick = SpeedButton9Click
     end
     object SpeedButton37: TSpeedButton
-      Left = 184
-      Top = 664
+      Left = 96
+      Top = 608
       Width = 65
       Height = 57
       Caption = 'Lot End'
@@ -132,10 +132,10 @@ object fmMain: TfmMain
     object PageControl1: TPageControl
       Left = 8
       Top = 8
-      Width = 425
-      Height = 577
-      ActivePage = tabCCD
-      TabIndex = 0
+      Width = 481
+      Height = 521
+      ActivePage = tabMarker
+      TabIndex = 5
       TabOrder = 0
       OnChange = PageControl1Change
       object tabCCD: TTabSheet
@@ -332,7 +332,7 @@ object fmMain: TfmMain
         end
         object GroupBox1: TGroupBox
           Left = 16
-          Top = 344
+          Top = 368
           Width = 281
           Height = 169
           Caption = #40670#37327' CCD'
@@ -717,7 +717,7 @@ object fmMain: TfmMain
         end
         object GroupBox3: TGroupBox
           Left = 16
-          Top = 288
+          Top = 256
           Width = 281
           Height = 105
           Caption = #22522#26495#26041#21521#27298#28204
@@ -1269,7 +1269,7 @@ object fmMain: TfmMain
         ParentFont = False
         object SpeedButton24: TSpeedButton
           Left = 264
-          Top = 248
+          Top = 256
           Width = 137
           Height = 57
           Caption = 'Active clientSMS'
@@ -1350,6 +1350,7 @@ object fmMain: TfmMain
           Width = 57
           Height = 33
           Caption = #36899#32218
+          Visible = False
           OnClick = SpeedButton35Click
         end
         object SpeedButton36: TSpeedButton
@@ -1367,6 +1368,7 @@ object fmMain: TfmMain
           Width = 137
           Height = 49
           Caption = 'Lot Map '#19978#20659
+          Visible = False
           OnClick = SpeedButton38Click
         end
         object textSMSStatus: TStaticText
@@ -1404,6 +1406,7 @@ object fmMain: TfmMain
           ParentColor = False
           ParentFont = False
           TabOrder = 1
+          Visible = False
         end
       end
       object tabInfo: TTabSheet
@@ -1477,6 +1480,7 @@ object fmMain: TfmMain
             Width = 48
             Height = 20
             Caption = 'Label3'
+            Visible = False
           end
           object labelSBTLotNo: TLabel
             Left = 152
@@ -1484,6 +1488,7 @@ object fmMain: TfmMain
             Width = 48
             Height = 20
             Caption = 'Label3'
+            Visible = False
           end
           object StaticText58: TStaticText
             Left = 16
@@ -1564,6 +1569,7 @@ object fmMain: TfmMain
             Color = clSkyBlue
             ParentColor = False
             TabOrder = 4
+            Visible = False
           end
           object StaticText2: TStaticText
             Left = 16
@@ -1580,6 +1586,7 @@ object fmMain: TfmMain
             Color = clSkyBlue
             ParentColor = False
             TabOrder = 5
+            Visible = False
           end
         end
         object GroupBox5: TGroupBox
@@ -1595,6 +1602,7 @@ object fmMain: TfmMain
           Font.Style = []
           ParentFont = False
           TabOrder = 1
+          Visible = False
           object Label1: TLabel
             Left = 24
             Top = 48
@@ -1709,18 +1717,20 @@ object fmMain: TfmMain
       object tabVisionLog: TTabSheet
         Caption = #40670#37327#36039#35338
         ImageIndex = 5
+        TabVisible = False
         object SpeedButton34: TSpeedButton
           Left = 384
           Top = 448
           Width = 23
           Height = 22
+          Visible = False
           OnClick = SpeedButton34Click
         end
         object listVisionLog: TListBox
           Left = 24
           Top = 12
           Width = 361
-          Height = 477
+          Height = 429
           Color = clMoneyGreen
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clGreen
@@ -1733,32 +1743,170 @@ object fmMain: TfmMain
         end
         object btnClearVisionLog: TBitBtn
           Left = 24
-          Top = 504
+          Top = 448
           Width = 105
           Height = 33
+          Hint = 'Vision'
           Caption = #37325#26032#35352#37636
           TabOrder = 1
-          OnClick = btnClearVisionLogClick
+          OnClick = btnClearLogClick
         end
         object BitBtn4: TBitBtn
           Left = 152
-          Top = 504
+          Top = 448
           Width = 105
           Height = 33
           Caption = #32080#25209' '#21152#32317
           TabOrder = 2
+          Visible = False
           OnClick = BitBtn4Click
         end
         object BitBtn11: TBitBtn
           Left = 280
-          Top = 504
+          Top = 448
           Width = 105
           Height = 33
           Caption = #21295#20986#27284#26696
           TabOrder = 3
+          Visible = False
           OnClick = BitBtn11Click
         end
       end
+      object tabMarker: TTabSheet
+        Caption = #38647#21051'Log'
+        ImageIndex = 7
+        object listMarkerLog: TListBox
+          Left = 24
+          Top = 12
+          Width = 425
+          Height = 429
+          Color = clMoneyGreen
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clGreen
+          Font.Height = -16
+          Font.Name = #26032#32048#26126#39636
+          Font.Style = []
+          ItemHeight = 16
+          ParentFont = False
+          TabOrder = 0
+        end
+        object btnClearMarkerLog: TBitBtn
+          Left = 24
+          Top = 448
+          Width = 105
+          Height = 33
+          Hint = 'Marker'
+          Caption = #37325#26032#35352#37636
+          TabOrder = 1
+          OnClick = btnClearLogClick
+        end
+      end
+      object tabAction: TTabSheet
+        Caption = #21205#20316'Log'
+        ImageIndex = 6
+        object listActionLog: TListBox
+          Left = 24
+          Top = 12
+          Width = 393
+          Height = 429
+          Color = clMoneyGreen
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clGreen
+          Font.Height = -16
+          Font.Name = #26032#32048#26126#39636
+          Font.Style = []
+          ItemHeight = 16
+          ParentFont = False
+          TabOrder = 0
+        end
+        object btnClearActionLog: TBitBtn
+          Left = 24
+          Top = 448
+          Width = 105
+          Height = 33
+          Hint = 'Action'
+          Caption = #37325#26032#35352#37636
+          TabOrder = 1
+          OnClick = btnClearLogClick
+        end
+      end
+      object tabError: TTabSheet
+        Caption = #37679#35492'Log'
+        ImageIndex = 8
+        object listErrorLog: TListBox
+          Left = 24
+          Top = 12
+          Width = 393
+          Height = 429
+          Color = clMoneyGreen
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clGreen
+          Font.Height = -16
+          Font.Name = #26032#32048#26126#39636
+          Font.Style = []
+          ItemHeight = 16
+          ParentFont = False
+          TabOrder = 0
+        end
+        object btnClearErrorLog: TBitBtn
+          Left = 24
+          Top = 448
+          Width = 105
+          Height = 33
+          Hint = 'Error'
+          Caption = #37325#26032#35352#37636
+          TabOrder = 1
+          OnClick = btnClearLogClick
+        end
+      end
+    end
+    object m_bIsRailLoad: TCheckBox
+      Left = 280
+      Top = 544
+      Width = 161
+      Height = 17
+      Caption = #20351#29992#27969#36947#20837#26009
+      TabOrder = 1
+    end
+    object m_bUseFMCCD: TCheckBox
+      Left = 280
+      Top = 592
+      Width = 161
+      Height = 17
+      Caption = #21855#29992#22522#26495#23450#20301
+      TabOrder = 2
+    end
+    object m_bUseLaserMark: TCheckBox
+      Left = 280
+      Top = 616
+      Width = 161
+      Height = 17
+      Caption = #21855#29992#38647#23556#21051#21360
+      TabOrder = 3
+    end
+    object m_bUseLaserCodeReader: TCheckBox
+      Left = 280
+      Top = 664
+      Width = 161
+      Height = 17
+      Caption = #21855#29992#21051#21360#23436#27298#26597
+      TabOrder = 4
+    end
+    object m_bShakeSubstarte: TCheckBox
+      Left = 280
+      Top = 568
+      Width = 161
+      Height = 17
+      Caption = #21560#21462#26178#38663#21205#22522#26495
+      TabOrder = 5
+    end
+    object m_bDoubleSide: TCheckBox
+      Left = 280
+      Top = 640
+      Width = 161
+      Height = 17
+      Caption = #21855#29992#38617#38754#38647#23556#21051#21360
+      TabOrder = 6
     end
   end
   object ImageList1: TImageList
@@ -4662,8 +4810,8 @@ object fmMain: TfmMain
   object timerSMS: TTimer
     Interval = 300
     OnTimer = timerSMSTimer
-    Left = 312
-    Top = 320
+    Left = 296
+    Top = 312
   end
   object ftpMap: TNMFTP
     Port = 21
@@ -4678,7 +4826,7 @@ object fmMain: TfmMain
     Passive = False
     FirewallType = FTUser
     FWAuthenticate = False
-    Left = 720
-    Top = 400
+    Left = 520
+    Top = 384
   end
 end

@@ -96,7 +96,7 @@ void WINAPI GlobalCallbackFunctionY (PMCCALLBACKINFO CbInfo)
                 theVision.m_ImageSizeX=g_Grabber.m_ImageSizeX[1];
                 theVision.m_ImageSizeY=g_Grabber.m_ImageSizeY[1];
 
-                theVision.RotateImage(180.0);
+                theVision.RotateImage(0.0);
 
                 // insert image processing here
                 g_Grabber.m_bValidImage[1]=true;
