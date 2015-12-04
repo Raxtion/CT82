@@ -240,6 +240,18 @@ __published:	// IDE-managed Components
     TEdit *m_editSCPickerPutSSPos;
     TStaticText *StaticText106;
         TStaticText *StaticText200;
+    TStaticText *StaticText95;
+    TStaticText *StaticText107;
+    TStaticText *StaticText108;
+    TEdit *m_dTableMarkPos2X1;
+    TEdit *m_dTableMarkPos2Y1;
+    TStaticText *StaticText109;
+    TStaticText *StaticText110;
+    TStaticText *StaticText111;
+    TStaticText *StaticText112;
+    TEdit *m_dTableMarkPos2Y0;
+    TEdit *m_dTableMarkPos2X0;
+    TStaticText *StaticText113;
         void __fastcall StaticText39Click(TObject *Sender);
 private:	// User declarations
 public:		// User declarations

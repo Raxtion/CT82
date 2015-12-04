@@ -32,6 +32,9 @@ __published:	// IDE-managed Components
         TCheckBox *m_bShakeSubstarte;
         TCheckBox *m_bUsePQC;
         TCheckBox *m_bDoubleSide;
+    TCheckBox *m_bUseFMCCD2;
+    void __fastcall m_bUseFMCCD2Click(TObject *Sender);
+    void __fastcall m_bUseFMCCDClick(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
         __fastcall TfmOption(TComponent* Owner);

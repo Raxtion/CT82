@@ -116,7 +116,6 @@ __published:	// IDE-managed Components
         TSpeedButton *SpeedButton19;
         TSpeedButton *SpeedButton20;
         TSpeedButton *SpeedButton21;
-        TTrackBar *TrackBar1;
         TTrackBar *TrackBar2;
         TLabel *labelLED0;
         TLabel *labelLED1;
@@ -199,6 +198,7 @@ __published:	// IDE-managed Components
     TBitBtn *btnClearMarkerLog;
     TBitBtn *btnClearActionLog;
     TBitBtn *btnClearErrorLog;
+    TTrackBar *TrackBar1;
         void __fastcall ImagePaintBoxMouseMove(TObject *Sender,
           TShiftState Shift, int X, int Y);
         void __fastcall btnFileOpenClick(TObject *Sender);

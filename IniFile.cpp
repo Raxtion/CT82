@@ -137,8 +137,9 @@ void __fastcall CIniFile::ProductFile(char *strFileName,bool bRead,int nMode)
                                                                                                                                
   DDXFile_Bool(bRead,pIniFile,Product_Section,"m_bIsRailLoad",m_bIsRailLoad,false);                                            
   DDXFile_Bool(bRead,pIniFile,Product_Section,"m_bReadVenderID",m_bReadVenderID,false);
-  DDXFile_Bool(bRead,pIniFile,Product_Section,"m_bUseFMCCD",m_bUseFMCCD,false);                                            
-  DDXFile_Bool(bRead,pIniFile,Product_Section,"m_bUseMapCCD",m_bUseMapCCD,false);                                              
+  DDXFile_Bool(bRead,pIniFile,Product_Section,"m_bUseFMCCD",m_bUseFMCCD,false);
+  DDXFile_Bool(bRead,pIniFile,Product_Section,"m_bUseFMCCD2",m_bUseFMCCD2,false);
+  DDXFile_Bool(bRead,pIniFile,Product_Section,"m_bUseMapCCD",m_bUseMapCCD,false);
   DDXFile_Bool(bRead,pIniFile,Product_Section,"m_bUseLaserMark",m_bUseLaserMark,false);                                        
   DDXFile_Bool(bRead,pIniFile,Product_Section,"m_bUseLaserCodeReader",m_bUseLaserCodeReader,false);                            
   DDXFile_Bool(bRead,pIniFile,Product_Section,"m_bUseCover",m_bUseCover,false);
@@ -179,7 +180,11 @@ void __fastcall CIniFile::ProductFile(char *strFileName,bool bRead,int nMode)
   DDXFile_Float(bRead,pIniFile,Product_Section,"m_dTableMarkPosX0",m_dTableMarkPosX[0],0.0);
   DDXFile_Float(bRead,pIniFile,Product_Section,"m_dTableMarkPosX1",m_dTableMarkPosX[1],0.0);
   DDXFile_Float(bRead,pIniFile,Product_Section,"m_dTableMarkPosY0",m_dTableMarkPosY[0],0.0);
-  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dTableMarkPosY1",m_dTableMarkPosY[1],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dTableMarkPosY1",m_dTableMarkPosY[1],0.0);  
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dTableMarkPos2X0",m_dTableMarkPos2X[0],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dTableMarkPos2X1",m_dTableMarkPos2X[1],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dTableMarkPos2Y0",m_dTableMarkPos2Y[0],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dTableMarkPos2Y1",m_dTableMarkPos2Y[1],0.0);
   DDXFile_Float(bRead,pIniFile,Product_Section,"m_dTableVenderCodePosX0",m_dTableVenderCodePosX[0],0.0);
   DDXFile_Float(bRead,pIniFile,Product_Section,"m_dTableVenderCodePosX1",m_dTableVenderCodePosX[1],0.0);
   DDXFile_Float(bRead,pIniFile,Product_Section,"m_dTableVenderCodePosY0",m_dTableVenderCodePosY[0],0.0);

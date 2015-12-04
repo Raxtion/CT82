@@ -122,8 +122,10 @@ public:
   double m_dSpaPickerThrowPos;
 
   double m_dTablePutDownPos[2];         //0:Rear Table 1:Front Table
-  double m_dTableMarkPosX[2];
-  double m_dTableMarkPosY[2];
+  double m_dTableMarkPosX[2];           //the first point for detect substrate Positive/Back and count the rotation angle
+  double m_dTableMarkPosY[2];           //the first point for detect substrate Positive/Back and count the rotation angle
+  double m_dTableMarkPos2X[2];          //the second point for count the rotation angle
+  double m_dTableMarkPos2Y[2];          //the second point for count the rotation angle
   double m_dTableVenderCodePosX[2];
   double m_dTableVenderCodePosY[2];
 
@@ -149,6 +151,7 @@ public:
   bool m_bReadVenderID;
   bool m_bUseVenderMap;
   bool m_bUseFMCCD;
+  bool m_bUseFMCCD2;
   bool m_bUseMapCCD;
 
   bool m_bUseLaserMark;

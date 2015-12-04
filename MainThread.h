@@ -23,8 +23,11 @@ struct ProductInfo
         int m_nIndex;
         int m_nMapOK;                        //Map OK
         int m_nMapNG;                        //Map NG
+        double m_dOffsetAngle;               //Angle for Laser
         double m_nOffsetX;                   //FM CCD for Laser
         double m_nOffsetY;
+        double m_nOffset2X;                  //FM CCD for Laser
+        double m_nOffset2Y;
         AnsiString m_strVenderID;
         AnsiString m_strLotID;               //Laser print ID
         AnsiString m_strBoatID;

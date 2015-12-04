@@ -1,6 +1,6 @@
 object fmOption: TfmOption
-  Left = 865
-  Top = 80
+  Left = 656
+  Top = 189
   BorderStyle = bsDialog
   Caption = 'fmOption'
   ClientHeight = 414
@@ -46,7 +46,7 @@ object fmOption: TfmOption
       TabOrder = 0
     end
     object m_bReadVenderID: TCheckBox
-      Left = 24
+      Left = 256
       Top = 200
       Width = 161
       Height = 17
@@ -61,10 +61,11 @@ object fmOption: TfmOption
       Height = 17
       Caption = #21855#29992#22522#26495#23450#20301
       TabOrder = 2
+      OnClick = m_bUseFMCCDClick
     end
     object m_bUseMapCCD: TCheckBox
-      Left = 24
-      Top = 176
+      Left = 256
+      Top = 152
       Width = 161
       Height = 17
       Caption = #21855#29992#40670#37327#21151#33021
@@ -73,7 +74,7 @@ object fmOption: TfmOption
     end
     object m_bUseLaserMark: TCheckBox
       Left = 24
-      Top = 104
+      Top = 128
       Width = 161
       Height = 17
       Caption = #21855#29992#38647#23556#21051#21360
@@ -81,7 +82,7 @@ object fmOption: TfmOption
     end
     object m_bUseLaserCodeReader: TCheckBox
       Left = 24
-      Top = 152
+      Top = 176
       Width = 161
       Height = 17
       Caption = #21855#29992#21051#21360#23436#27298#26597
@@ -151,11 +152,20 @@ object fmOption: TfmOption
     end
     object m_bDoubleSide: TCheckBox
       Left = 24
-      Top = 128
+      Top = 152
       Width = 201
       Height = 17
       Caption = #21855#29992#38617#38754#38647#23556#21051#21360
       TabOrder = 13
+    end
+    object m_bUseFMCCD2: TCheckBox
+      Left = 24
+      Top = 104
+      Width = 161
+      Height = 17
+      Caption = #21855#29992#20559#35282#35036#27491
+      TabOrder = 14
+      OnClick = m_bUseFMCCD2Click
     end
   end
   object m_nUseTable: TRadioGroup

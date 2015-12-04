@@ -400,6 +400,10 @@ void __fastcall TfmMain::btnMachineParaClick(TObject *Sender)
         DDX_Float(bRead,g_IniFile.m_dTableMarkPosY[1],pMachineDlg->m_dTableMarkPosY1);
         DDX_Float(bRead,g_IniFile.m_dTableVenderCodePosX[1],pMachineDlg->m_dTableVenderCodePosX1);
         DDX_Float(bRead,g_IniFile.m_dTableVenderCodePosY[1],pMachineDlg->m_dTableVenderCodePosY1);
+        DDX_Float(bRead,g_IniFile.m_dTableMarkPos2X[0],pMachineDlg->m_dTableMarkPos2X0);
+        DDX_Float(bRead,g_IniFile.m_dTableMarkPos2Y[0],pMachineDlg->m_dTableMarkPos2Y0);
+        DDX_Float(bRead,g_IniFile.m_dTableMarkPos2X[1],pMachineDlg->m_dTableMarkPos2X1);
+        DDX_Float(bRead,g_IniFile.m_dTableMarkPos2Y[1],pMachineDlg->m_dTableMarkPos2Y1);
 
         DDX_Float(bRead,g_IniFile.m_dTableLaserPos[0],pMachineDlg->m_dTableLaserPos0);
         DDX_Float(bRead,g_IniFile.m_dTableLaserCodePosX[0],pMachineDlg->m_dTableLaserCodePosX0);
@@ -762,6 +766,7 @@ void __fastcall TfmMain::btnOptionClick(TObject *Sender)
         DDX_Check(bRead,g_IniFile.m_bReadVenderID,pWnd->m_bReadVenderID);
 
         DDX_Check(bRead,g_IniFile.m_bUseFMCCD,pWnd->m_bUseFMCCD);
+        DDX_Check(bRead,g_IniFile.m_bUseFMCCD2,pWnd->m_bUseFMCCD2);
         DDX_Check(bRead,g_IniFile.m_bUseMapCCD,pWnd->m_bUseMapCCD);
 
         DDX_Check(bRead,g_IniFile.m_bUseLaserMark,pWnd->m_bUseLaserMark);
@@ -792,6 +797,7 @@ void __fastcall TfmMain::btnOptionClick(TObject *Sender)
                 DDX_Check(bRead,g_IniFile.m_bReadVenderID,pWnd->m_bReadVenderID);
 
                 DDX_Check(bRead,g_IniFile.m_bUseFMCCD,pWnd->m_bUseFMCCD);
+                DDX_Check(bRead,g_IniFile.m_bUseFMCCD2,pWnd->m_bUseFMCCD2);
                 DDX_Check(bRead,g_IniFile.m_bUseMapCCD,pWnd->m_bUseMapCCD);
 
                 DDX_Check(bRead,g_IniFile.m_bUseLaserMark,pWnd->m_bUseLaserMark);
@@ -1538,6 +1544,7 @@ void __fastcall TfmMain::timerMessageTimer(TObject *Sender)
         this->m_bIsRailLoad->Checked = g_IniFile.m_bIsRailLoad;
         this->m_bShakeSubstarte->Checked = g_IniFile.m_bShakeSubstarte;
         this->m_bUseFMCCD->Checked = g_IniFile.m_bUseFMCCD;
+        this->m_bUseFMCCD2->Checked = g_IniFile.m_bUseFMCCD2;
         this->m_bUseLaserMark->Checked = g_IniFile.m_bUseLaserMark;
         this->m_bDoubleSide->Checked = g_IniFile.m_bDoubleSide;
         this->m_bUseLaserCodeReader->Checked = g_IniFile.m_bUseLaserCodeReader;

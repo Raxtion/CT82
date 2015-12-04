@@ -400,6 +400,10 @@ void __fastcall TfmMain::btnMachineParaClick(TObject *Sender)
         DDX_Float(bRead,g_IniFile.m_dTableMarkPosY[1],pMachineDlg->m_dTableMarkPosY1);
         DDX_Float(bRead,g_IniFile.m_dTableVenderCodePosX[1],pMachineDlg->m_dTableVenderCodePosX1);
         DDX_Float(bRead,g_IniFile.m_dTableVenderCodePosY[1],pMachineDlg->m_dTableVenderCodePosY1);
+        DDX_Float(bRead,g_IniFile.m_dTableMarkPos2X[0],pMachineDlg->m_dTableMarkPos2X0);
+        DDX_Float(bRead,g_IniFile.m_dTableMarkPos2Y[0],pMachineDlg->m_dTableMarkPos2Y0);
+        DDX_Float(bRead,g_IniFile.m_dTableMarkPos2X[1],pMachineDlg->m_dTableMarkPos2X1);
+        DDX_Float(bRead,g_IniFile.m_dTableMarkPos2Y[1],pMachineDlg->m_dTableMarkPos2Y1);
 
         DDX_Float(bRead,g_IniFile.m_dTableLaserPos[0],pMachineDlg->m_dTableLaserPos0);
         DDX_Float(bRead,g_IniFile.m_dTableLaserCodePosX[0],pMachineDlg->m_dTableLaserCodePosX0);
@@ -2765,15 +2769,19 @@ void __fastcall TfmMain::btnClearLogClick(TObject *Sender)
         }
         else if (pBtn->Hint == "Marker")
         {
-
+            listMarkerLog->Clear();
+            g_pMainThread->m_listMarkerLog.push_back("Marker Log Clear.");
+            g_pMainThread->m_listLog.push_back("Marker Log Clear.");
         }
         else if (pBtn->Hint == "Action")
         {
-
+            listActionLog->Clear();
+            g_pMainThread->m_listLog.push_back("Action Log Clear.");
         }
         else if (pBtn->Hint == "Error")
         {
-
+            listErrorLog->Clear();
+            g_pMainThread->m_listLog.push_back("Error Log Clear.");
         }
 }
 //---------------------------------------------------------------------------

@@ -1,11 +1,11 @@
 object fmMain: TfmMain
-  Left = 679
-  Top = 299
+  Left = -4
+  Top = -4
   BorderIcons = [biMinimize, biMaximize]
   BorderStyle = bsSingle
   Caption = 'fmMain'
-  ClientHeight = 566
-  ClientWidth = 1340
+  ClientHeight = 824
+  ClientWidth = 1600
   Color = 13430215
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -22,25 +22,25 @@ object fmMain: TfmMain
   TextHeight = 13
   object Splitter1: TSplitter
     Left = 0
-    Top = 495
-    Width = 1340
+    Top = 715
+    Width = 1600
     Height = 9
     Cursor = crVSplit
     Align = alBottom
   end
   object Splitter2: TSplitter
-    Left = 835
+    Left = 1095
     Top = 0
     Width = 5
-    Height = 495
+    Height = 715
     Cursor = crHSplit
     Align = alRight
   end
   object listHistory: TListBox
     Left = 0
-    Top = 504
-    Width = 1340
-    Height = 62
+    Top = 724
+    Width = 1600
+    Height = 100
     Align = alBottom
     Color = clBlack
     Font.Charset = DEFAULT_CHARSET
@@ -55,14 +55,14 @@ object fmMain: TfmMain
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 835
-    Height = 495
+    Width = 1095
+    Height = 715
     Align = alClient
     TabOrder = 1
     object Splitter3: TSplitter
       Left = 1
       Top = 601
-      Width = 833
+      Width = 1093
       Height = 8
       Cursor = crVSplit
       Align = alTop
@@ -72,8 +72,8 @@ object fmMain: TfmMain
     object paintMap: TPaintBox
       Left = 1
       Top = 609
-      Width = 833
-      Height = 77
+      Width = 1093
+      Height = 105
       Align = alClient
       Color = clBtnFace
       ParentColor = False
@@ -82,7 +82,7 @@ object fmMain: TfmMain
     object ScrollBox1: TScrollBox
       Left = 1
       Top = 1
-      Width = 833
+      Width = 1093
       Height = 600
       Align = alTop
       TabOrder = 0
@@ -97,10 +97,10 @@ object fmMain: TfmMain
     end
   end
   object Panel2: TPanel
-    Left = 840
+    Left = 1100
     Top = 0
     Width = 500
-    Height = 495
+    Height = 715
     Align = alRight
     TabOrder = 2
     object SpeedButton6: TSpeedButton
@@ -134,8 +134,8 @@ object fmMain: TfmMain
       Top = 8
       Width = 481
       Height = 521
-      ActivePage = tabMarker
-      TabIndex = 5
+      ActivePage = tabCCD
+      TabIndex = 0
       TabOrder = 0
       OnChange = PageControl1Change
       object tabCCD: TTabSheet
@@ -331,8 +331,8 @@ object fmMain: TfmMain
             FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
         end
         object GroupBox1: TGroupBox
-          Left = 16
-          Top = 368
+          Left = 8
+          Top = 264
           Width = 281
           Height = 169
           Caption = #40670#37327' CCD'
@@ -1878,7 +1878,7 @@ object fmMain: TfmMain
     end
     object m_bUseLaserMark: TCheckBox
       Left = 280
-      Top = 616
+      Top = 640
       Width = 161
       Height = 17
       Caption = #21855#29992#38647#23556#21051#21360
@@ -1886,7 +1886,7 @@ object fmMain: TfmMain
     end
     object m_bUseLaserCodeReader: TCheckBox
       Left = 280
-      Top = 664
+      Top = 688
       Width = 161
       Height = 17
       Caption = #21855#29992#21051#21360#23436#27298#26597
@@ -1902,11 +1902,19 @@ object fmMain: TfmMain
     end
     object m_bDoubleSide: TCheckBox
       Left = 280
-      Top = 640
+      Top = 664
       Width = 161
       Height = 17
       Caption = #21855#29992#38617#38754#38647#23556#21051#21360
       TabOrder = 6
+    end
+    object m_bUseFMCCD2: TCheckBox
+      Left = 280
+      Top = 616
+      Width = 161
+      Height = 17
+      Caption = #21855#29992#20559#35282#35036#27491
+      TabOrder = 7
     end
   end
   object ImageList1: TImageList
