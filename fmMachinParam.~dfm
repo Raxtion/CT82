@@ -1,6 +1,6 @@
 object frmMachineParam: TfrmMachineParam
-  Left = 553
-  Top = 74
+  Left = 402
+  Top = 37
   Width = 1013
   Height = 747
   Caption = 'frmMachineParam'
@@ -35,8 +35,8 @@ object frmMachineParam: TfrmMachineParam
     Top = 0
     Width = 841
     Height = 713
-    ActivePage = TabSheet5
-    TabIndex = 1
+    ActivePage = TabSheet4
+    TabIndex = 0
     TabOrder = 3
     object TabSheet4: TTabSheet
       Caption = #39340#36948#36895#24230

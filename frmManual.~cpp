@@ -151,6 +151,8 @@ void __fastcall TfmManual::btnFTXClick(TObject *Sender)
         dPos[6]=g_IniFile.m_dTableLaserCodePosX[1];
         dPos[7]=g_IniFile.m_dTableLaserCodePosY[1];
         dPos[8]=g_IniFile.m_dTablePickUpPos[1];
+        dPos[18]=g_IniFile.m_dTableMarkPos2X[1];
+        dPos[19]=g_IniFile.m_dTableMarkPos2Y[1];
 
         dPos[9]=g_IniFile.m_dTablePutDownPos[0];
         dPos[10]=g_IniFile.m_dTableMarkPosX[0];
@@ -161,7 +163,8 @@ void __fastcall TfmManual::btnFTXClick(TObject *Sender)
         dPos[15]=g_IniFile.m_dTableLaserCodePosX[0];
         dPos[16]=g_IniFile.m_dTableLaserCodePosY[0];
         dPos[17]=g_IniFile.m_dTablePickUpPos[0];
-
+        dPos[20]=g_IniFile.m_dTableMarkPos2X[0];
+        dPos[21]=g_IniFile.m_dTableMarkPos2Y[0];
 
         TSpeedButton *pBtn=(TSpeedButton *)Sender;
         //pBtn->Enabled=false;
@@ -356,6 +359,32 @@ void __fastcall TfmManual::StaticText1Click(TObject *Sender)
         pMotorCheckDlg=new TfrmMotorCheck(this);
         pMotorCheckDlg->m_nActiveAxis=pText->Tag;
         pMotorCheckDlg->Caption=pText->Caption;
+        //Change Arrow Glyph
+        if (pMotorCheckDlg->m_nActiveAxis == 4 || pMotorCheckDlg->m_nActiveAxis == 5)
+        {
+                int nRWDLeft = pMotorCheckDlg->btnRWD->Left;
+                int nFWDLeft = pMotorCheckDlg->btnFWD->Left;
+                pMotorCheckDlg->btnFWD->Glyph->LoadFromFile(sPath+"\\bmp\\right.bmp");
+                pMotorCheckDlg->btnRWD->Glyph->LoadFromFile(sPath+"\\bmp\\left.bmp");
+                pMotorCheckDlg->btnFWD->Left = nRWDLeft;
+                pMotorCheckDlg->btnRWD->Left = nFWDLeft;
+        }
+        else if (pMotorCheckDlg->m_nActiveAxis == 6)
+        {
+                pMotorCheckDlg->btnFWD->Glyph->LoadFromFile(sPath+"\\bmp\\up.bmp");
+                pMotorCheckDlg->btnRWD->Glyph->LoadFromFile(sPath+"\\bmp\\down.bmp");
+        }
+        else if (pMotorCheckDlg->m_nActiveAxis == 7)
+        {
+                pMotorCheckDlg->btnFWD->Glyph->LoadFromFile(sPath+"\\bmp\\down.bmp");
+                pMotorCheckDlg->btnRWD->Glyph->LoadFromFile(sPath+"\\bmp\\up.bmp");
+        }
+        else if (pMotorCheckDlg->m_nActiveAxis == 8)
+        {
+                pMotorCheckDlg->btnRWD->Glyph->LoadFromFile(sPath+"\\bmp\\up.bmp");
+                pMotorCheckDlg->btnFWD->Glyph->LoadFromFile(sPath+"\\bmp\\down.bmp");
+        }
+
 
         if(pMotorCheckDlg->ShowModal()==mrOk)
         {

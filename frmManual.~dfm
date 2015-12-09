@@ -1,11 +1,11 @@
 object fmManual: TfmManual
   Tag = 6
-  Left = 391
-  Top = 27
+  Left = 397
+  Top = 17
   Hint = 'Y'
   BorderStyle = bsDialog
   Caption = 'fmManual'
-  ClientHeight = 820
+  ClientHeight = 781
   ClientWidth = 1083
   Color = 13430215
   Font.Charset = DEFAULT_CHARSET
@@ -970,7 +970,7 @@ object fmManual: TfmManual
         end
         object SpeedButton22: TSpeedButton
           Tag = 8
-          Left = 576
+          Left = 584
           Top = 30
           Width = 41
           Height = 28
@@ -980,7 +980,7 @@ object fmManual: TfmManual
         end
         object SpeedButton17: TSpeedButton
           Tag = 3
-          Left = 576
+          Left = 584
           Top = 62
           Width = 41
           Height = 28
@@ -990,7 +990,7 @@ object fmManual: TfmManual
         end
         object SpeedButton18: TSpeedButton
           Tag = 4
-          Left = 576
+          Left = 584
           Top = 94
           Width = 41
           Height = 28
@@ -1000,7 +1000,7 @@ object fmManual: TfmManual
         end
         object SpeedButton21: TSpeedButton
           Tag = 6
-          Left = 576
+          Left = 584
           Top = 126
           Width = 41
           Height = 28
@@ -1011,7 +1011,7 @@ object fmManual: TfmManual
         end
         object SpeedButton20: TSpeedButton
           Tag = 7
-          Left = 576
+          Left = 584
           Top = 158
           Width = 41
           Height = 28
@@ -1171,6 +1171,26 @@ object fmManual: TfmManual
           Width = 40
           Height = 16
           Caption = 'X4(U)'
+        end
+        object SpeedButton39: TSpeedButton
+          Tag = 18
+          Left = 584
+          Top = 62
+          Width = 41
+          Height = 28
+          Hint = 'X'
+          Caption = 'GO!'
+          OnClick = btnFTXClick
+        end
+        object SpeedButton40: TSpeedButton
+          Tag = 19
+          Left = 584
+          Top = 94
+          Width = 41
+          Height = 28
+          Hint = 'Y'
+          Caption = 'GO!'
+          OnClick = btnFTXClick
         end
         object StaticText13: TStaticText
           Tag = 4
@@ -1332,7 +1352,7 @@ object fmManual: TfmManual
           OnClick = StaticText1Click
         end
         object m_dTableVenderCodePosX1: TEdit
-          Left = 448
+          Left = 456
           Top = 62
           Width = 81
           Height = 24
@@ -1340,7 +1360,7 @@ object fmManual: TfmManual
           Text = 'editPickSpacerPosY'
         end
         object m_dTableVenderCodePosY1: TEdit
-          Left = 448
+          Left = 456
           Top = 94
           Width = 81
           Height = 24
@@ -1348,7 +1368,7 @@ object fmManual: TfmManual
           Text = 'editPickSpacerPosY'
         end
         object StaticText30: TStaticText
-          Left = 536
+          Left = 544
           Top = 62
           Width = 30
           Height = 28
@@ -1363,7 +1383,7 @@ object fmManual: TfmManual
           TabOrder = 13
         end
         object StaticText31: TStaticText
-          Left = 536
+          Left = 544
           Top = 94
           Width = 30
           Height = 28
@@ -1422,7 +1442,7 @@ object fmManual: TfmManual
           Tag = 4
           Left = 320
           Top = 126
-          Width = 122
+          Width = 129
           Height = 28
           Hint = 'm_dTableLaserCodePosX1'
           AutoSize = False
@@ -1441,7 +1461,7 @@ object fmManual: TfmManual
           Tag = 5
           Left = 320
           Top = 158
-          Width = 122
+          Width = 129
           Height = 28
           Hint = 'm_dTableLaserCodePosY1'
           AutoSize = False
@@ -1457,7 +1477,7 @@ object fmManual: TfmManual
           OnClick = StaticText1Click
         end
         object m_dTableLaserCodePosX1: TEdit
-          Left = 448
+          Left = 456
           Top = 126
           Width = 81
           Height = 24
@@ -1466,7 +1486,7 @@ object fmManual: TfmManual
           Visible = False
         end
         object m_dTableLaserCodePosY1: TEdit
-          Left = 448
+          Left = 456
           Top = 158
           Width = 81
           Height = 24
@@ -1475,7 +1495,7 @@ object fmManual: TfmManual
           Visible = False
         end
         object StaticText36: TStaticText
-          Left = 536
+          Left = 544
           Top = 126
           Width = 30
           Height = 28
@@ -1491,7 +1511,7 @@ object fmManual: TfmManual
           Visible = False
         end
         object StaticText40: TStaticText
-          Left = 536
+          Left = 544
           Top = 158
           Width = 30
           Height = 28
@@ -1510,7 +1530,7 @@ object fmManual: TfmManual
           Tag = 4
           Left = 320
           Top = 30
-          Width = 122
+          Width = 129
           Height = 28
           Hint = 'm_dTablePickUpPos1'
           AutoSize = False
@@ -1525,7 +1545,7 @@ object fmManual: TfmManual
           OnClick = StaticText1Click
         end
         object m_dTablePickUpPos1: TEdit
-          Left = 448
+          Left = 456
           Top = 30
           Width = 81
           Height = 24
@@ -1533,7 +1553,7 @@ object fmManual: TfmManual
           Text = 'editPickSpacerPosY'
         end
         object StaticText42: TStaticText
-          Left = 536
+          Left = 544
           Top = 30
           Width = 30
           Height = 28
@@ -1546,6 +1566,88 @@ object fmManual: TfmManual
           Color = clSkyBlue
           ParentColor = False
           TabOrder = 26
+        end
+        object StaticText3: TStaticText
+          Tag = 4
+          Left = 320
+          Top = 62
+          Width = 129
+          Height = 28
+          Hint = 'm_dTableMarkPos2X1'
+          AutoSize = False
+          BevelInner = bvSpace
+          BevelKind = bkSoft
+          BevelOuter = bvNone
+          BorderStyle = sbsSingle
+          Caption = #38651#30524#23450#20301#20301#32622'2(X)'
+          Color = clSkyBlue
+          ParentColor = False
+          TabOrder = 27
+          OnClick = StaticText1Click
+        end
+        object m_dTableMarkPos2X1: TEdit
+          Left = 456
+          Top = 62
+          Width = 81
+          Height = 24
+          TabOrder = 28
+          Text = 'editPickSpacerPosY'
+        end
+        object StaticText5: TStaticText
+          Left = 544
+          Top = 62
+          Width = 30
+          Height = 28
+          AutoSize = False
+          BevelInner = bvSpace
+          BevelKind = bkSoft
+          BevelOuter = bvNone
+          BorderStyle = sbsSingle
+          Caption = 'mm'
+          Color = clSkyBlue
+          ParentColor = False
+          TabOrder = 29
+        end
+        object StaticText7: TStaticText
+          Tag = 8
+          Left = 320
+          Top = 94
+          Width = 129
+          Height = 28
+          Hint = 'm_dTableMarkPos2Y1'
+          AutoSize = False
+          BevelInner = bvSpace
+          BevelKind = bkSoft
+          BevelOuter = bvNone
+          BorderStyle = sbsSingle
+          Caption = #38651#30524#23450#20301#20301#32622'2(Y)'
+          Color = clSkyBlue
+          ParentColor = False
+          TabOrder = 30
+          OnClick = StaticText1Click
+        end
+        object m_dTableMarkPos2Y1: TEdit
+          Left = 456
+          Top = 94
+          Width = 81
+          Height = 24
+          TabOrder = 31
+          Text = 'editPickSpacerPosY1'
+        end
+        object StaticText8: TStaticText
+          Left = 544
+          Top = 94
+          Width = 30
+          Height = 28
+          AutoSize = False
+          BevelInner = bvSpace
+          BevelKind = bkSoft
+          BevelOuter = bvNone
+          BorderStyle = sbsSingle
+          Caption = 'mm'
+          Color = clSkyBlue
+          ParentColor = False
+          TabOrder = 32
         end
       end
       object GroupBox7: TGroupBox
@@ -1597,7 +1699,7 @@ object fmManual: TfmManual
         end
         object SpeedButton31: TSpeedButton
           Tag = 17
-          Left = 576
+          Left = 584
           Top = 30
           Width = 41
           Height = 28
@@ -1607,7 +1709,7 @@ object fmManual: TfmManual
         end
         object SpeedButton26: TSpeedButton
           Tag = 12
-          Left = 576
+          Left = 584
           Top = 62
           Width = 41
           Height = 28
@@ -1617,7 +1719,7 @@ object fmManual: TfmManual
         end
         object SpeedButton30: TSpeedButton
           Tag = 15
-          Left = 576
+          Left = 584
           Top = 126
           Width = 41
           Height = 28
@@ -1628,7 +1730,7 @@ object fmManual: TfmManual
         end
         object SpeedButton29: TSpeedButton
           Tag = 16
-          Left = 576
+          Left = 584
           Top = 158
           Width = 41
           Height = 28
@@ -1639,7 +1741,7 @@ object fmManual: TfmManual
         end
         object SpeedButton27: TSpeedButton
           Tag = 13
-          Left = 576
+          Left = 584
           Top = 94
           Width = 41
           Height = 28
@@ -1789,6 +1891,26 @@ object fmManual: TfmManual
           Width = 48
           Height = 16
           Caption = 'X12(U)'
+        end
+        object SpeedButton41: TSpeedButton
+          Tag = 20
+          Left = 584
+          Top = 62
+          Width = 41
+          Height = 28
+          Hint = 'X1'
+          Caption = 'GO!'
+          OnClick = btnFTXClick
+        end
+        object SpeedButton43: TSpeedButton
+          Tag = 21
+          Left = 584
+          Top = 94
+          Width = 41
+          Height = 28
+          Hint = 'Y'
+          Caption = 'GO!'
+          OnClick = btnFTXClick
         end
         object StaticText43: TStaticText
           Tag = 5
@@ -1950,7 +2072,7 @@ object fmManual: TfmManual
           OnClick = StaticText1Click
         end
         object m_dTableVenderCodePosX0: TEdit
-          Left = 448
+          Left = 456
           Top = 62
           Width = 81
           Height = 24
@@ -1958,7 +2080,7 @@ object fmManual: TfmManual
           Text = 'editPickSpacerPosY'
         end
         object m_dTableVenderCodePosY0: TEdit
-          Left = 448
+          Left = 456
           Top = 94
           Width = 81
           Height = 24
@@ -1966,7 +2088,7 @@ object fmManual: TfmManual
           Text = 'editPickSpacerPosY'
         end
         object StaticText60: TStaticText
-          Left = 536
+          Left = 544
           Top = 62
           Width = 30
           Height = 28
@@ -1981,7 +2103,7 @@ object fmManual: TfmManual
           TabOrder = 13
         end
         object StaticText61: TStaticText
-          Left = 536
+          Left = 544
           Top = 94
           Width = 30
           Height = 28
@@ -2040,7 +2162,7 @@ object fmManual: TfmManual
           Tag = 8
           Left = 320
           Top = 126
-          Width = 122
+          Width = 129
           Height = 28
           Hint = 'm_dTableLaserCodePosX0'
           AutoSize = False
@@ -2059,7 +2181,7 @@ object fmManual: TfmManual
           Tag = 5
           Left = 320
           Top = 158
-          Width = 122
+          Width = 129
           Height = 28
           Hint = 'm_dTableLaserCodePosY0'
           AutoSize = False
@@ -2075,7 +2197,7 @@ object fmManual: TfmManual
           OnClick = StaticText1Click
         end
         object m_dTableLaserCodePosX0: TEdit
-          Left = 448
+          Left = 456
           Top = 126
           Width = 81
           Height = 24
@@ -2084,7 +2206,7 @@ object fmManual: TfmManual
           Visible = False
         end
         object m_dTableLaserCodePosY0: TEdit
-          Left = 448
+          Left = 456
           Top = 158
           Width = 81
           Height = 24
@@ -2093,7 +2215,7 @@ object fmManual: TfmManual
           Visible = False
         end
         object StaticText66: TStaticText
-          Left = 536
+          Left = 544
           Top = 126
           Width = 30
           Height = 28
@@ -2109,7 +2231,7 @@ object fmManual: TfmManual
           Visible = False
         end
         object StaticText67: TStaticText
-          Left = 536
+          Left = 544
           Top = 158
           Width = 30
           Height = 28
@@ -2128,7 +2250,7 @@ object fmManual: TfmManual
           Tag = 5
           Left = 320
           Top = 30
-          Width = 122
+          Width = 129
           Height = 28
           Hint = 'm_dTablePickUpPos0'
           AutoSize = False
@@ -2143,7 +2265,7 @@ object fmManual: TfmManual
           OnClick = StaticText1Click
         end
         object m_dTablePickUpPos0: TEdit
-          Left = 448
+          Left = 456
           Top = 30
           Width = 81
           Height = 24
@@ -2151,7 +2273,7 @@ object fmManual: TfmManual
           Text = 'editPickSpacerPosY'
         end
         object StaticText69: TStaticText
-          Left = 536
+          Left = 544
           Top = 30
           Width = 30
           Height = 28
@@ -2164,6 +2286,88 @@ object fmManual: TfmManual
           Color = clSkyBlue
           ParentColor = False
           TabOrder = 26
+        end
+        object StaticText11: TStaticText
+          Tag = 5
+          Left = 320
+          Top = 62
+          Width = 129
+          Height = 28
+          Hint = 'm_dTableMarkPosX0'
+          AutoSize = False
+          BevelInner = bvSpace
+          BevelKind = bkSoft
+          BevelOuter = bvNone
+          BorderStyle = sbsSingle
+          Caption = #38651#30524#23450#20301#20301#32622'2(X)'
+          Color = clSkyBlue
+          ParentColor = False
+          TabOrder = 27
+          OnClick = StaticText1Click
+        end
+        object StaticText12: TStaticText
+          Tag = 8
+          Left = 320
+          Top = 94
+          Width = 129
+          Height = 28
+          Hint = 'm_dTableMarkPosY0'
+          AutoSize = False
+          BevelInner = bvSpace
+          BevelKind = bkSoft
+          BevelOuter = bvNone
+          BorderStyle = sbsSingle
+          Caption = #38651#30524#23450#20301#20301#32622'2(Y)'
+          Color = clSkyBlue
+          ParentColor = False
+          TabOrder = 28
+          OnClick = StaticText1Click
+        end
+        object m_dTableMarkPos2X0: TEdit
+          Left = 456
+          Top = 62
+          Width = 81
+          Height = 24
+          TabOrder = 29
+          Text = 'editPickSpacerPosY'
+        end
+        object m_dTableMarkPos2Y0: TEdit
+          Left = 456
+          Top = 94
+          Width = 81
+          Height = 24
+          TabOrder = 30
+          Text = 'editPickSpacerPosY'
+        end
+        object StaticText14: TStaticText
+          Left = 544
+          Top = 62
+          Width = 30
+          Height = 28
+          AutoSize = False
+          BevelInner = bvSpace
+          BevelKind = bkSoft
+          BevelOuter = bvNone
+          BorderStyle = sbsSingle
+          Caption = 'mm'
+          Color = clSkyBlue
+          ParentColor = False
+          TabOrder = 31
+        end
+        object StaticText16: TStaticText
+          Left = 544
+          Top = 94
+          Width = 30
+          Height = 28
+          AutoSize = False
+          BevelInner = bvSpace
+          BevelKind = bkSoft
+          BevelOuter = bvNone
+          BorderStyle = sbsSingle
+          Caption = 'mm'
+          Color = clSkyBlue
+          ParentColor = False
+          TabOrder = 32
         end
       end
     end

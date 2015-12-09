@@ -356,9 +356,38 @@ void __fastcall TfmManual::StaticText1Click(TObject *Sender)
         TStaticText *pText=(TStaticText *)Sender;
         TfrmMotorCheck *pMotorCheckDlg;
 
+        AnsiString sPath = ExtractFilePath(Application->ExeName);
+        sPath = StringReplace(sPath, "\\exe\\", "",TReplaceFlags());
+
         pMotorCheckDlg=new TfrmMotorCheck(this);
         pMotorCheckDlg->m_nActiveAxis=pText->Tag;
         pMotorCheckDlg->Caption=pText->Caption;
+        //Change Arrow Glyph
+        if (pMotorCheckDlg->m_nActiveAxis == 4 || pMotorCheckDlg->m_nActiveAxis == 5)
+        {
+                int nRWDLeft = pMotorCheckDlg->btnRWD->Left;
+                int nFWDLeft = pMotorCheckDlg->btnFWD->Left;
+                pMotorCheckDlg->btnFWD->Glyph->LoadFromFile(sPath+"\\bmp\\right.bmp");
+                pMotorCheckDlg->btnRWD->Glyph->LoadFromFile(sPath+"\\bmp\\left.bmp");
+                pMotorCheckDlg->btnFWD->Left = nRWDLeft;
+                pMotorCheckDlg->btnRWD->Left = nFWDLeft;
+        }
+        else if (pMotorCheckDlg->m_nActiveAxis == 6)
+        {
+                pMotorCheckDlg->btnFWD->Glyph->LoadFromFile(sPath+"\\bmp\\up.bmp");
+                pMotorCheckDlg->btnRWD->Glyph->LoadFromFile(sPath+"\\bmp\\down.bmp");
+        }
+        else if (pMotorCheckDlg->m_nActiveAxis == 7)
+        {
+                pMotorCheckDlg->btnFWD->Glyph->LoadFromFile(sPath+"\\bmp\\down.bmp");
+                pMotorCheckDlg->btnRWD->Glyph->LoadFromFile(sPath+"\\bmp\\up.bmp");
+        }
+        else if (pMotorCheckDlg->m_nActiveAxis == 8)
+        {
+                pMotorCheckDlg->btnRWD->Glyph->LoadFromFile(sPath+"\\bmp\\up.bmp");
+                pMotorCheckDlg->btnFWD->Glyph->LoadFromFile(sPath+"\\bmp\\down.bmp");
+        }
+
 
         if(pMotorCheckDlg->ShowModal()==mrOk)
         {

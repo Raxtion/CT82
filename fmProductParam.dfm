@@ -1,6 +1,6 @@
 object frmProductParam: TfrmProductParam
-  Left = 424
-  Top = 312
+  Left = 296
+  Top = 101
   BorderStyle = bsDialog
   Caption = 'frmProductParam'
   ClientHeight = 607
@@ -613,9 +613,8 @@ object frmProductParam: TfrmProductParam
         Top = 88
         Width = 257
         Height = 73
-        Caption = #22522#26495#27491#21453#38754'CCD '#21443#25976
+        Caption = #23450#20301'CCD '#21443#25976'2'
         TabOrder = 3
-        Visible = False
         object Label1: TLabel
           Left = 21
           Top = 32

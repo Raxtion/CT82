@@ -1715,7 +1715,7 @@ void __fastcall TfmMain::timerCommTimer(TObject *Sender)
                                 bRet=g_Laser.SetText(g_IniFile.m_nLaserProgramNo[nIndex],0,GetSchedule(g_pMainThread->m_nLaserCount).c_str());
                                 bRet=g_Laser.SetText(g_IniFile.m_nLaserProgramNo[nIndex],2,GetSchedule(g_pMainThread->m_nLaserCount).c_str());
                                 //Set Offset
-                                bRet=g_Laser.SetToolPosOffset(g_IniFile.m_nLaserProgramNo[nIndex],g_pMainThread->m_tmpProductInfo[nIndex % 2].m_nOffsetX,g_pMainThread->m_tmpProductInfo[nIndex % 2].m_nOffsetY,0.0);
+                                bRet=g_Laser.SetToolPosOffset(g_IniFile.m_nLaserProgramNo[nIndex],g_pMainThread->m_tmpProductInfo[nIndex % 2].m_nOffsetX,g_pMainThread->m_tmpProductInfo[nIndex % 2].m_nOffsetY,g_pMainThread->m_tmpProductInfo[nIndex % 2].m_dOffsetAngle);
                                 // bRet=true;
                                 if(bRet) g_pMainThread->m_listLaserRX.push_back("SET_LASER_OFFSET_OK");
                                 else g_pMainThread->m_listLaserRX.push_back("SET_LASER_OFFSET_NG");
