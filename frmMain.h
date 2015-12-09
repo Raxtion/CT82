@@ -89,8 +89,6 @@ __published:	// IDE-managed Components
         TServerSocket *serverCoverID;
         TServerSocket *serverBoatID;
         TGroupBox *GroupBox2;
-        TSpeedButton *SpeedButton4;
-        TSpeedButton *SpeedButton5;
         TCheckBox *checkShowSearchROI2;
         TCheckBox *checkShowPatternROI2;
         TCheckBox *checkShowResult2;
@@ -116,9 +114,7 @@ __published:	// IDE-managed Components
         TSpeedButton *SpeedButton19;
         TSpeedButton *SpeedButton20;
         TSpeedButton *SpeedButton21;
-        TTrackBar *TrackBar2;
         TLabel *labelLED0;
-        TLabel *labelLED1;
         TRadioGroup *radioTable;
         TGroupBox *GroupBox3;
         TBitBtn *BitBtn9;
@@ -200,6 +196,12 @@ __published:	// IDE-managed Components
     TBitBtn *btnClearErrorLog;
     TTrackBar *TrackBar1;
     TCheckBox *m_bUseFMCCD2;
+    TSpeedButton *SpeedButton1;
+    TSpeedButton *SpeedButton7;
+    TTrackBar *TrackBar2;
+    TLabel *labelLED1;
+    TSpeedButton *SpeedButton4;
+    TSpeedButton *SpeedButton5;
         void __fastcall ImagePaintBoxMouseMove(TObject *Sender,
           TShiftState Shift, int X, int Y);
         void __fastcall btnFileOpenClick(TObject *Sender);
@@ -328,6 +330,8 @@ __published:	// IDE-managed Components
         void __fastcall BitBtn4Click(TObject *Sender);
         void __fastcall BitBtn11Click(TObject *Sender);
         void __fastcall SpeedButton38Click(TObject *Sender);
+    void __fastcall SpeedButton5Click(TObject *Sender);
+    void __fastcall SpeedButton4Click(TObject *Sender);
 private:	// User declarations         
         void __fastcall CreateCaptionFile(TForm *pForm);
         void __fastcall ReadCaptionFile(TForm *pForm,int nLanguage=0);

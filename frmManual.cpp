@@ -151,6 +151,8 @@ void __fastcall TfmManual::btnFTXClick(TObject *Sender)
         dPos[6]=g_IniFile.m_dTableLaserCodePosX[1];
         dPos[7]=g_IniFile.m_dTableLaserCodePosY[1];
         dPos[8]=g_IniFile.m_dTablePickUpPos[1];
+        dPos[18]=g_IniFile.m_dTableMarkPos2X[1];
+        dPos[19]=g_IniFile.m_dTableMarkPos2Y[1];
 
         dPos[9]=g_IniFile.m_dTablePutDownPos[0];
         dPos[10]=g_IniFile.m_dTableMarkPosX[0];
@@ -161,7 +163,8 @@ void __fastcall TfmManual::btnFTXClick(TObject *Sender)
         dPos[15]=g_IniFile.m_dTableLaserCodePosX[0];
         dPos[16]=g_IniFile.m_dTableLaserCodePosY[0];
         dPos[17]=g_IniFile.m_dTablePickUpPos[0];
-
+        dPos[20]=g_IniFile.m_dTableMarkPos2X[0];
+        dPos[21]=g_IniFile.m_dTableMarkPos2Y[0];
 
         TSpeedButton *pBtn=(TSpeedButton *)Sender;
         //pBtn->Enabled=false;

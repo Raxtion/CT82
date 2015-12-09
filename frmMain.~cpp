@@ -309,12 +309,44 @@ void __fastcall TfmMain::btnIOCheckClick(TObject *Sender)
 
 void __fastcall TfmMain::btnMotorCheckClick(TObject *Sender)
 {
-        TfrmChoiceMotor *pChoiceMotorDlg=new TfrmChoiceMotor(this);
-     TfrmMotorCheck *pMotorCheckDlg;
+    TfrmChoiceMotor *pChoiceMotorDlg=new TfrmChoiceMotor(this);
+    TfrmMotorCheck *pMotorCheckDlg;
+
+    AnsiString sPath = ExtractFilePath(Application->ExeName);
+    sPath = StringReplace(sPath, "\\exe\\", "",TReplaceFlags());
 
     while(pChoiceMotorDlg->ShowModal()!=mrCancel)
     {
-        pMotorCheckDlg=new TfrmMotorCheck(this); 
+        pMotorCheckDlg=new TfrmMotorCheck(this);
+
+        //Change Arrow Glyph
+        if (pChoiceMotorDlg->m_nSelectAxis == 4 || pChoiceMotorDlg->m_nSelectAxis == 5)
+        {
+                int nRWDLeft = pMotorCheckDlg->btnRWD->Left;
+                int nFWDLeft = pMotorCheckDlg->btnFWD->Left;
+                pMotorCheckDlg->btnFWD->Glyph->LoadFromFile(sPath+"\\bmp\\right.bmp");
+                pMotorCheckDlg->btnRWD->Glyph->LoadFromFile(sPath+"\\bmp\\left.bmp");
+                pMotorCheckDlg->btnFWD->Left = nRWDLeft;
+                pMotorCheckDlg->btnRWD->Left = nFWDLeft;
+        }
+        else if (pChoiceMotorDlg->m_nSelectAxis == 6)
+        {
+                pMotorCheckDlg->btnFWD->Glyph->LoadFromFile(sPath+"\\bmp\\up.bmp");
+                pMotorCheckDlg->btnRWD->Glyph->LoadFromFile(sPath+"\\bmp\\down.bmp");
+        }
+        else if (pChoiceMotorDlg->m_nSelectAxis == 7)
+        {
+                pMotorCheckDlg->btnFWD->Glyph->LoadFromFile(sPath+"\\bmp\\down.bmp");
+                pMotorCheckDlg->btnRWD->Glyph->LoadFromFile(sPath+"\\bmp\\up.bmp");
+        }
+        else if (pChoiceMotorDlg->m_nSelectAxis == 8)
+        {
+                pMotorCheckDlg->btnRWD->Glyph->LoadFromFile(sPath+"\\bmp\\up.bmp");
+                pMotorCheckDlg->btnFWD->Glyph->LoadFromFile(sPath+"\\bmp\\down.bmp");
+        }
+
+
+
         pMotorCheckDlg->m_nActiveAxis=pChoiceMotorDlg->m_nSelectAxis;
         pMotorCheckDlg->Caption=pChoiceMotorDlg->m_strCaption;
         pMotorCheckDlg->ShowModal();
@@ -766,6 +798,7 @@ void __fastcall TfmMain::btnOptionClick(TObject *Sender)
         DDX_Check(bRead,g_IniFile.m_bReadVenderID,pWnd->m_bReadVenderID);
 
         DDX_Check(bRead,g_IniFile.m_bUseFMCCD,pWnd->m_bUseFMCCD);
+        DDX_Check(bRead,g_IniFile.m_bUseFMCCD2,pWnd->m_bUseFMCCD2);
         DDX_Check(bRead,g_IniFile.m_bUseMapCCD,pWnd->m_bUseMapCCD);
 
         DDX_Check(bRead,g_IniFile.m_bUseLaserMark,pWnd->m_bUseLaserMark);
@@ -796,6 +829,7 @@ void __fastcall TfmMain::btnOptionClick(TObject *Sender)
                 DDX_Check(bRead,g_IniFile.m_bReadVenderID,pWnd->m_bReadVenderID);
 
                 DDX_Check(bRead,g_IniFile.m_bUseFMCCD,pWnd->m_bUseFMCCD);
+                DDX_Check(bRead,g_IniFile.m_bUseFMCCD2,pWnd->m_bUseFMCCD2);
                 DDX_Check(bRead,g_IniFile.m_bUseMapCCD,pWnd->m_bUseMapCCD);
 
                 DDX_Check(bRead,g_IniFile.m_bUseLaserMark,pWnd->m_bUseLaserMark);
@@ -1542,6 +1576,7 @@ void __fastcall TfmMain::timerMessageTimer(TObject *Sender)
         this->m_bIsRailLoad->Checked = g_IniFile.m_bIsRailLoad;
         this->m_bShakeSubstarte->Checked = g_IniFile.m_bShakeSubstarte;
         this->m_bUseFMCCD->Checked = g_IniFile.m_bUseFMCCD;
+        this->m_bUseFMCCD2->Checked = g_IniFile.m_bUseFMCCD2;
         this->m_bUseLaserMark->Checked = g_IniFile.m_bUseLaserMark;
         this->m_bDoubleSide->Checked = g_IniFile.m_bDoubleSide;
         this->m_bUseLaserCodeReader->Checked = g_IniFile.m_bUseLaserCodeReader;
@@ -2074,7 +2109,7 @@ void __fastcall TfmMain::SpeedButton18Click(TObject *Sender)
 
         int nTable=radioTable->ItemIndex;
 
-         C_GetTime tm1MS(EX_SCALE::TIME_1MS,false);
+        C_GetTime tm1MS(EX_SCALE::TIME_1MS,false);
         tm1MS.timeStart(10000);
 
         g_MNet.AbsMove(Axis_Const::FTX,g_IniFile.m_dTableMarkPosX[nTable]);
@@ -2084,6 +2119,32 @@ void __fastcall TfmMain::SpeedButton18Click(TObject *Sender)
         {
                 if( g_MNet.IsPosDone(Axis_Const::FTX,g_IniFile.m_dTableMarkPosX[nTable])  &&
                         g_MNet.IsPosDone(Axis_Const::CCD,g_IniFile.m_dTableMarkPosY[nTable])) break;
+                if(tm1MS.timeUp()) break;
+                Application->ProcessMessages();
+        }
+
+        pBtn->Enabled=true;
+}
+//---------------------------------------------------------------------------
+void __fastcall TfmMain::SpeedButton4Click(TObject *Sender)
+{
+        if(!AxisMoveCheck()) return;
+
+        TSpeedButton *pBtn=(TSpeedButton *)Sender;
+        pBtn->Enabled=false;
+
+        int nTable=radioTable->ItemIndex;
+
+        C_GetTime tm1MS(EX_SCALE::TIME_1MS,false);
+        tm1MS.timeStart(10000);
+
+        g_MNet.AbsMove(Axis_Const::FTX,g_IniFile.m_dTableMarkPos2X[nTable]);
+        g_MNet.AbsMove(Axis_Const::CCD,g_IniFile.m_dTableMarkPos2Y[nTable]);
+
+        while(1)
+        {
+                if( g_MNet.IsPosDone(Axis_Const::FTX,g_IniFile.m_dTableMarkPos2X[nTable])  &&
+                        g_MNet.IsPosDone(Axis_Const::CCD,g_IniFile.m_dTableMarkPos2Y[nTable])) break;
                 if(tm1MS.timeUp()) break;
                 Application->ProcessMessages();
         }
@@ -2103,6 +2164,13 @@ void __fastcall TfmMain::BitBtn10Click(TObject *Sender)
         if(nFounds<1)
         {
                 ShowMessage("找不到標記!!");
+
+        }
+        else
+        {
+                double dX=theVision.GetMatchPosX(theVision.m_markMatch[1],1)-320.0;
+                double dY=theVision.GetMatchPosY(theVision.m_markMatch[1],1)-240.0;
+                AddList("2X="+FormatFloat("0.00 ",dX)+"2Y="+FormatFloat("0.00",dY));
 
         }
 
@@ -2175,9 +2243,6 @@ void __fastcall TfmMain::SpeedButton22Click(TObject *Sender)
         g_MNet.AbsMove(Axis_Const::FTX,g_IniFile.m_dTableMarkPosX[nTable]-dX*g_IniFile.m_dFMCCDResolution[0]);
         g_MNet.AbsMove(Axis_Const::CCD,g_IniFile.m_dTableMarkPosY[nTable]+dY*g_IniFile.m_dFMCCDResolution[1]);
 
-        //g_MNet.AbsMove(Axis_Const::FTX,g_IniFile.m_dTableMarkPosX[nTable]+dX*g_IniFile.m_dFMCCDResolution[0]);
-        //g_MNet.AbsMove(Axis_Const::CCD,g_IniFile.m_dTableMarkPosY[nTable]-dY*g_IniFile.m_dFMCCDResolution[1]);
-
         while(1)
         {
                 if( g_MNet.IsPosDone(Axis_Const::FTX,g_IniFile.m_dTableMarkPosX[nTable])  &&
@@ -2189,6 +2254,58 @@ void __fastcall TfmMain::SpeedButton22Click(TObject *Sender)
         pBtn->Enabled=true;
 }
 //---------------------------------------------------------------------------
+void __fastcall TfmMain::SpeedButton5Click(TObject *Sender)
+{
+        if(!AxisMoveCheck()) return;
+
+        TSpeedButton *pBtn=(TSpeedButton *)Sender;
+        pBtn->Enabled=false;
+
+        int  nFounds=0;
+        double dX=0;
+        double dY=0;
+
+        theVision.m_markMatch[1].SetMaxPositions(1);
+
+        nFounds=theVision.FindPatMatch(theVision.m_roiMark[1],theVision.m_markMatch[1]);
+
+        if(nFounds<1)
+        {
+                ShowMessage("找不到標記!!");
+                pBtn->Enabled=true;
+                return;
+
+        }
+        else
+        {
+                dX=theVision.GetMatchPosX(theVision.m_markMatch[1],1)-320.0;
+                dY=theVision.GetMatchPosY(theVision.m_markMatch[1],1)-240.0;
+                AddList("2X="+FormatFloat("0.00 ",dX)+"2Y="+FormatFloat("0.00",dY));
+
+        }
+
+        RefreshImage();
+
+        int nTable=radioTable->ItemIndex;
+
+        C_GetTime tm1MS(EX_SCALE::TIME_1MS,false);
+        tm1MS.timeStart(10000);
+
+        g_MNet.AbsMove(Axis_Const::FTX,g_IniFile.m_dTableMarkPos2X[nTable]-dX*g_IniFile.m_dFMCCDResolution[0]);
+        g_MNet.AbsMove(Axis_Const::CCD,g_IniFile.m_dTableMarkPos2Y[nTable]+dY*g_IniFile.m_dFMCCDResolution[1]);
+
+        while(1)
+        {
+                if( g_MNet.IsPosDone(Axis_Const::FTX,g_IniFile.m_dTableMarkPos2X[nTable])  &&
+                        g_MNet.IsPosDone(Axis_Const::CCD,g_IniFile.m_dTableMarkPos2Y[nTable])) break;
+                if(tm1MS.timeUp()) break;
+                Application->ProcessMessages();
+        }
+
+        pBtn->Enabled=true;
+}
+//---------------------------------------------------------------------------
+
 
 
 
@@ -2457,7 +2574,29 @@ void __fastcall TfmMain::SpeedButton30Click(TObject *Sender)
 
         DDX_Int(bRead,g_IniFile.m_nIssueQty,pWnd->m_nIssueQty);
 
-        if(pWnd->ShowModal()==mrOk)
+    while (1)
+    {
+        if (pWnd->ShowModal()== mrOk)
+        {
+
+            if (pWnd->m_strSMSUserID->Text == "")
+            {
+				Application->MessageBoxA("使用者ID不可以空白","Confirm",MB_OK);
+            }
+            else
+            {
+                bRead = false;
+                break;
+            }
+        }
+        else
+        {
+            break;
+        }
+    }
+
+        //if(pWnd->ShowModal()==mrOk)
+        if (bRead == false)
         {
                 bRead=false;
 
@@ -3025,5 +3164,6 @@ void __fastcall TfmMain::SpeedButton38Click(TObject *Sender)
 
 }
 //---------------------------------------------------------------------------
+
 
 

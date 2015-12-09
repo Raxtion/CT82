@@ -1,6 +1,6 @@
 object frmUserID: TfrmUserID
-  Left = 530
-  Top = 249
+  Left = 587
+  Top = 220
   Width = 340
   Height = 491
   Caption = #35531#36664#20837

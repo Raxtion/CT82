@@ -1570,25 +1570,19 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                         if(g_IniFile.m_bUseFMCCD)
                         {
                                 g_Motion.AbsMove(nAxisTable,g_IniFile.m_dTableMarkPosX[bFront]);
+                                g_Motion.AbsMove(Axis_Const::CCD,g_IniFile.m_dTableMarkPosY[bFront]);
                                 nThreadIndex++;
                         }
                         else nThreadIndex=nTagMapCCD;
                         break;
                 case 20:
-                        if(g_Motion.IsLastPosDone(nAxisTable))
-                        {
-                                g_Motion.AbsMove(Axis_Const::CCD,g_IniFile.m_dTableMarkPosY[bFront]);
-                                nThreadIndex++;
-                        }
-                        break;
-                case 21:
-                        if(g_Motion.IsLastPosDone(Axis_Const::CCD))
+                        if(g_Motion.IsLastPosDone(nAxisTable) && g_Motion.IsLastPosDone(Axis_Const::CCD))
                         {
                                 p_tm1MS->timeStart(500);
                                 nThreadIndex++;
                         }
                         break;
-                case 22:
+                case 21:
                         if(p_tm1MS->timeUp())
                         {
                                 g_Grabber.Grab(1);
@@ -1596,7 +1590,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                                 nThreadIndex++;
                         }
                         break;
-                case 23:
+                case 22:
                         if(g_Grabber.m_bValidImage[1])
                         {
                                 //LED OFF
@@ -1626,30 +1620,24 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                         break;
                 //___________________________________________________________\\
                 //使用電眼取得第二點Offset value
-                case 24:
-                case nTagFMCCD2:nThreadIndex=24;
+                case 23:
+                case nTagFMCCD2:nThreadIndex=23;
                         if(g_IniFile.m_bUseFMCCD2)
                         {
                                 g_Motion.AbsMove(nAxisTable,g_IniFile.m_dTableMarkPos2X[bFront]);
+                                g_Motion.AbsMove(Axis_Const::CCD,g_IniFile.m_dTableMarkPos2Y[bFront]);
                                 nThreadIndex++;
                         }
                         else nThreadIndex=nTagMapCCD;
                         break;
-                case 25:
-                        if(g_Motion.IsLastPosDone(nAxisTable))
-                        {
-                                g_Motion.AbsMove(Axis_Const::CCD,g_IniFile.m_dTableMarkPos2Y[bFront]);
-                                nThreadIndex++;
-                        }
-                        break;
-                case 26:
-                        if(g_Motion.IsLastPosDone(Axis_Const::CCD))
+                case 24:
+                        if(g_Motion.IsLastPosDone(nAxisTable) && g_Motion.IsLastPosDone(Axis_Const::CCD))
                         {
                                 p_tm1MS->timeStart(500);
                                 nThreadIndex++;
                         }
                         break;
-                case 27:
+                case 25:
                         if(p_tm1MS->timeUp())
                         {
                                 g_Grabber.Grab(1);
@@ -1657,15 +1645,15 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                                 nThreadIndex++;
                         }
                         break;
-                case 28:
+                case 26:
                         if(g_Grabber.m_bValidImage[1])
                         {
                                 //LED OFF
                                 //Process Image  get offset x,y
 
-                                theVision.m_markMatch[2].SetMaxPositions(1);
+                                theVision.m_markMatch[1].SetMaxPositions(1);
 
-                                nFounds=theVision.FindPatMatch(theVision.m_roiMark[2],theVision.m_markMatch[2]);
+                                nFounds=theVision.FindPatMatch(theVision.m_roiMark[1],theVision.m_markMatch[1]);
 
                                 if(nFounds<1)
                                 {
@@ -1674,8 +1662,8 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                                 }
                                 else
                                 {
-                                        double d2X=(theVision.GetMatchPosX(theVision.m_markMatch[2],2)-320.0)*g_IniFile.m_dFMCCDResolution[0] ;
-                                        double d2Y=(theVision.GetMatchPosY(theVision.m_markMatch[2],2)-240.0)*g_IniFile.m_dFMCCDResolution[1];
+                                        double d2X=(theVision.GetMatchPosX(theVision.m_markMatch[1],1)-320.0)*g_IniFile.m_dFMCCDResolution[0];
+                                        double d2Y=(theVision.GetMatchPosY(theVision.m_markMatch[1],1)-240.0)*g_IniFile.m_dFMCCDResolution[1];
                                         m_listLog.push_back("定位 Offset 2X="+FormatFloat("0.00 ",d2X)+"2Y="+FormatFloat("0.00",d2Y)+"mm");
 
                                         m_tmpProductInfo[bFront].m_nOffset2X=d2X;
@@ -1688,8 +1676,8 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                                         double dAy = g_IniFile.m_dTableMarkPosY[bFront];
                                         double dBx = g_IniFile.m_dTableMarkPos2X[bFront];
                                         double dBy = g_IniFile.m_dTableMarkPos2Y[bFront];
-                                        double dAngle0 = atan(fabs(dAy-dBy)/fabs(dAx-dBx))*180/3.141592653589793;
-                                        double dAngle1 = atan(fabs(dY+dAy-d2Y-dBy)/fabs(dX+dAx-d2X-dBx))*180/3.141592653589793;
+                                        double dAngle0; ((dAx-dBx)==0) ? dAngle0 = 0 : dAngle0 = atan((dAy-dBy)/(dAx-dBx))*180/3.141592653589793;
+                                        double dAngle1; ((dX+dAx-d2X-dBx)==0) ? dAngle1 = 0 : dAngle1 = atan((dY+dAy-d2Y-dBy)/(dX+dAx-d2X-dBx))*180/3.141592653589793;
 
                                         if (fabs(dAngle1-dAngle0)<180.0)
                                         {
@@ -1709,8 +1697,8 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                         else if(p_tm1MS->timeUp()) g_IniFile.m_nErrorCode=415;
                         break;
                 //___________________________________________________________\\
-                case 29:
-                case nTagMapCCD:nThreadIndex=29;
+                case 27:
+                case nTagMapCCD:nThreadIndex=27;
                         g_IniFile.m_bUseMapCCD=false;   //Option
                         if(g_IniFile.m_bUseMapCCD)
                         {
@@ -1720,7 +1708,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                         }
                         else nThreadIndex=nTagUnLockMapCCD;//nTagLaserMark;
                         break;
-                case 30:
+                case 28:
                        if(g_Motion.IsLastPosDone(nAxisTable)&& g_Motion.IsLastPosDone(Axis_Const::CCD))
                         {
                                 //LED on
@@ -1729,14 +1717,14 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                                 nThreadIndex++;
                         }
                         break;
-                case 31:
+                case 29:
                         if(p_tm1MS->timeUp())
                         {
                                 g_Grabber.Grab(0);
                                 nThreadIndex++;
                         }
                         break;
-                case 32:
+                case 30:
                         if(g_Grabber.m_bValidImage[0])
                         {
                                 theVision.MergeImage(nCCDIndex,g_IniFile.m_nImageWidth,g_IniFile.m_dImageAngle);
@@ -1745,7 +1733,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                                 else nThreadIndex=nTagMapCCD;
                         }
                         break;
-                case 33:
+                case 31:
                         nCCDIndex=0;
                         //LED Off
                         //LED Up
@@ -1760,14 +1748,14 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                         }
                         else nThreadIndex++;
                         break;
-                case 34:
+                case 32:
                         m_listVisionRX.clear();
                         if(bFront) m_listTX.push_back("PROCESS_MAP_FRONT");   //DoVisionProcess      //ExportMapFile
                         else m_listTX.push_back("PROCESS_MAP_REAR");
                         p_tm1MS->timeStart(3000);
                         nThreadIndex++;
                         break;
-                case 35:
+                case 33:
                         if(m_listVisionRX.size()>0)
                         {
                                 if(m_listVisionRX.back()=="PROCESS_MAP_DONE")
@@ -1798,14 +1786,14 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                         }
                         break;
                 //___________________________________________________________\\
-                case 36:
-                case nTagUnLockMapCCD:nThreadIndex=36;
+                case 34:
+                case nTagUnLockMapCCD:nThreadIndex=34;
                         m_bIsMapCCDLocked=false;
                         nThreadIndex++;
                         break;
                 //___________________________________________________________\\
-                case 37:
-                case nTagLaserMark:nThreadIndex=37;
+                case 35:
+                case nTagLaserMark:nThreadIndex=35;
                         if(g_IniFile.m_bUseLaserMark)
                         {
                                 if(!m_bLaserLocked)
@@ -1819,7 +1807,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                         }
                         else nThreadIndex=nTagTableFinish;
                         break;
-                case 38:
+                case 36:
                         if(g_Motion.IsLastPosDone(nAxisTable))
                         {
                                 //Select Laser File
@@ -1831,7 +1819,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                                 nThreadIndex++;
                         }
                          break;
-                case 39:
+                case 37:
                         if(m_listLaserRX.size()>0)
                         {
                                 if(m_listLaserRX.back()=="OPEN_LASER_OK") nThreadIndex++;
@@ -1846,12 +1834,12 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                         }
                         else if(p_tm1MS->timeUp()) g_IniFile.m_nErrorCode=416;
                         break;
-                case 40:
+                case 38:
                         g_SMSXML.QueryID();
                         p_tm1MS->timeStart(10000);
                         nThreadIndex++;
                         break;
-                case 41:
+                case 39:
                         if(g_SMSXML.m_strSerialID!="FAIL" && g_SMSXML.m_strSerialID!="NOT_VALID")
                         {
                                 m_listLog.push_back("取得雷刻ID "+g_SMSXML.m_strSerialID);
@@ -1859,7 +1847,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
 
                                 //Add to Marker Log
                                 AnsiString strLog;
-                                strLog="["+m_tmpProductInfo[bFront].m_strLotID+"]-->"+g_SMSXML.m_strSerialID;
+                                strLog="User ID:"+g_IniFile.m_strSMSUserID+" ["+m_tmpProductInfo[bFront].m_strLotID+"]-->"+g_SMSXML.m_strSerialID;
                                 m_listMarkerLog.push_back(strLog);
 
                                 nThreadIndex++;
@@ -1875,7 +1863,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                                 nThreadIndex--;
                         }
                         break;
-                case 42:
+                case 40:
                         m_listLaserRX.clear();
                         if(bFront) m_listTX.push_back("SET_LASER_OFFSET_FRONT_UP");
                         else m_listTX.push_back("SET_LASER_OFFSET_REAR_UP");
@@ -1883,7 +1871,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                         p_tm1MS->timeStart(10000);
                         nThreadIndex++;
                         break;
-                case 43:
+                case 41:
                         if(m_listLaserRX.size()>0)
                         {
                                  if(m_listLaserRX.back()=="SET_LASER_OFFSET_OK") nThreadIndex++;
@@ -1897,14 +1885,14 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                         }
                         if(p_tm1MS->timeUp()) g_IniFile.m_nErrorCode=420;
                         break;
-                case 44:
+                case 42:
                         m_listLaserRX.clear();
                         m_listTX.push_back("FIRE_LASER");
 
                         p_tm1MS->timeStart(10000);
                         nThreadIndex++;
                         break;
-                case 45:
+                case 43:
                         if(m_listLaserRX.size()>0)
                         {
                                  if(m_listLaserRX.back()=="FIRE_LASER_OK")
@@ -1930,7 +1918,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                         }
                         else if(p_tm1MS->timeUp()) g_IniFile.m_nErrorCode=421;
                         break;
-                case 46:
+                case 44:
                         m_listLaserRX.clear();
                         if(bFront) m_listTX.push_back("RESET_LASER_OFFSET_FRONT_UP");
                         else m_listTX.push_back("RESET_LASER_OFFSET_REAR_UP");
@@ -1938,7 +1926,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                         p_tm1MS->timeStart(10000);
                         nThreadIndex++;
                         break;
-                case 47:
+                case 45:
                         if(m_listLaserRX.size()>0)
                         {
                                  if(m_listLaserRX.back()=="RESET_LASER_OFFSET_OK")
@@ -1960,12 +1948,12 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                         }
                         else if(p_tm1MS->timeUp())  g_IniFile.m_nErrorCode=429;
                         break;
-               case 48:
+               case 46:
                         g_DIO.SetDO(oTableLock, false);
                         p_tm1MS->timeStart(3000);
                         nThreadIndex++;
                         break;
-               case 49:
+               case 47:
                         if(g_DIO.GetDI(iTableLockOff))
                         {
                                 p_tm1MS->timeStart(1000);
@@ -1973,7 +1961,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                         }
                         else if(p_tm1MS->timeUp()) bFront ? g_IniFile.m_nErrorCode=436 : g_IniFile.m_nErrorCode=437 ;
                         break;
-               case 50:
+               case 48:
                         //Flip Table
                         if (p_tm1MS->timeUp())
                         {
@@ -1982,7 +1970,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                                 nThreadIndex++;
                         }
                         break;
-               case 51:
+               case 49:
                         if(g_DIO.GetDI(iTableNegative))
                         {
                                 p_tm1MS->timeStart(1000);
@@ -1990,7 +1978,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                         }
                         else if(p_tm1MS->timeUp()) bFront ? g_IniFile.m_nErrorCode=434 : g_IniFile.m_nErrorCode=435 ;
                         break;
-               case 52:
+               case 50:
                         if(p_tm1MS->timeUp())
                         {
                                 g_DIO.SetDO(oTableLock, true);
@@ -1998,7 +1986,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                                 nThreadIndex++;
                         }
                         break;
-               case 53:
+               case 51:
                         if(g_DIO.GetDI(iTableLockOn))
                         {
                                 p_tm1MS->timeStart(1000);
@@ -2006,7 +1994,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                         }
                         else if(p_tm1MS->timeUp()) bFront ? g_IniFile.m_nErrorCode=402 : g_IniFile.m_nErrorCode=403 ;
                         break;
-               case 54:
+               case 52:
                         if(p_tm1MS->timeUp())
                         {
                                 //Select Laser File
@@ -2018,7 +2006,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                                 nThreadIndex++;
                         }
                          break;
-                case 55:
+                case 53:
                         if(m_listLaserRX.size()>0)
                         {
                                 if(m_listLaserRX.back()=="OPEN_LASER_OK") nThreadIndex++;
@@ -2033,12 +2021,12 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                         }
                         else if(p_tm1MS->timeUp()) g_IniFile.m_nErrorCode=416;
                         break;
-                case 56:
+                case 54:
                         //g_SMSXML.QueryID();          翻面不在取得lot member
                         p_tm1MS->timeStart(10000);
                         nThreadIndex++;
                         break;
-                case 57:
+                case 55:
                         if(g_SMSXML.m_strSerialID!="FAIL" && g_SMSXML.m_strSerialID!="NOT_VALID")
                         {
                                 m_listLog.push_back("取得雷刻ID "+g_SMSXML.m_strSerialID);
@@ -2057,7 +2045,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                                 nThreadIndex--;
                         }
                         break;
-                case 58:
+                case 56:
                         m_listLaserRX.clear();
                         if(bFront) m_listTX.push_back("SET_LASER_OFFSET_FRONT_DOWN");
                         else m_listTX.push_back("SET_LASER_OFFSET_REAR_DOWN");
@@ -2065,7 +2053,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                         p_tm1MS->timeStart(10000);
                         nThreadIndex++;
                         break;
-                case 59:
+                case 57:
                         if(m_listLaserRX.size()>0)
                         {
                                  if(m_listLaserRX.back()=="SET_LASER_OFFSET_OK") nThreadIndex++;
@@ -2079,14 +2067,14 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                         }
                         if(p_tm1MS->timeUp()) g_IniFile.m_nErrorCode=420;
                         break;
-                case 60:
+                case 58:
                         m_listLaserRX.clear();
                         m_listTX.push_back("FIRE_LASER");
 
                         p_tm1MS->timeStart(10000);
                         nThreadIndex++;
                         break;
-                case 61:
+                case 59:
                         if(m_listLaserRX.size()>0)
                         {
                                  if(m_listLaserRX.back()=="FIRE_LASER_OK")
@@ -2112,7 +2100,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                         }
                         else if(p_tm1MS->timeUp()) g_IniFile.m_nErrorCode=421;
                         break;
-                case 62:
+                case 60:
                         m_listLaserRX.clear();
                         if(bFront) m_listTX.push_back("RESET_LASER_OFFSET_FRONT_DOWN");
                         else m_listTX.push_back("RESET_LASER_OFFSET_REAR_DOWN");
@@ -2120,7 +2108,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                         p_tm1MS->timeStart(10000);
                         nThreadIndex++;
                         break;
-                case 63:
+                case 61:
                         if(m_listLaserRX.size()>0)
                         {
                                  if(m_listLaserRX.back()=="RESET_LASER_OFFSET_OK")
@@ -2137,12 +2125,12 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                         }
                         else if(p_tm1MS->timeUp())  g_IniFile.m_nErrorCode=429;
                         break;
-                case 64:
+                case 62:
                         g_DIO.SetDO(oTableLock, false);
                         p_tm1MS->timeStart(3000);
                         nThreadIndex++;
                         break;
-               case 65:
+               case 63:
                         if(g_DIO.GetDI(iTableLockOff))
                         {
                                 p_tm1MS->timeStart(1000);
@@ -2150,13 +2138,13 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                         }
                         else if(p_tm1MS->timeUp()) bFront ? g_IniFile.m_nErrorCode=436 : g_IniFile.m_nErrorCode=437 ;
                         break;
-               case 66:
+               case 64:
                         //Flip Table
                         g_DIO.SetDO(oTableFlip,false);
                         p_tm1MS->timeStart(3000);
                         nThreadIndex++;
                         break;
-               case 67:
+               case 65:
                         if(g_DIO.GetDI(iTablePositive))
                         {
                                 m_bLaserLocked=false;
@@ -2165,7 +2153,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                         }
                         else if(p_tm1MS->timeUp()) bFront ? g_IniFile.m_nErrorCode=400 : g_IniFile.m_nErrorCode=401 ;
                         break;
-               case 68:
+               case 66:
                         if(p_tm1MS->timeUp())
                         {
                                 g_DIO.SetDO(oTableLock, true);
@@ -2173,7 +2161,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                                 nThreadIndex++;
                         }
                         break;
-               case 69:
+               case 67:
                         if(g_DIO.GetDI(iTableLockOn))
                         {
                                 nThreadIndex++;
@@ -2181,29 +2169,29 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                         else if(p_tm1MS->timeUp()) bFront ? g_IniFile.m_nErrorCode=402 : g_IniFile.m_nErrorCode=403 ;
                         break;
                 //___________________________________________________________\\
-                case 70:
-                case nTagTableFinish:nThreadIndex=70;
+                case 68:
+                case nTagTableFinish:nThreadIndex=68;
                         g_Motion.AbsMove(nAxisTable,g_IniFile.m_dTablePickUpPos[bFront]);
                         if (bFront) g_DIO.SetDO(DO::Laser_BlowAir_Front, false);
                         else g_DIO.SetDO(DO::Laser_BlowAir_Rear, false);
                         nThreadIndex++;
                         break;
 
-                case 71:
+                case 69:
                         if(g_Motion.IsMotionDone(nAxisTable))
                         {
                                 p_tm1MS->timeStart(500);
                                 nThreadIndex++;
                         }
                         break;
-                case 72:
+                case 70:
                         if(p_tm1MS->timeUp())
                         {
                                 m_bTableReady[bFront]=true;
                                 nThreadIndex++;
                         }
                         break;
-                case 73:
+                case 71:
                         if(!m_bTableReady[bFront])
                         {
                                 nThreadIndex++;
