@@ -1,11 +1,11 @@
 object fmMain: TfmMain
-  Left = -2
-  Top = 178
+  Left = 4
+  Top = 103
   BorderIcons = [biMinimize, biMaximize]
   BorderStyle = bsSingle
   Caption = 'fmMain'
   ClientHeight = 713
-  ClientWidth = 1592
+  ClientWidth = 1588
   Color = 13430215
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -23,13 +23,13 @@ object fmMain: TfmMain
   object Splitter1: TSplitter
     Left = 0
     Top = 604
-    Width = 1592
+    Width = 1588
     Height = 9
     Cursor = crVSplit
     Align = alBottom
   end
   object Splitter2: TSplitter
-    Left = 1087
+    Left = 1083
     Top = 0
     Width = 5
     Height = 604
@@ -39,7 +39,7 @@ object fmMain: TfmMain
   object listHistory: TListBox
     Left = 0
     Top = 613
-    Width = 1592
+    Width = 1588
     Height = 100
     Align = alBottom
     Color = clBlack
@@ -55,14 +55,14 @@ object fmMain: TfmMain
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 1087
+    Width = 1083
     Height = 604
     Align = alClient
     TabOrder = 1
     object Splitter3: TSplitter
       Left = 1
       Top = 601
-      Width = 1085
+      Width = 1081
       Height = 8
       Cursor = crVSplit
       Align = alTop
@@ -72,8 +72,8 @@ object fmMain: TfmMain
     object paintMap: TPaintBox
       Left = 1
       Top = 609
-      Width = 1085
-      Height = 0
+      Width = 1081
+      Height = 105
       Align = alClient
       Color = clBtnFace
       ParentColor = False
@@ -82,7 +82,7 @@ object fmMain: TfmMain
     object ScrollBox1: TScrollBox
       Left = 1
       Top = 1
-      Width = 1085
+      Width = 1081
       Height = 600
       Align = alTop
       TabOrder = 0
@@ -97,7 +97,7 @@ object fmMain: TfmMain
     end
   end
   object Panel2: TPanel
-    Left = 1092
+    Left = 1088
     Top = 0
     Width = 500
     Height = 604

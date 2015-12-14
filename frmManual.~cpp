@@ -125,21 +125,7 @@ void __fastcall TfmManual::btnSSYClick(TObject *Sender)
 
 void __fastcall TfmManual::btnFTXClick(TObject *Sender)
 {
-        double dPos[20]={0};
-
-        if(!g_MNet.GetDI(DI::SS_SSuckerUp) || !g_MNet.GetDI(DI::SS_SpaSuckerUp))
-        {
-                ShowMessage("入料區吸盤沒有在上位");
-                return;
-        }
-
-        if(!g_MNet.GetDI(DI::SC_SSuckerUp))
-        {
-                ShowMessage("出料區吸盤沒有在上位");
-                return;
-        }
-
-        
+        double dPos[30]={0};
 
 
         dPos[0]=g_IniFile.m_dTablePutDownPos[1];
@@ -174,11 +160,33 @@ void __fastcall TfmManual::btnFTXClick(TObject *Sender)
         tm1MS.timeStart(10000);
 
         int nAxis;
-
         if(pBtn->Hint=="X") nAxis=Axis_Const::FTX;
         else if(pBtn->Hint=="X1") nAxis=Axis_Const::RTX;
         else if(pBtn->Hint=="Y") nAxis=Axis_Const::CCD;
-        //else nAxis=Axis_Const::CRD;
+
+        if(!g_MNet.GetDI(DI::SS_SSuckerUp) || !g_MNet.GetDI(DI::SS_SpaSuckerUp))
+        {
+                ShowMessage("入料區吸盤沒有在上位");
+                return;
+        }
+
+        if(!g_MNet.GetDI(DI::SC_SSuckerUp))
+        {
+                ShowMessage("出料區吸盤沒有在上位");
+                return;
+        }
+
+        if(pBtn->Hint=="X" && !g_MNet.GetDI(DI::FT_Positive))
+        {
+                ShowMessage("前平台沒有在正面");
+                return;
+        }
+        
+        if(pBtn->Hint=="X1" && !g_MNet.GetDI(DI::RT_Positive))
+        {
+                ShowMessage("後平台沒有在正面");
+                return;
+        }
 
         g_MNet.AbsMove(nAxis,dPos[pBtn->Tag]);
 
@@ -297,11 +305,17 @@ void __fastcall TfmManual::SpeedButton14Click(TObject *Sender)
         if (pBtn->Tag == 0 || pBtn->Tag == 8)
         {
                 //g_Motion.AbsMove(Axis_Const::SSY, 878.460);
-                if (g_MNet.GetAxisStatus(Axis_Const::SSY,Axis_Const::PEL) && g_MNet.GetDI(DI::FT_LockerOff) && !g_MNet.GetDI(DI::FT_Align2Off) && g_MNet.GetDI(DI::FT_AlignOff) && pBtn->Tag == 0 && (fabs(g_MNet.GetFeedbackPos(Axis_Const::FTX)-g_IniFile.m_dTableLaserPos[1])<=5 || fabs(g_MNet.GetFeedbackPos(Axis_Const::FTX)-g_IniFile.m_dTablePutDownPos[1])<=5))
+                if ( g_MNet.GetAxisStatus(Axis_Const::SSY,Axis_Const::PEL) && g_MNet.GetDI(DI::FT_LockerOff)
+                && !g_MNet.GetDI(DI::FT_Align2Off) && g_MNet.GetDI(DI::FT_AlignOff) && pBtn->Tag == 0
+                && (fabs(g_MNet.GetFeedbackPos(Axis_Const::FTX)-g_IniFile.m_dTableLaserPos[1])<=5
+                    || fabs(g_MNet.GetFeedbackPos(Axis_Const::FTX)-g_IniFile.m_dTablePutDownPos[1])<=5) )
                 {
                         g_MNet.SetDO(pBtn->Tag,!g_MNet.GetDO(pBtn->Tag));
                 }
-                else if (g_MNet.GetAxisStatus(Axis_Const::SSY,Axis_Const::PEL) && g_MNet.GetDI(DI::RT_LockerOff) && !g_MNet.GetDI(DI::RT_Align2Off) && g_MNet.GetDI(DI::RT_AlignOff) && pBtn->Tag == 8 && (fabs(g_MNet.GetFeedbackPos(Axis_Const::RTX)-g_IniFile.m_dTableLaserPos[0])<=5 || fabs(g_MNet.GetFeedbackPos(Axis_Const::RTX)-g_IniFile.m_dTablePutDownPos[0])<=5))
+                else if ( g_MNet.GetAxisStatus(Axis_Const::SSY,Axis_Const::PEL) && g_MNet.GetDI(DI::RT_LockerOff)
+                && !g_MNet.GetDI(DI::RT_Align2Off) && g_MNet.GetDI(DI::RT_AlignOff) && pBtn->Tag == 8
+                && (fabs(g_MNet.GetFeedbackPos(Axis_Const::RTX)-g_IniFile.m_dTableLaserPos[0])<=5
+                    || fabs(g_MNet.GetFeedbackPos(Axis_Const::RTX)-g_IniFile.m_dTablePutDownPos[0])<=5) )
                 {
                         g_MNet.SetDO(pBtn->Tag,!g_MNet.GetDO(pBtn->Tag));
                 }
@@ -355,6 +369,9 @@ void __fastcall TfmManual::StaticText1Click(TObject *Sender)
 
         TStaticText *pText=(TStaticText *)Sender;
         TfrmMotorCheck *pMotorCheckDlg;
+
+        AnsiString sPath = ExtractFilePath(Application->ExeName);
+        sPath = StringReplace(sPath, "\\exe\\", "",TReplaceFlags());
 
         pMotorCheckDlg=new TfrmMotorCheck(this);
         pMotorCheckDlg->m_nActiveAxis=pText->Tag;

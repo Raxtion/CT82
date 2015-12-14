@@ -504,6 +504,10 @@ void __fastcall TfmMain::btnMachineParaClick(TObject *Sender)
         DDX_Float(bRead,g_IniFile.m_dTableMarkPosY[1],pMachineDlg->m_dTableMarkPosY1);
         DDX_Float(bRead,g_IniFile.m_dTableVenderCodePosX[1],pMachineDlg->m_dTableVenderCodePosX1);
         DDX_Float(bRead,g_IniFile.m_dTableVenderCodePosY[1],pMachineDlg->m_dTableVenderCodePosY1);
+        DDX_Float(bRead,g_IniFile.m_dTableMarkPos2X[0],pMachineDlg->m_dTableMarkPos2X0);
+        DDX_Float(bRead,g_IniFile.m_dTableMarkPos2Y[0],pMachineDlg->m_dTableMarkPos2Y0);
+        DDX_Float(bRead,g_IniFile.m_dTableMarkPos2X[1],pMachineDlg->m_dTableMarkPos2X1);
+        DDX_Float(bRead,g_IniFile.m_dTableMarkPos2Y[1],pMachineDlg->m_dTableMarkPos2Y1);
 
         DDX_Float(bRead,g_IniFile.m_dTableLaserPos[0],pMachineDlg->m_dTableLaserPos0);
         DDX_Float(bRead,g_IniFile.m_dTableLaserCodePosX[0],pMachineDlg->m_dTableLaserCodePosX0);
@@ -723,6 +727,10 @@ void __fastcall TfmMain::btnMotorManulClick(TObject *Sender)
                 DDX_Float(bRead,g_IniFile.m_dTableMarkPosY[1],pWnd->m_dTableMarkPosY1);
                 DDX_Float(bRead,g_IniFile.m_dTableVenderCodePosX[1],pWnd->m_dTableVenderCodePosX1);
                 DDX_Float(bRead,g_IniFile.m_dTableVenderCodePosY[1],pWnd->m_dTableVenderCodePosY1);
+                DDX_Float(bRead,g_IniFile.m_dTableMarkPos2X[0],pWnd->m_dTableMarkPos2X0);
+                DDX_Float(bRead,g_IniFile.m_dTableMarkPos2Y[0],pWnd->m_dTableMarkPos2Y0);
+                DDX_Float(bRead,g_IniFile.m_dTableMarkPos2X[1],pWnd->m_dTableMarkPos2X1);
+                DDX_Float(bRead,g_IniFile.m_dTableMarkPos2Y[1],pWnd->m_dTableMarkPos2Y1);
 
                 DDX_Float(bRead,g_IniFile.m_dTableLaserPos[0],pWnd->m_dTableLaserPos0);
                 DDX_Float(bRead,g_IniFile.m_dTableLaserCodePosX[0],pWnd->m_dTableLaserCodePosX0);
@@ -745,8 +753,9 @@ void __fastcall TfmMain::btnMotorManulClick(TObject *Sender)
 
                 if(pWnd->ShowModal()==mrOk)
                 {
+                        if(Application->MessageBoxA("確定要儲存修改數據?","Confirm",MB_ICONQUESTION|MB_OKCANCEL)==IDCANCEL) return;
                         bRead=false;
-                
+
                 DDX_Float(bRead,g_IniFile.m_dSSPickerPickPos,pWnd->m_dSSPickerPickPos);
                 DDX_Float(bRead,g_IniFile.m_dSSPickerPickRailPos,pWnd->m_dSSPickerPickRailPos);
                 DDX_Float(bRead,g_IniFile.m_dSSPickerPutPos[0],pWnd->m_dSSPickerPutPos0);
@@ -764,6 +773,10 @@ void __fastcall TfmMain::btnMotorManulClick(TObject *Sender)
                 DDX_Float(bRead,g_IniFile.m_dTableMarkPosY[1],pWnd->m_dTableMarkPosY1);
                 DDX_Float(bRead,g_IniFile.m_dTableVenderCodePosX[1],pWnd->m_dTableVenderCodePosX1);
                 DDX_Float(bRead,g_IniFile.m_dTableVenderCodePosY[1],pWnd->m_dTableVenderCodePosY1);
+                DDX_Float(bRead,g_IniFile.m_dTableMarkPos2X[0],pWnd->m_dTableMarkPos2X0);
+                DDX_Float(bRead,g_IniFile.m_dTableMarkPos2Y[0],pWnd->m_dTableMarkPos2Y0);
+                DDX_Float(bRead,g_IniFile.m_dTableMarkPos2X[1],pWnd->m_dTableMarkPos2X1);
+                DDX_Float(bRead,g_IniFile.m_dTableMarkPos2Y[1],pWnd->m_dTableMarkPos2Y1);
 
                 DDX_Float(bRead,g_IniFile.m_dTableLaserPos[0],pWnd->m_dTableLaserPos0);
                 DDX_Float(bRead,g_IniFile.m_dTableLaserCodePosX[0],pWnd->m_dTableLaserCodePosX0);
@@ -2112,12 +2125,16 @@ void __fastcall TfmMain::SpeedButton18Click(TObject *Sender)
         C_GetTime tm1MS(EX_SCALE::TIME_1MS,false);
         tm1MS.timeStart(10000);
 
-        g_MNet.AbsMove(Axis_Const::FTX,g_IniFile.m_dTableMarkPosX[nTable]);
+        int nAxis;
+        if(nTable==1) nAxis=Axis_Const::FTX;
+        else if(nTable==0) nAxis=Axis_Const::RTX;
+
+        g_MNet.AbsMove(nAxis,g_IniFile.m_dTableMarkPosX[nTable]);
         g_MNet.AbsMove(Axis_Const::CCD,g_IniFile.m_dTableMarkPosY[nTable]);
 
         while(1)
         {
-                if( g_MNet.IsPosDone(Axis_Const::FTX,g_IniFile.m_dTableMarkPosX[nTable])  &&
+                if( g_MNet.IsPosDone(nAxis,g_IniFile.m_dTableMarkPosX[nTable])  &&
                         g_MNet.IsPosDone(Axis_Const::CCD,g_IniFile.m_dTableMarkPosY[nTable])) break;
                 if(tm1MS.timeUp()) break;
                 Application->ProcessMessages();
@@ -2138,12 +2155,16 @@ void __fastcall TfmMain::SpeedButton4Click(TObject *Sender)
         C_GetTime tm1MS(EX_SCALE::TIME_1MS,false);
         tm1MS.timeStart(10000);
 
-        g_MNet.AbsMove(Axis_Const::FTX,g_IniFile.m_dTableMarkPos2X[nTable]);
+        int nAxis;
+        if(nTable==1) nAxis=Axis_Const::FTX;
+        else if(nTable==0) nAxis=Axis_Const::RTX;
+
+        g_MNet.AbsMove(nAxis,g_IniFile.m_dTableMarkPos2X[nTable]);
         g_MNet.AbsMove(Axis_Const::CCD,g_IniFile.m_dTableMarkPos2Y[nTable]);
 
         while(1)
         {
-                if( g_MNet.IsPosDone(Axis_Const::FTX,g_IniFile.m_dTableMarkPos2X[nTable])  &&
+                if( g_MNet.IsPosDone(nAxis,g_IniFile.m_dTableMarkPos2X[nTable])  &&
                         g_MNet.IsPosDone(Axis_Const::CCD,g_IniFile.m_dTableMarkPos2Y[nTable])) break;
                 if(tm1MS.timeUp()) break;
                 Application->ProcessMessages();

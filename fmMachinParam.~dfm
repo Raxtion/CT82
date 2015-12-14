@@ -1,6 +1,6 @@
 object frmMachineParam: TfrmMachineParam
-  Left = 402
-  Top = 37
+  Left = 184
+  Top = 71
   Width = 1013
   Height = 747
   Caption = 'frmMachineParam'
@@ -35,8 +35,8 @@ object frmMachineParam: TfrmMachineParam
     Top = 0
     Width = 841
     Height = 713
-    ActivePage = TabSheet4
-    TabIndex = 0
+    ActivePage = TabSheet5
+    TabIndex = 1
     TabOrder = 3
     object TabSheet4: TTabSheet
       Caption = #39340#36948#36895#24230
@@ -1568,7 +1568,6 @@ object frmMachineParam: TfrmMachineParam
           Color = clSkyBlue
           ParentColor = False
           TabOrder = 28
-          Visible = False
         end
         object StaticText108: TStaticText
           Tag = 8
@@ -1595,7 +1594,6 @@ object frmMachineParam: TfrmMachineParam
           Height = 24
           TabOrder = 30
           Text = 'editPickSpacerPosY'
-          Visible = False
         end
         object m_dTableMarkPos2Y1: TEdit
           Left = 152
@@ -1604,7 +1602,6 @@ object frmMachineParam: TfrmMachineParam
           Height = 24
           TabOrder = 31
           Text = 'editPickSpacerPosY'
-          Visible = False
         end
         object StaticText109: TStaticText
           Left = 240
@@ -1620,7 +1617,6 @@ object frmMachineParam: TfrmMachineParam
           Color = clSkyBlue
           ParentColor = False
           TabOrder = 32
-          Visible = False
         end
       end
       object GroupBox11: TGroupBox
@@ -2037,7 +2033,6 @@ object frmMachineParam: TfrmMachineParam
           Color = clSkyBlue
           ParentColor = False
           TabOrder = 28
-          Visible = False
         end
         object StaticText112: TStaticText
           Tag = 8
@@ -2064,7 +2059,6 @@ object frmMachineParam: TfrmMachineParam
           Height = 24
           TabOrder = 30
           Text = 'editPickSpacerPosY'
-          Visible = False
         end
         object m_dTableMarkPos2X0: TEdit
           Left = 152
@@ -2073,7 +2067,6 @@ object frmMachineParam: TfrmMachineParam
           Height = 24
           TabOrder = 31
           Text = 'editPickSpacerPosY'
-          Visible = False
         end
         object StaticText113: TStaticText
           Left = 240
@@ -2089,7 +2082,6 @@ object frmMachineParam: TfrmMachineParam
           Color = clSkyBlue
           ParentColor = False
           TabOrder = 32
-          Visible = False
         end
       end
     end

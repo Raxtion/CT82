@@ -1,9 +1,9 @@
 object frmProductParam: TfrmProductParam
-  Left = 296
-  Top = 101
+  Left = 496
+  Top = 132
   BorderStyle = bsDialog
   Caption = 'frmProductParam'
-  ClientHeight = 607
+  ClientHeight = 601
   ClientWidth = 943
   Color = 13430215
   Font.Charset = DEFAULT_CHARSET

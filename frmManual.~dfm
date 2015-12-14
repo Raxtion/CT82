@@ -1,11 +1,11 @@
 object fmManual: TfmManual
   Tag = 6
-  Left = 397
-  Top = 17
+  Left = 473
+  Top = 3
   Hint = 'Y'
   BorderStyle = bsDialog
   Caption = 'fmManual'
-  ClientHeight = 781
+  ClientHeight = 821
   ClientWidth = 1083
   Color = 13430215
   Font.Charset = DEFAULT_CHARSET
@@ -28,7 +28,7 @@ object fmManual: TfmManual
   end
   object PageControl1: TPageControl
     Left = 0
-    Top = 8
+    Top = 0
     Width = 1457
     Height = 737
     ActivePage = TabSheet2

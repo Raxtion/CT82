@@ -717,16 +717,23 @@ void __fastcall CMainThread::doUnLoadRail(int &nThreadIndex)
                                         g_IniFile.m_strSMSLotNo="";
                                         g_IniFile.m_strSBTLotNo="";
                                         g_IniFile.m_strProductID="";
-
+                                        g_DIO.SetDO(DO::UnloaderEnough,true);
                                         g_IniFile.m_nErrorCode=913;
                                 }
 
-
+                                tm1MS.timeStart(500);
                                 nThreadIndex++;
 
                         }
                         else if(tm1MS.timeUp() && !g_DIO.GetDI(DI::SR2_PusherBwd)) g_IniFile.m_nErrorCode=43;
                         else if(tm1MS.timeUp() && !g_DIO.GetDI(DI::SR2_PusherUp)) g_IniFile.m_nErrorCode=44;
+                        break;
+                case 10:
+                        if(tm1MS.timeUp())
+                        {
+                                g_DIO.SetDO(DO::UnloaderEnough,false);
+                                nThreadIndex++;
+                        }
                         break;
                 default:
                         nThreadIndex=0;

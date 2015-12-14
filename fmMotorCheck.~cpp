@@ -111,6 +111,17 @@ void __fastcall TfrmMotorCheck::btnFWDMouseDown(TObject *Sender,
     case 3:dMoveSpeed=g_IniFile.m_dJogSpeed[m_nActiveAxis]*0.1;break;
     }
 
+    if(m_nActiveAxis == 4 && !g_MNet.GetDI(DI::FT_Positive))
+    {
+        ShowMessage("前平台沒有在正面");
+        return;
+    }
+    if(m_nActiveAxis == 5 && !g_MNet.GetDI(DI::RT_Positive))
+    {
+        ShowMessage("後平台沒有在正面");
+        return;
+    }
+
     g_MNet.SetMoveSpeed(m_nActiveAxis,dMoveSpeed,g_IniFile.m_dACCSpeed[m_nActiveAxis],g_IniFile.m_dDECSpeed[m_nActiveAxis]);
     if(dMovePitch==0)
     {

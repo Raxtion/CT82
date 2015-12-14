@@ -1,6 +1,6 @@
 object frmMotorCheck: TfrmMotorCheck
-  Left = 707
-  Top = 335
+  Left = 536
+  Top = 206
   BorderStyle = bsDialog
   Caption = #39340#36948#28204#35430
   ClientHeight = 354
@@ -303,7 +303,7 @@ object frmMotorCheck: TfrmMotorCheck
     Color = 13430215
     TabOrder = 4
     object btnFWD: TSpeedButton
-      Left = 78
+      Left = 70
       Top = 16
       Width = 56
       Height = 51
