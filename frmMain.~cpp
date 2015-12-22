@@ -22,6 +22,7 @@
 #include "C_GetTime.h"
 #include "frmManual.h"
 #include "DominoVision.h"
+#include "frmShowNow.h"
 
 #include "KenenceLaser.h"
 #include "frmOption.h"
@@ -209,6 +210,7 @@ void __fastcall TfmMain::btnSaveAsClick(TObject *Sender)
 
 void __fastcall TfmMain::FormCreate(TObject *Sender)
 {
+    fmShowNow = new TfmShowNow(this);
     g_pMainThread=new CMainThread(false);
 
     g_IniFile.MachineFile(true);
@@ -261,7 +263,6 @@ void __fastcall TfmMain::FormCreate(TObject *Sender)
     PageControl1->ActivePage=tabInfo;
 
     LoadProduct();
-
 }
 //---------------------------------------------------------------------------
 
@@ -1200,7 +1201,7 @@ void __fastcall TfmMain::FormClose(TObject *Sender, TCloseAction &Action)
         g_bStopMainThread=true;
         g_Grabber.StopLive(0);
         g_Grabber.StopLive(1);
-
+        delete fmShowNow;
 }
 //---------------------------------------------------------------------------
 
@@ -3186,5 +3187,23 @@ void __fastcall TfmMain::SpeedButton38Click(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+void __fastcall TfmMain::SpeedButton8Click(TObject *Sender)
+{
+    fmShowNow->Show();
+}
+//---------------------------------------------------------------------------
 
+void __fastcall TfmMain::timerLoaderSigTimer(TObject *Sender)
+{
+    timerLoaderSig->Enabled = false;
+    if (g_DIO.GetDI(DI::LoaderNoSubstrate))
+    {
+        this->SpeedButton9->Down = true;
+        g_pMainThread->m_bStopLoad = true;
+
+        if(g_pMainThread->m_bStopLoad) g_pMainThread->m_bLoadLifterReady=false;
+    }
+    timerLoaderSig->Enabled = true;
+}
+//---------------------------------------------------------------------------
 

@@ -1,6 +1,6 @@
 object fmMain: TfmMain
-  Left = 4
-  Top = 103
+  Left = 3
+  Top = 120
   BorderIcons = [biMinimize, biMaximize]
   BorderStyle = bsSingle
   Caption = 'fmMain'
@@ -122,20 +122,28 @@ object fmMain: TfmMain
       OnClick = SpeedButton9Click
     end
     object SpeedButton37: TSpeedButton
-      Left = 96
+      Left = 136
       Top = 608
-      Width = 65
+      Width = 121
       Height = 57
       Caption = 'Lot End'
       OnClick = SpeedButton37Click
+    end
+    object SpeedButton8: TSpeedButton
+      Left = 8
+      Top = 608
+      Width = 121
+      Height = 57
+      Caption = 'Show Subtrate Now'
+      OnClick = SpeedButton8Click
     end
     object PageControl1: TPageControl
       Left = 8
       Top = 8
       Width = 481
       Height = 521
-      ActivePage = tabCCD
-      TabIndex = 0
+      ActivePage = tabInfo
+      TabIndex = 4
       TabOrder = 0
       OnChange = PageControl1Change
       object tabCCD: TTabSheet
@@ -4851,5 +4859,11 @@ object fmMain: TfmMain
     FWAuthenticate = False
     Left = 520
     Top = 384
+  end
+  object timerLoaderSig: TTimer
+    Interval = 10
+    OnTimer = timerLoaderSigTimer
+    Left = 344
+    Top = 312
   end
 end

@@ -15,6 +15,7 @@
 #include "CEVision.h"
 #include "KenenceLaser.h"
 #include "SMSXML.h"
+#include "frmMain.h"
 
 #include <algorithm>
 
@@ -25,6 +26,7 @@ extern DominoVision g_Grabber;
 extern CKeyenceLaser g_Laser;
 bool g_bStopMainThread=false;
 extern CSMSXML g_SMSXML;
+extern TfmShowNow **pShowNow;
 
 CMainThread *g_pMainThread;
 //---------------------------------------------------------------------------
@@ -52,7 +54,7 @@ __fastcall CMainThread::CMainThread(bool CreateSuspended)
         m_bNeedHome=false;
         m_bStopBlower=false;
         bFrontTable=false;
-
+        pShowNow = &fmMain->pShowNow;
 }
 //---------------------------------------------------------------------------
 void __fastcall CMainThread::Execute()
@@ -434,6 +436,11 @@ bool __fastcall CMainThread::InitialMachine(int &nThreadIndex)
 
                         g_DIO.SetDO(DO::SS_SpaVacOff,true);
                         g_DIO.SetDO(DO::SS_SVacOff,true);
+                        
+                        for (int nX=0;nX<24;nX++)
+                        {
+                            pShowNow->m_arraybShape[nX] = false;
+                        }
 
                         g_IniFile.m_nErrorCode=1001;
                         nThreadIndex++;
@@ -507,6 +514,8 @@ void __fastcall CMainThread::doLoadRail(int &nThreadIndex)
                 case 1:
                         if(g_DIO.GetDI(DI::SR_Entry) && !g_DIO.GetDI(DI::SR_Exist) && !g_DIO.GetDI(DI::SR_Inp))
                         {
+                                //ShowNow
+                                pShowNow->m_arraybShape[0] = true;
                                 m_nSubstrateRemains++;
                                 m_nStripCount++;
 
@@ -549,6 +558,9 @@ void __fastcall CMainThread::doLoadRail(int &nThreadIndex)
                 case 3:
                         if(tm1MS.timeUp())
                         {
+                                //ShowNow
+                                pShowNow->m_arraybShape[0] = false;
+                                pShowNow->m_arraybShape[1] = true;
                                 g_DIO.SetDO(DO::SR_Start,false);
                                 g_DIO.SetDO(DO::SR_Align,true);
                                 tm1MS.timeStart(500);
@@ -606,7 +618,6 @@ void __fastcall CMainThread::doUnLoadRail(int &nThreadIndex)
                 case 1:
                         if(g_DIO.GetDI(DI::SC_SSuckerDown))
                         {
-
                                 g_DIO.SetDO(DO::SC_SSuckerVacOn,false);
                                 g_DIO.SetDO(DO::SC_SSuckerVacOff,true);
                                 g_DIO.SetDO(DO::SC_SSuckerDeVac,true);
@@ -634,6 +645,9 @@ void __fastcall CMainThread::doUnLoadRail(int &nThreadIndex)
                 case 3:
                         if(g_DIO.GetDI(DI::SC_SSuckerUp))
                         {
+                                //ShowNow
+                                pShowNow->m_arraybShape[10] = false;
+                                pShowNow->m_arraybShape[11] = true;
                                 nThreadIndex++;
                         }
                         else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=511;
@@ -651,7 +665,7 @@ void __fastcall CMainThread::doUnLoadRail(int &nThreadIndex)
 
                         if(!g_DIO.GetDI(DI::SR2_Inp) && g_DIO.GetDI(DI::SR2_Exit))
                         {
-                                tm1MS.timeStart(1000);
+                                tm1MS.timeStart(500);
                                 nThreadIndex++;
                         }
                         else if(!g_DIO.GetDO(DO::SR2_Start))
@@ -664,6 +678,10 @@ void __fastcall CMainThread::doUnLoadRail(int &nThreadIndex)
                 case 6:
                         if(tm1MS.timeUp())
                         {
+                                //ShowNow
+                                pShowNow->m_arraybShape[11] = false;
+                                pShowNow->m_arraybShape[12] = true;
+
                                 g_DIO.SetDO(DO::SR2_PusherDown,true);
                                 tm1MS.timeStart(3000);
                                 nThreadIndex++;
@@ -672,7 +690,6 @@ void __fastcall CMainThread::doUnLoadRail(int &nThreadIndex)
                 case 7:
                         if(g_DIO.GetDI(DI::SR2_PusherDown))
                         {
-
                                 g_DIO.SetDO(DO::SR2_PusherPush,true);
                                 g_DIO.SetDO(DO::SR2_OutGoing,true);
                                 g_DIO.SetDO(DO::SR2_PressWheel,false);
@@ -685,13 +702,13 @@ void __fastcall CMainThread::doUnLoadRail(int &nThreadIndex)
                         if(g_DIO.GetDI(DI::SR2_PusherFwd))
                         {
                                 g_DIO.SetDO(DO::SR2_PusherPush,false);
-                                 g_DIO.SetDO(DO::SR2_PusherDown,false);
+                                g_DIO.SetDO(DO::SR2_PusherDown,false);
                                 g_DIO.SetDO(DO::SR2_OutGoing,false);
                                 g_DIO.SetDO(DO::SR2_Start,false);
                                 tm1MS.timeStart(5000);
                                 nThreadIndex++;
                         }
-                        else if( !g_DIO.GetDO(DO::SR2_PusherPush))
+                        else if(!g_DIO.GetDO(DO::SR2_PusherPush))
                         {
                                 g_DIO.SetDO(DO::SR2_PusherPush,true);
                                 g_DIO.SetDO(DO::SR2_PusherDown,true);
@@ -721,7 +738,10 @@ void __fastcall CMainThread::doUnLoadRail(int &nThreadIndex)
                                         g_IniFile.m_nErrorCode=913;
                                 }
 
-                                tm1MS.timeStart(1000);
+                                //ShowNow
+                                pShowNow->m_arraybShape[12] = false;
+
+                                tm1MS.timeStart(500);
                                 nThreadIndex++;
 
                         }
@@ -800,6 +820,9 @@ void __fastcall CMainThread::doLoadLifter(int &nThreadIndex)
                 case 3:
                         if(g_DIO.GetDI(DI::SL_Inp))
                         {
+                                //ShowNow
+                                pShowNow->m_arraybShape[20] = true;
+
                                 g_DIO.SetDO(DO::SL_Start,false);
                                 m_bLoadLifterReady=true;
                                 nThreadIndex++;
@@ -840,7 +863,8 @@ void __fastcall CMainThread::doSSPickerFromLifter(int &nThreadIndex)
         static C_GetTime tm1MS(EX_SCALE::TIME_1MS,false);
 
         static bool bIsSubstrate=false;
-
+        
+        static bool bFrontTable=false;
         const int nTagPickOK=1000;
         const int nTagReSuck=2000;
 
@@ -926,6 +950,11 @@ void __fastcall CMainThread::doSSPickerFromLifter(int &nThreadIndex)
                         if( (bIsSubstrate & g_DIO.GetDI(DI::SS_SSuckerVacGauge)) ||
                                 (!bIsSubstrate & g_DIO.GetDI(DI::SS_SpaSuckerVacGauge)))
                         {
+                                if (bIsSubstrate)
+                                {
+                                    pShowNow->m_arraybShape[20] = false;
+                                    pShowNow->m_arraybShape[21] = true;
+                                }
                                 tm1MS.timeStart(1000);
                                 nThreadIndex++;
                         }
@@ -1066,6 +1095,19 @@ void __fastcall CMainThread::doSSPickerFromLifter(int &nThreadIndex)
                 case 11:
                         if(g_Motion.IsLastPosDone(Axis_Const::SSY))
                         {
+                                //ShowNow
+                                if (bFrontTable == true)
+                                {
+                                    pShowNow->m_arraybShape[2] = false;
+                                    pShowNow->m_arraybShape[21] = false;
+                                    pShowNow->m_arraybShape[13] = true;
+                                }
+                                else
+                                {
+                                    pShowNow->m_arraybShape[2] = false;
+                                    pShowNow->m_arraybShape[21] = false;
+                                    pShowNow->m_arraybShape[3] = true;
+                                }
                                 tm1MS.timeStart(300);
                                 nThreadIndex++;
                         }
@@ -1108,7 +1150,8 @@ void __fastcall CMainThread::doSSPickerFromRail(int &nThreadIndex)
         static C_GetTime tm1MS(EX_SCALE::TIME_1MS,false);
 
         const int nTagReSuck=1000;
-
+        
+        static bool bFrontTable=false;
         switch(nThreadIndex)
         {
                 case 0:
@@ -1193,6 +1236,9 @@ void __fastcall CMainThread::doSSPickerFromRail(int &nThreadIndex)
                 case 7:
                         if( g_DIO.GetDI(DI::SS_SSuckerUp))
                         {
+                                //ShowNow
+                                pShowNow->m_arraybShape[1] = false;
+                                pShowNow->m_arraybShape[2] = true;
                                 tm1MS.timeStart(300);
                                 nThreadIndex++;
                         }
@@ -1218,10 +1264,12 @@ void __fastcall CMainThread::doSSPickerFromRail(int &nThreadIndex)
                         switch (g_IniFile.m_nUseTable)
                         {
                         case 0:
-                                g_Motion.AbsMove(Axis_Const::SSY,g_IniFile.m_dSSPickerPutPos[true]);
+                                bFrontTable=true;
+                                g_Motion.AbsMove(Axis_Const::SSY,g_IniFile.m_dSSPickerPutPos[bFrontTable]);
                                 break;
                         case 1:
-                                g_Motion.AbsMove(Axis_Const::SSY,g_IniFile.m_dSSPickerPutPos[false]);
+                                bFrontTable=false;
+                                g_Motion.AbsMove(Axis_Const::SSY,g_IniFile.m_dSSPickerPutPos[bFrontTable]);
                                 break;
                         case 2:
                                 if(m_listPutTable.size()>0)
@@ -1245,7 +1293,17 @@ void __fastcall CMainThread::doSSPickerFromRail(int &nThreadIndex)
                         if(g_Motion.IsLastPosDone(Axis_Const::SSY))
                         {
                                 //m_nSubstrateRemains++;     //move to doLoadRail
-
+                                //ShowNow
+                                if (bFrontTable == true)
+                                {
+                                    pShowNow->m_arraybShape[2] = false;
+                                    pShowNow->m_arraybShape[13] = true;
+                                }
+                                else
+                                {
+                                    pShowNow->m_arraybShape[2] = false;
+                                    pShowNow->m_arraybShape[3] = true;
+                                }
                                 m_bSSPickerReady=true;
                                 m_bLoadRailReady=false;      //Announce Lifter to reload again
                                 nThreadIndex++;
@@ -1348,7 +1406,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                         if(g_DIO.GetDI(iTableLockOn))
                         {
                                 p_tm1MS->timeStart(100);
-                                 nThreadIndex++;
+                                nThreadIndex++;
                         }
                         else if(p_tm1MS->timeUp() ) bFront? g_IniFile.m_nErrorCode=402 : g_IniFile.m_nErrorCode=403;
                         break;
@@ -1358,20 +1416,20 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                                 g_DIO.SetDO(oTableClamp,btableClampOff);
                                 g_Motion.AbsMove(nAxisTable,g_IniFile.m_dTablePutDownPos[bFront]);
                                 p_tm1MS->timeStart(10000);
-                                 nThreadIndex++;
+                                nThreadIndex++;
                         }
                         break;
                 case 3:
                         if(g_Motion.IsLastPosDone(nAxisTable))
                         {
-                                 p_tm1MS->timeStart(3000);
-                                 nThreadIndex++;
+                                p_tm1MS->timeStart(3000);
+                                nThreadIndex++;
                         }
                         else if(p_tm1MS->timeUp() )
                         {
                                 g_Motion.StopMove(nAxisTable);
-                                 g_Motion.AbsMove(nAxisTable,g_IniFile.m_dTablePutDownPos[bFront]);
-                                 p_tm1MS->timeStart(10000);
+                                g_Motion.AbsMove(nAxisTable,g_IniFile.m_dTablePutDownPos[bFront]);
+                                p_tm1MS->timeStart(10000);
                         }
                         break;
                 case 4:
@@ -1403,6 +1461,17 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                         }
                         else if(g_Motion.IsLastPosDone(Axis_Const::SSY))
                         {
+                                //ShowNow
+                                if (bFront)
+                                {
+                                    pShowNow->m_arraybShape[2] = false;
+                                    pShowNow->m_arraybShape[13] = true;
+                                }
+                                else
+                                {
+                                    pShowNow->m_arraybShape[2] = false;
+                                    pShowNow->m_arraybShape[3] = true;
+                                }
                                 g_DIO.SetDO(DO::SS_SSucker,true);
                                 p_tm1MS->timeStart(5000);
                                 nThreadIndex++;
@@ -1490,6 +1559,17 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                 case 13:
                         if(g_DIO.GetDI(iTableVacGauge) && g_DIO.GetDI(iTableAlignOff))
                         {
+                                //ShowNow
+                                if (bFront)
+                                {
+                                    pShowNow->m_arraybShape[13] = false;
+                                    pShowNow->m_arraybShape[14] = true;
+                                }
+                                else
+                                {
+                                    pShowNow->m_arraybShape[3] = false;
+                                    pShowNow->m_arraybShape[4] = true;
+                                }
                                 p_tm1MS->timeStart(500);
                                 nThreadIndex++;
                         }
@@ -1585,6 +1665,17 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                 case 20:
                         if(g_Motion.IsLastPosDone(nAxisTable) && g_Motion.IsLastPosDone(Axis_Const::CCD))
                         {
+                                //ShowNow
+                                if (bFront)
+                                {
+                                    pShowNow->m_arraybShape[14] = false;
+                                    pShowNow->m_arraybShape[15] = true;
+                                }
+                                else
+                                {
+                                    pShowNow->m_arraybShape[4] = false;
+                                    pShowNow->m_arraybShape[5] = true;
+                                }
                                 p_tm1MS->timeStart(500);
                                 nThreadIndex++;
                         }
@@ -1640,6 +1731,19 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                 case 24:
                         if(g_Motion.IsLastPosDone(nAxisTable) && g_Motion.IsLastPosDone(Axis_Const::CCD))
                         {
+                                //ShowNow
+                                if (bFront)
+                                {
+                                    pShowNow->m_arraybShape[14] = false;
+                                    pShowNow->m_arraybShape[15] = false;
+                                    pShowNow->m_arraybShape[16] = true;
+                                }
+                                else
+                                {
+                                    pShowNow->m_arraybShape[4] = false;
+                                    pShowNow->m_arraybShape[5] = false;
+                                    pShowNow->m_arraybShape[6] = true;
+                                }
                                 p_tm1MS->timeStart(500);
                                 nThreadIndex++;
                         }
@@ -1817,6 +1921,21 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                 case 36:
                         if(g_Motion.IsLastPosDone(nAxisTable))
                         {
+                                //ShowNow
+                                if (bFront)
+                                {
+                                    pShowNow->m_arraybShape[14] = false;
+                                    pShowNow->m_arraybShape[15] = false;
+                                    pShowNow->m_arraybShape[16] = false;
+                                    pShowNow->m_arraybShape[17] = true;
+                                }
+                                else
+                                {
+                                    pShowNow->m_arraybShape[4] = false;
+                                    pShowNow->m_arraybShape[5] = false;
+                                    pShowNow->m_arraybShape[6] = false;
+                                    pShowNow->m_arraybShape[7] = true;
+                                }
                                 //Select Laser File
                                 m_listLaserRX.clear();
                                 if(bFront) m_listTX.push_back("OPEN_LASER_FRONT_UP");
@@ -2187,6 +2306,23 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                 case 69:
                         if(g_Motion.IsMotionDone(nAxisTable))
                         {
+                                //ShowNow
+                                if (bFront)
+                                {
+                                    pShowNow->m_arraybShape[14] = false;
+                                    pShowNow->m_arraybShape[15] = false;
+                                    pShowNow->m_arraybShape[16] = false;
+                                    pShowNow->m_arraybShape[17] = false;
+                                    pShowNow->m_arraybShape[18] = true;
+                                }
+                                else
+                                {
+                                    pShowNow->m_arraybShape[4] = false;
+                                    pShowNow->m_arraybShape[5] = false;
+                                    pShowNow->m_arraybShape[6] = false;
+                                    pShowNow->m_arraybShape[7] = false;
+                                    pShowNow->m_arraybShape[8] = true;
+                                }
                                 p_tm1MS->timeStart(500);
                                 nThreadIndex++;
                         }
@@ -2339,9 +2475,19 @@ void __fastcall CMainThread::doSCPicker(int &nThreadIndex)
                         {
                                 if(g_DIO.GetDI(DI::SC_SSuckerVacGauge))
                                 {
-
+                                        //ShowNow
+                                        if (bFrontTable)
+                                        {
+                                            pShowNow->m_arraybShape[18] = false;
+                                            pShowNow->m_arraybShape[19] = true;
+                                        }
+                                        else
+                                        {
+                                            pShowNow->m_arraybShape[8] = false;
+                                            pShowNow->m_arraybShape[9] = true;
+                                        }
                                         m_bTableReady[bFrontTable]=false;
-                                         m_listProductInfo.push_back(m_tmpProductInfo[bFrontTable]);
+                                        m_listProductInfo.push_back(m_tmpProductInfo[bFrontTable]);
 
                                         nThreadIndex++;
                                 }
@@ -2371,6 +2517,10 @@ void __fastcall CMainThread::doSCPicker(int &nThreadIndex)
                 case 11:
                         if(g_Motion.IsLastPosDone(Axis_Const::SCY))
                         {
+                                //ShowNow
+                                pShowNow->m_arraybShape[19] = false;
+                                pShowNow->m_arraybShape[9] = false;
+                                pShowNow->m_arraybShape[23] = true;
                                 tm1MS.timeStart(300);
                                 nThreadIndex++;
                         }
@@ -2472,6 +2622,9 @@ void __fastcall CMainThread::doSCPicker(int &nThreadIndex)
                 case 20:
                         if(g_Motion.IsLastPosDone(Axis_Const::SCY))
                         {
+                                //ShowNow
+                                pShowNow->m_arraybShape[23] = false;
+                                pShowNow->m_arraybShape[22] = true;
                                 tm1MS.timeStart(300);
                                 nThreadIndex++;
                         }
@@ -2500,6 +2653,10 @@ void __fastcall CMainThread::doSCPicker(int &nThreadIndex)
                 case 24:
                         if(g_Motion.IsLastPosDone(Axis_Const::SCY))
                         {
+                                //ShowNow
+                                pShowNow->m_arraybShape[23] = false;
+                                pShowNow->m_arraybShape[22] = false;
+                                pShowNow->m_arraybShape[10] = true;
                                 tm1MS.timeStart(300);
                                 nThreadIndex++;
                         }

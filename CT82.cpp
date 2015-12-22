@@ -14,6 +14,7 @@ USEFORM("frmPrivilege.cpp", fmPrivilege);
 USEFORM("frmManual.cpp", fmManual);
 USEFORM("frmOption.cpp", fmOption);
 USEFORM("fmUserID.cpp", frmUserID);
+USEFORM("frmShowNow.cpp", fmShowNow);
 //---------------------------------------------------------------------------
 WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
@@ -21,7 +22,8 @@ WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         {
                  Application->Initialize();
                  Application->CreateForm(__classid(TfmMain), &fmMain);
-                 Application->Run();
+         Application->CreateForm(__classid(TfmShowNow), &fmShowNow);
+         Application->Run();
         }
         catch (Exception &exception)
         {

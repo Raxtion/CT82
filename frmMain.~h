@@ -23,6 +23,7 @@
 
 
 #include "C_GetTime.h"
+#include "frmShowNow.h"
 //---------------------------------------------------------------------------
 class TfmMain : public TForm
 {
@@ -202,6 +203,8 @@ __published:	// IDE-managed Components
     TLabel *labelLED1;
     TSpeedButton *SpeedButton4;
     TSpeedButton *SpeedButton5;
+    TSpeedButton *SpeedButton8;
+    TTimer *timerLoaderSig;
         void __fastcall ImagePaintBoxMouseMove(TObject *Sender,
           TShiftState Shift, int X, int Y);
         void __fastcall btnFileOpenClick(TObject *Sender);
@@ -332,6 +335,8 @@ __published:	// IDE-managed Components
         void __fastcall SpeedButton38Click(TObject *Sender);
     void __fastcall SpeedButton5Click(TObject *Sender);
     void __fastcall SpeedButton4Click(TObject *Sender);
+    void __fastcall SpeedButton8Click(TObject *Sender);
+    void __fastcall timerLoaderSigTimer(TObject *Sender);
 private:	// User declarations         
         void __fastcall CreateCaptionFile(TForm *pForm);
         void __fastcall ReadCaptionFile(TForm *pForm,int nLanguage=0);
@@ -357,6 +362,7 @@ public:		// User declarations
 
         int m_nUserLevel; //0:OP 1:Engineer 2:adm
         C_GetTime tm1MSLogOut;
+        //TfmShowNow *fmShowNow;
 
         std::vector<TRect> m_vectRect; //for display vision inspect result
         __int16 m_nSubstrateMap[100*100];

@@ -12,14 +12,14 @@
       temp\IniFile.obj temp\GlobalFunction.obj temp\C_GetTime.obj 
       temp\frmPrivilege.obj temp\frmManual.obj temp\frmOption.obj 
       temp\SMSXML.obj temp\tinyxmlparser.obj temp\tinystr.obj 
-      temp\tinyxmlerror.obj temp\fmUserID.obj"/>
+      temp\tinyxmlerror.obj temp\fmUserID.obj temp\frmShowNow.obj"/>
     <RESFILES value="CT82.res"/>
     <IDLFILES value=""/>
     <IDLGENFILES value=""/>
     <DEFFILE value=""/>
     <RESDEPEN value="$(RESFILES) fmChoiceMotor.dfm fmIOCheck.dfm fmMachinParam.dfm 
       fmMotorCheck.dfm fmPassword.dfm fmProductParam.dfm frmMain.dfm 
-      frmPrivilege.dfm frmManual.dfm frmOption.dfm fmUserID.dfm"/>
+      frmPrivilege.dfm frmManual.dfm frmOption.dfm fmUserID.dfm frmShowNow.dfm"/>
     <LIBFILES value="extern\PICM114GL\Lib\CMnetBCB.lib extern\PICM114GL\Lib\PCI_M114GLCBCB.lib 
       extern\Pcom\Pcommb.lib extern\EVision\BcB6\EOcvBcB6.lib 
       extern\EVision\BcB6\EasyBcB6.lib extern\EVision\BcB6\EAviBcB6.lib 
@@ -126,6 +126,7 @@
       <FILE FILENAME="extern\TinyXML\tinystr.cpp" FORMNAME="" UNITNAME="tinystr.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="extern\TinyXML\tinyxmlerror.cpp" FORMNAME="" UNITNAME="tinyxmlerror.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="fmUserID.cpp" FORMNAME="frmUserID" UNITNAME="fmUserID" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="frmShowNow.cpp" FORMNAME="fmShowNow" UNITNAME="frmShowNow" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
   </FILELIST>
   <BUILDTOOLS>
   </BUILDTOOLS>
