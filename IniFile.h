@@ -88,6 +88,7 @@ public:
   //delay time
   int m_nCoverVacTime;              //Vacuum on delay time
   int m_nSubstrateVacTime;
+  int m_nLoadingAlarmTime;
 
 
   //-----------------Product-----------------

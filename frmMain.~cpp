@@ -3200,8 +3200,7 @@ void __fastcall TfmMain::timerLoaderSigTimer(TObject *Sender)
     {
         this->SpeedButton9->Down = true;
         g_pMainThread->m_bStopLoad = true;
-
-        if(g_pMainThread->m_bStopLoad) g_pMainThread->m_bLoadLifterReady=false;
+        g_pMainThread->m_bLoadLifterReady=false;
     }
     timerLoaderSig->Enabled = true;
 }

@@ -1,6 +1,6 @@
 object frmMachineParam: TfrmMachineParam
-  Left = 285
-  Top = 74
+  Left = 321
+  Top = 101
   Width = 1013
   Height = 747
   Caption = 'frmMachineParam'
@@ -35,8 +35,8 @@ object frmMachineParam: TfrmMachineParam
     Top = 0
     Width = 841
     Height = 713
-    ActivePage = TabSheet5
-    TabIndex = 1
+    ActivePage = TabSheet3
+    TabIndex = 5
     TabOrder = 3
     object TabSheet4: TTabSheet
       Caption = #39340#36948#36895#24230
@@ -2769,14 +2769,14 @@ object frmMachineParam: TfrmMachineParam
       end
     end
     object TabSheet3: TTabSheet
-      Caption = #21560#22068#30495#31354#24310#36978#26178#38291
+      Caption = #24310#36978#26178#38291
       ImageIndex = 2
       object GroupBox7: TGroupBox
         Left = 32
         Top = 24
         Width = 305
         Height = 121
-        Caption = #21462#25918#22522#26495' / '#33995#26495
+        Caption = #21560#22068#21462#25918#22522#26495
         TabOrder = 0
         object StaticText32: TStaticText
           Left = 21
@@ -2855,6 +2855,53 @@ object frmMachineParam: TfrmMachineParam
           Color = clSkyBlue
           ParentColor = False
           TabOrder = 5
+        end
+      end
+      object GroupBox15: TGroupBox
+        Left = 376
+        Top = 24
+        Width = 305
+        Height = 121
+        Caption = #27969#36947#26410#20837#26009#24310#36978'Alarm'
+        TabOrder = 1
+        object StaticText114: TStaticText
+          Left = 24
+          Top = 48
+          Width = 145
+          Height = 25
+          Alignment = taRightJustify
+          AutoSize = False
+          BevelInner = bvSpace
+          BevelKind = bkSoft
+          BevelOuter = bvNone
+          BorderStyle = sbsSingle
+          Caption = 'Loader '#26410#20837#26009'Alarm'
+          Color = clSkyBlue
+          ParentColor = False
+          TabOrder = 0
+        end
+        object m_nLoadingAlarmTime: TEdit
+          Left = 170
+          Top = 47
+          Width = 81
+          Height = 24
+          TabOrder = 1
+          Text = 'm_nLoadingAlarmTime'
+        end
+        object StaticText115: TStaticText
+          Left = 252
+          Top = 48
+          Width = 33
+          Height = 25
+          AutoSize = False
+          BevelInner = bvSpace
+          BevelKind = bkSoft
+          BevelOuter = bvNone
+          BorderStyle = sbsSingle
+          Caption = 'ms'
+          Color = clSkyBlue
+          ParentColor = False
+          TabOrder = 2
         end
       end
     end

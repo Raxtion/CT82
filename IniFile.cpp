@@ -100,6 +100,7 @@ void __fastcall CIniFile::MachineFile(bool bRead)
   //Delay Time
   DDXFile_Int(bRead,pIniFile,Machine_Section,"m_nCoverVacTime",m_nCoverVacTime,1000);
   DDXFile_Int(bRead,pIniFile,Machine_Section,"m_nSubstrateVacTime",m_nSubstrateVacTime,1000);
+  DDXFile_Int(bRead,pIniFile,Machine_Section,"m_nLoadingAlarmTime",m_nLoadingAlarmTime,600000);
   delete pIniFile;
 }
 //---------------------------------------------------------------------------

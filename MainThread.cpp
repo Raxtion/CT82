@@ -508,6 +508,7 @@ void __fastcall CMainThread::doLoadRail(int &nThreadIndex)
                                 {
                                         g_DIO.SetDO(DO::SR_Ready,true);
                                 }
+                                if (g_IniFile.m_nLoadingAlarmTime != 0) tm1MS.timeStart(g_IniFile.m_nLoadingAlarmTime);
                                 nThreadIndex++;
                         }
                         break;
@@ -539,8 +540,12 @@ void __fastcall CMainThread::doLoadRail(int &nThreadIndex)
                                 tm1MS.timeStart(5000);
                                 nThreadIndex++;
                         }
+                        else if (tm1MS.timeUp())
+                        {
+                            g_IniFile.m_nErrorCode=321;
+                            nThreadIndex--;
+                        }
                         else g_DIO.SetDO(DO::SR_Ready,true);
-
                         break;
                 case 2:
                         if(g_DIO.GetDI(DI::SR_Inp) && !g_DIO.GetDI(DI::SR_Entry))

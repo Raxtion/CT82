@@ -252,6 +252,10 @@ __published:	// IDE-managed Components
     TEdit *m_dTableMarkPos2Y0;
     TEdit *m_dTableMarkPos2X0;
     TStaticText *StaticText113;
+    TGroupBox *GroupBox15;
+    TStaticText *StaticText114;
+    TEdit *m_nLoadingAlarmTime;
+    TStaticText *StaticText115;
         void __fastcall StaticText39Click(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
