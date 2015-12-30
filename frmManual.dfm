@@ -934,7 +934,7 @@ object fmManual: TfmManual
       ImageIndex = 1
       object GroupBox1: TGroupBox
         Left = 16
-        Top = 9
+        Top = 353
         Width = 665
         Height = 328
         Caption = #31227#21205#36617#21488'('#21069')'
@@ -1652,7 +1652,7 @@ object fmManual: TfmManual
       end
       object GroupBox7: TGroupBox
         Left = 16
-        Top = 353
+        Top = 17
         Width = 665
         Height = 328
         Caption = #31227#21205#36617#21488'('#24460')'

@@ -415,6 +415,7 @@ void __fastcall TfmMain::btnMachineParaClick(TObject *Sender)
 
         DDX_Int(bRead,g_IniFile.m_nCoverVacTime,pMachineDlg->m_nCoverVacTime);
         DDX_Int(bRead,g_IniFile.m_nSubstrateVacTime,pMachineDlg->m_nSubstrateVacTime);
+        DDX_Int(bRead,g_IniFile.m_nLoadingAlarmTime,pMachineDlg->m_nLoadingAlarmTime);
 
         DDX_Float(bRead,g_IniFile.m_dSSPickerPickPos,pMachineDlg->m_dSSPickerPickPos);
         DDX_Float(bRead,g_IniFile.m_dSSPickerPickRailPos,pMachineDlg->m_dSSPickerPickRailPos);
@@ -487,6 +488,7 @@ void __fastcall TfmMain::btnMachineParaClick(TObject *Sender)
 
                 DDX_Int(bRead,g_IniFile.m_nCoverVacTime,pMachineDlg->m_nCoverVacTime);
                 DDX_Int(bRead,g_IniFile.m_nSubstrateVacTime,pMachineDlg->m_nSubstrateVacTime);
+                DDX_Int(bRead,g_IniFile.m_nLoadingAlarmTime,pMachineDlg->m_nLoadingAlarmTime);
 
                 DDX_Float(bRead,g_IniFile.m_dSSPickerPickPos,pMachineDlg->m_dSSPickerPickPos);
         DDX_Float(bRead,g_IniFile.m_dSSPickerPickRailPos,pMachineDlg->m_dSSPickerPickRailPos);

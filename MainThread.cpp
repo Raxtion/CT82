@@ -132,6 +132,9 @@ void __fastcall CMainThread::Execute()
                         g_DIO.SetDO(DO::SC_SSucker,false);
 
                         g_DIO.SetDO(DO::SR_Ready,false);
+                        g_DIO.SetDO(DO::SR2_PusherPush,false);
+                        g_DIO.SetDO(DO::SR2_PusherDown,false);
+                        g_DIO.SetDO(DO::UnloaderEnough,false);
                         tmBlower.timeStart(10000);
                         m_bStopBlower = true;
                 }
@@ -509,6 +512,7 @@ void __fastcall CMainThread::doLoadRail(int &nThreadIndex)
                                         g_DIO.SetDO(DO::SR_Ready,true);
                                 }
                                 if (g_IniFile.m_nLoadingAlarmTime != 0) tm1MS.timeStart(g_IniFile.m_nLoadingAlarmTime);
+                                g_DIO.SetDO(DO::UnloaderEnough,false);
                                 nThreadIndex++;
                         }
                         break;
@@ -543,6 +547,7 @@ void __fastcall CMainThread::doLoadRail(int &nThreadIndex)
                         else if (tm1MS.timeUp())
                         {
                             g_IniFile.m_nErrorCode=321;
+                            g_DIO.SetDO(DO::UnloaderEnough,true);
                             nThreadIndex--;
                         }
                         else g_DIO.SetDO(DO::SR_Ready,true);
@@ -2483,11 +2488,17 @@ void __fastcall CMainThread::doSCPicker(int &nThreadIndex)
                                         //ShowNow
                                         if (bFrontTable)
                                         {
+                                            fmShowNow->m_arraybShape[10] = false;
                                             fmShowNow->m_arraybShape[18] = false;
+                                            fmShowNow->m_arraybShape[22] = false;
+                                            fmShowNow->m_arraybShape[23] = false;
                                             fmShowNow->m_arraybShape[19] = true;
                                         }
                                         else
                                         {
+                                            fmShowNow->m_arraybShape[10] = false;
+                                            fmShowNow->m_arraybShape[22] = false;
+                                            fmShowNow->m_arraybShape[23] = false;
                                             fmShowNow->m_arraybShape[8] = false;
                                             fmShowNow->m_arraybShape[9] = true;
                                         }
@@ -2573,6 +2584,11 @@ void __fastcall CMainThread::doSCPicker(int &nThreadIndex)
                 case 15:
                         if(g_Motion.IsLastPosDone(Axis_Const::SCY))
                         {
+                                //ShowNow
+                                fmShowNow->m_arraybShape[23] = false;
+                                fmShowNow->m_arraybShape[19] = false;
+                                fmShowNow->m_arraybShape[9] = false;
+                                fmShowNow->m_arraybShape[24] = true;
                                 tm1MS.timeStart(300);
                                 nThreadIndex++;
                         }
@@ -2628,7 +2644,10 @@ void __fastcall CMainThread::doSCPicker(int &nThreadIndex)
                         if(g_Motion.IsLastPosDone(Axis_Const::SCY))
                         {
                                 //ShowNow
+                                fmShowNow->m_arraybShape[9] = false;
+                                fmShowNow->m_arraybShape[19] = false;
                                 fmShowNow->m_arraybShape[23] = false;
+                                fmShowNow->m_arraybShape[24] = false;
                                 fmShowNow->m_arraybShape[22] = true;
                                 tm1MS.timeStart(300);
                                 nThreadIndex++;
@@ -2659,7 +2678,10 @@ void __fastcall CMainThread::doSCPicker(int &nThreadIndex)
                         if(g_Motion.IsLastPosDone(Axis_Const::SCY))
                         {
                                 //ShowNow
+                                fmShowNow->m_arraybShape[9] = false;
+                                fmShowNow->m_arraybShape[19] = false;
                                 fmShowNow->m_arraybShape[23] = false;
+                                fmShowNow->m_arraybShape[24] = false;
                                 fmShowNow->m_arraybShape[22] = false;
                                 fmShowNow->m_arraybShape[10] = true;
                                 tm1MS.timeStart(300);

@@ -469,3 +469,4 @@ void __fastcall TfmManual::SpeedButton53Click(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+
