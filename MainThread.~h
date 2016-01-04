@@ -81,7 +81,7 @@ public:
         bool m_bLEDDown;
 
         bool m_bStopLoad;
-
+        bool m_bReLoad;
         int m_nSubstrateRemains;
         
         bool m_bStopBlower;

@@ -51,6 +51,7 @@ __fastcall CMainThread::CMainThread(bool CreateSuspended)
         m_bRefresh=false;
         m_bIsHomeDone=false;
         m_bStopLoad=false;
+        m_bReLoad=false;
         m_bNeedHome=false;
         m_bStopBlower=false;
         bFrontTable=false;
@@ -59,14 +60,14 @@ __fastcall CMainThread::CMainThread(bool CreateSuspended)
 //---------------------------------------------------------------------------
 void __fastcall CMainThread::Execute()
 {
-        //---- Place thread code here ----
-        C_GetTime tmReset,tmAlarm,tmResetLamp,tmBlower;
+    //---- Place thread code here ----
+    C_GetTime tmReset,tmAlarm,tmResetLamp,tmBlower;
 
 	g_bStopMainThread=false;
 
 	bool bHomeDone=false;
 	bool bAutoMode=false;
-        bool bPreAuto=false;
+    bool bPreAuto=false;
 
 	bool bLastStart=false;
 	bool bLastReset=false;
@@ -74,7 +75,7 @@ void __fastcall CMainThread::Execute()
 	bool bAlarmLamp=false;
 	bool bResetLamp=false;
 
-        bool bStartMachineInit=false;
+    bool bStartMachineInit=false;
 
 	//int nThreadIndex[MAX_PROCESS]={0};		//0:Inti 1:Start Measure
 
@@ -82,21 +83,21 @@ void __fastcall CMainThread::Execute()
 	{
 		if(g_bStopMainThread) break;
 
-                //Status
-                m_bIsHomeDone=bHomeDone;
-                m_bIsAutoMode=bAutoMode;
-                //
+        //Status
+        m_bIsHomeDone=bHomeDone;
+        m_bIsAutoMode=bAutoMode;
+        //
 
-                if(m_bNeedHome)
-                {
-                        m_bNeedHome=false;
-                        bHomeDone=false;
-                }
+        if(m_bNeedHome)
+        {
+            m_bNeedHome=false;
+            bHomeDone=false;
+        }
 
-                 g_Motion.m_bAutoMode=m_bIsAutoMode;
+        g_Motion.m_bAutoMode=m_bIsAutoMode;
 
 
-                //---Start Homing
+        //---Start Homing
 		if(g_DIO.ReadDIBit(DI::ResetBtn) && !bLastReset) tmReset.timeStart(3000);
 		if(bLastReset && tmReset.timeUp())
 		{
@@ -105,46 +106,46 @@ void __fastcall CMainThread::Execute()
 		}
 		bLastReset=g_DIO.ReadDIBit(DI::ResetBtn);
 
-                //CheckAlarm();
-                if(g_MNet.IsCommError(0)) g_IniFile.m_nErrorCode=50;
-		
-                //----Alarm Occured
-                //--Stop Auto
+        //CheckAlarm();
+        if(g_MNet.IsCommError(0)) g_IniFile.m_nErrorCode=50;
+
+        //----Alarm Occured
+        //--Stop Auto
 		if(g_DIO.ReadDIBit(DI::StopBtn) || (g_IniFile.m_nErrorCode>0 && g_IniFile.m_nErrorCode<1000))
-                {
-                        bStartMachineInit=false;
-                        bAutoMode=false;
-                        bPreAuto=false;
-                        SetManualSpeed();
+        {
+            bStartMachineInit=false;
+            bAutoMode=false;
+            bPreAuto=false;
+            SetManualSpeed();
 
-                        g_Motion.StopMove(Axis_Const::SSY);
-                        g_Motion.StopMove(Axis_Const::SCY);
-                        g_Motion.StopMove(Axis_Const::FTX);
-                        g_Motion.StopMove(Axis_Const::RTX);
-                        g_Motion.StopMove(Axis_Const::CCD);
+            g_Motion.StopMove(Axis_Const::SSY);
+            g_Motion.StopMove(Axis_Const::SCY);
+            g_Motion.StopMove(Axis_Const::FTX);
+            g_Motion.StopMove(Axis_Const::RTX);
+            g_Motion.StopMove(Axis_Const::CCD);
 
-                        g_DIO.SetDO(DO::SR_Start,false);
-                        g_DIO.SetDO(DO::SR2_Start,false);
+            g_DIO.SetDO(DO::SR_Start,false);
+            g_DIO.SetDO(DO::SR2_Start,false);
 
-                        g_DIO.SetDO(DO::SL_Start,false);
-                        g_DIO.SetDO(DO::SS_SSucker,false);
-                        g_DIO.SetDO(DO::SS_SpaSucker,false);
-                        g_DIO.SetDO(DO::SC_SSucker,false);
+            g_DIO.SetDO(DO::SL_Start,false);
+            g_DIO.SetDO(DO::SS_SSucker,false);
+            g_DIO.SetDO(DO::SS_SpaSucker,false);
+            g_DIO.SetDO(DO::SC_SSucker,false);
 
-                        g_DIO.SetDO(DO::SR_Ready,false);
-                        g_DIO.SetDO(DO::SR2_PusherPush,false);
-                        g_DIO.SetDO(DO::SR2_PusherDown,false);
-                        g_DIO.SetDO(DO::UnloaderEnough,false);
-                        tmBlower.timeStart(10000);
-                        m_bStopBlower = true;
-                }
+            g_DIO.SetDO(DO::SR_Ready,false);
+            g_DIO.SetDO(DO::SR2_PusherPush,false);
+            g_DIO.SetDO(DO::SR2_PusherDown,false);
+            g_DIO.SetDO(DO::UnloaderEnough,false);
+            tmBlower.timeStart(10000);
+            m_bStopBlower = true;
+        }
 
-                //---Off Blower
-                if(m_bStopBlower && tmBlower.timeUp())
-                {
-                        g_DIO.SetDO(DO::Blower, false);
-                        m_bStopBlower = false;
-                }
+        //---Off Blower
+        if(m_bStopBlower && tmBlower.timeUp())
+        {
+            g_DIO.SetDO(DO::Blower, false);
+            m_bStopBlower = false;
+        }
 
                 //---Reset Alarm
 		if(g_DIO.ReadDIBit(DI::ResetBtn) )
@@ -167,8 +168,8 @@ void __fastcall CMainThread::Execute()
                 else if(tmAlarm.timeUp() && !bHomeDone)
 		{
 			g_DIO.SetDO(DO::StopBtnLamp,bAlarmLamp);
-                        g_DIO.SetDO(DO::StartBtnLamp,bAlarmLamp);
-                        g_DIO.SetDO(DO::ResetBtnLamp,bAlarmLamp);
+            g_DIO.SetDO(DO::StartBtnLamp,bAlarmLamp);
+            g_DIO.SetDO(DO::ResetBtnLamp,bAlarmLamp);
 
 			bAlarmLamp=!bAlarmLamp;
 			tmAlarm.timeStart(500);
@@ -181,16 +182,16 @@ void __fastcall CMainThread::Execute()
 		{
 			bHomeDone=InitialMachine(nThreadIndex[0]);
 			if(bHomeDone)
-                        {
+            {
 
-                                for(int nIndex=0;nIndex<MAX_PROCESS;nIndex++)
-                                        nThreadIndex[nIndex]=0;
+                for(int nIndex=0;nIndex<MAX_PROCESS;nIndex++)
+                    nThreadIndex[nIndex]=0;
 
 
-                                bStartMachineInit=false;
-                        }
+                bStartMachineInit=false;
+            }
 
-                        CheckAlarm();
+            CheckAlarm();
 		}
 		else if(bAutoMode && bHomeDone)	                //AutoMode
 		{
@@ -200,26 +201,26 @@ void __fastcall CMainThread::Execute()
 			g_DIO.SetDO(DO::YellowLamp,false);
 			g_DIO.SetDO(DO::RedLamp,false);
 
-                        CheckAlarm();
+            CheckAlarm();
 
-                        //do Auto process
+            //do Auto process
 
-                        if(g_IniFile.m_bIsRailLoad )
-                        {
-                                doLoadRail(nThreadIndex[1]);
-                                doSSPickerFromRail(nThreadIndex[2]);
-                        }
-                        else
-                        {
-                                if(!m_bStopLoad) doLoadLifter(nThreadIndex[3]);
-                                doSSPickerFromLifter(nThreadIndex[4]);
-                        }
+            if(g_IniFile.m_bIsRailLoad )
+            {
+                doLoadRail(nThreadIndex[1]);
+                doSSPickerFromRail(nThreadIndex[2]);
+            }
+            else
+            {
+                if(!m_bStopLoad) doLoadLifter(nThreadIndex[3]);
+                doSSPickerFromLifter(nThreadIndex[4]);
+            }
 
-                        if(g_IniFile.m_nUseTable==0 || g_IniFile.m_nUseTable==2) doTable(nThreadIndex[5],true);
-                        if(g_IniFile.m_nUseTable==1 || g_IniFile.m_nUseTable==2) doTable(nThreadIndex[6],false);
+            if(g_IniFile.m_nUseTable==0 || g_IniFile.m_nUseTable==2) doTable(nThreadIndex[5],true);
+            if(g_IniFile.m_nUseTable==1 || g_IniFile.m_nUseTable==2) doTable(nThreadIndex[6],false);
 
-                        doSCPicker(nThreadIndex[7]);
-                        doUnLoadRail(nThreadIndex[8]);
+            doSCPicker(nThreadIndex[7]);
+            doUnLoadRail(nThreadIndex[8]);
 
 
 		}
@@ -235,33 +236,33 @@ void __fastcall CMainThread::Execute()
 
 			if(g_DIO.ReadDIBit(DI::StartBtn))
 			{
-                                if(g_IniFile.m_strProductPgm==g_IniFile.m_strSMSPartNo)
-                                {
-                                        bPreAuto=true;
-                                        nThreadIndex[19]=0;      //pre auto
-                                        SetManualSpeed();
-                                }
-                                else g_IniFile.m_nErrorCode=51;
+                if(g_IniFile.m_strProductPgm==g_IniFile.m_strSMSPartNo)
+                {
+                    bPreAuto=true;
+                    nThreadIndex[19]=0;      //pre auto
+                    SetManualSpeed();
+                }
+                else g_IniFile.m_nErrorCode=51;
 			}
 
-                        if(bPreAuto)
-                        {
-                                g_DIO.SetDO(DO::StopBtnLamp,true);
-			        g_DIO.SetDO(DO::StartBtnLamp,true);
-			        g_DIO.SetDO(DO::GreenLamp,true);
-			        g_DIO.SetDO(DO::YellowLamp,false);
-			        g_DIO.SetDO(DO::RedLamp,false);
-                                CheckAlarm();
+            if(bPreAuto)
+            {
+                g_DIO.SetDO(DO::StopBtnLamp,true);
+                g_DIO.SetDO(DO::StartBtnLamp,true);
+                g_DIO.SetDO(DO::GreenLamp,true);
+                g_DIO.SetDO(DO::YellowLamp,false);
+                g_DIO.SetDO(DO::RedLamp,false);
+                CheckAlarm();
                                 
-                                bAutoMode=doPreAuto(nThreadIndex[19]);
-                                bPreAuto=!bAutoMode;
-                                if (bAutoMode) SetWorkSpeed();
-                        }
+                bAutoMode=doPreAuto(nThreadIndex[19]);
+                bPreAuto=!bAutoMode;
+                if (bAutoMode) SetWorkSpeed();
+            }
 		}
 		else
 		{
-                        if(!bHomeDone && g_DIO.ReadDIBit(DI::StartBtn)) g_IniFile.m_nErrorCode=999;
-                        //Announce to Homing 
+            if(!bHomeDone && g_DIO.ReadDIBit(DI::StartBtn)) g_IniFile.m_nErrorCode=999;
+            //Announce to Homing
 			if(tmResetLamp.timeUp())
 			{
 				g_DIO.SetDO(DO::ResetBtnLamp,bResetLamp);
@@ -737,15 +738,15 @@ void __fastcall CMainThread::doUnLoadRail(int &nThreadIndex)
                         {
                                 if(m_nSubstrateRemains>0) m_nSubstrateRemains--;
 
-                                if(m_bStopLoad && m_nSubstrateRemains<=0 && g_IniFile.m_bUsePQC) g_IniFile.m_nErrorCode=914;
-                                else if(m_bStopLoad && m_nSubstrateRemains<=0 )
+
+                                if(m_bStopLoad && g_IniFile.m_nIssueQty == 0)
                                 {
-                                        g_IniFile.m_strSMSPartNo="";
-                                        g_IniFile.m_strSMSLotNo="";
-                                        g_IniFile.m_strSBTLotNo="";
-                                        g_IniFile.m_strProductID="";
+                                    g_DIO.SetDO(DO::UnloaderEnough,true);
+                                }
+                                else if(m_bStopLoad && m_nSubstrateRemains<=0 && g_IniFile.m_bUsePQC) {}
+                                else if(m_bStopLoad && m_nSubstrateRemains<=0 && g_IniFile.m_nIssueQty != 0)
+                                {
                                         g_DIO.SetDO(DO::UnloaderEnough,true);
-                                        g_IniFile.m_nErrorCode=913;
                                 }
 
                                 //ShowNow
@@ -762,6 +763,19 @@ void __fastcall CMainThread::doUnLoadRail(int &nThreadIndex)
                         if(tm1MS.timeUp())
                         {
                                 g_DIO.SetDO(DO::UnloaderEnough,false);
+                                g_pMainThread->m_bStopLoad = false;
+                                g_pMainThread->m_bLoadLifterReady = true;
+                                g_pMainThread->m_bReLoad = true;
+
+                                if(m_bStopLoad && m_nSubstrateRemains<=0 && g_IniFile.m_bUsePQC) g_IniFile.m_nErrorCode=914;
+                                else if(m_bStopLoad && m_nSubstrateRemains<=0 && g_IniFile.m_nIssueQty != 0)
+                                {
+                                        g_IniFile.m_strSMSPartNo="";
+                                        g_IniFile.m_strSMSLotNo="";
+                                        g_IniFile.m_strSBTLotNo="";
+                                        g_IniFile.m_strProductID="";
+                                        g_IniFile.m_nErrorCode=913;
+                                }
                                 nThreadIndex++;
                         }
                         break;

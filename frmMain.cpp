@@ -3198,11 +3198,16 @@ void __fastcall TfmMain::SpeedButton8Click(TObject *Sender)
 void __fastcall TfmMain::timerLoaderSigTimer(TObject *Sender)
 {
     timerLoaderSig->Enabled = false;
-    if (g_DIO.GetDI(DI::LoaderNoSubstrate))
+    if (g_DIO.GetDI(DI::LoaderNoSubstrate) && this->SpeedButton9->Down == false)
     {
         this->SpeedButton9->Down = true;
         g_pMainThread->m_bStopLoad = true;
         g_pMainThread->m_bLoadLifterReady=false;
+    }
+    else if (g_pMainThread->m_bReLoad == true)
+    {
+        this->SpeedButton9->Down = false;
+        g_pMainThread->m_bReLoad = false;
     }
     timerLoaderSig->Enabled = true;
 }
