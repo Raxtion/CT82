@@ -205,6 +205,9 @@ __published:	// IDE-managed Components
     TSpeedButton *SpeedButton5;
     TSpeedButton *SpeedButton8;
     TTimer *timerLoaderSig;
+    TBitBtn *btnExportMarkerLog;
+    TBitBtn *btnExportActionLog;
+    TBitBtn *btnExportErrorLog;
         void __fastcall ImagePaintBoxMouseMove(TObject *Sender,
           TShiftState Shift, int X, int Y);
         void __fastcall btnFileOpenClick(TObject *Sender);
@@ -337,6 +340,7 @@ __published:	// IDE-managed Components
     void __fastcall SpeedButton4Click(TObject *Sender);
     void __fastcall SpeedButton8Click(TObject *Sender);
     void __fastcall timerLoaderSigTimer(TObject *Sender);
+    void __fastcall btnExportLogClick(TObject *Sender);
 private:	// User declarations         
         void __fastcall CreateCaptionFile(TForm *pForm);
         void __fastcall ReadCaptionFile(TForm *pForm,int nLanguage=0);

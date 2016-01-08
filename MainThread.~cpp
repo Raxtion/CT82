@@ -707,10 +707,15 @@ void __fastcall CMainThread::doUnLoadRail(int &nThreadIndex)
                                 tm1MS.timeStart(5000);
                                 nThreadIndex++;
                         }
+                        else (g_DIO.GetDI(DI::SR2_PusherUp))
+                        {
+                                g_DIO.SetDO(DO::SR2_PusherDown,true);
+                                tm1MS.timeStart(3000);
+                        }
                         else if(tm1MS.timeUp()) g_IniFile.m_nErrorCode=47;
                         break;
                 case 8:
-                        if(g_DIO.GetDI(DI::SR2_PusherFwd))
+                        if(g_DIO.GetDI(DI::SR2_PusherFwd))                
                         {
                                 g_DIO.SetDO(DO::SR2_PusherPush,false);
                                 g_DIO.SetDO(DO::SR2_PusherDown,false);
@@ -718,6 +723,10 @@ void __fastcall CMainThread::doUnLoadRail(int &nThreadIndex)
                                 g_DIO.SetDO(DO::SR2_Start,false);
                                 tm1MS.timeStart(5000);
                                 nThreadIndex++;
+                        }
+                        else if (g_DIO.GetDI(DI::SR2_PusherUp))
+                        {
+                                nThreadIndex--;
                         }
                         else if(!g_DIO.GetDO(DO::SR2_PusherPush))
                         {
@@ -743,7 +752,7 @@ void __fastcall CMainThread::doUnLoadRail(int &nThreadIndex)
                                 {
                                     g_DIO.SetDO(DO::UnloaderEnough,true);
                                 }
-                                else if(m_bStopLoad && m_nSubstrateRemains<=0 && g_IniFile.m_bUsePQC) {};
+                                else if(m_bStopLoad && m_nSubstrateRemains<=0 && g_IniFile.m_bUsePQC) {}
                                 else if(m_bStopLoad && m_nSubstrateRemains<=0 && g_IniFile.m_nIssueQty != 0)
                                 {
                                         g_DIO.SetDO(DO::UnloaderEnough,true);

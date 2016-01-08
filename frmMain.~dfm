@@ -1,11 +1,11 @@
 object fmMain: TfmMain
-  Left = 100
-  Top = 157
+  Left = 37
+  Top = 32
   BorderIcons = [biMinimize, biMaximize]
   BorderStyle = bsSingle
   Caption = 'fmMain'
-  ClientHeight = 682
-  ClientWidth = 1356
+  ClientHeight = 742
+  ClientWidth = 1497
   Color = 13430215
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -22,24 +22,24 @@ object fmMain: TfmMain
   TextHeight = 13
   object Splitter1: TSplitter
     Left = 0
-    Top = 573
-    Width = 1356
+    Top = 633
+    Width = 1497
     Height = 9
     Cursor = crVSplit
     Align = alBottom
   end
   object Splitter2: TSplitter
-    Left = 851
+    Left = 992
     Top = 0
     Width = 5
-    Height = 573
+    Height = 633
     Cursor = crHSplit
     Align = alRight
   end
   object listHistory: TListBox
     Left = 0
-    Top = 582
-    Width = 1356
+    Top = 642
+    Width = 1497
     Height = 100
     Align = alBottom
     Color = clBlack
@@ -55,14 +55,14 @@ object fmMain: TfmMain
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 851
-    Height = 573
+    Width = 992
+    Height = 633
     Align = alClient
     TabOrder = 1
     object Splitter3: TSplitter
       Left = 1
       Top = 601
-      Width = 849
+      Width = 990
       Height = 8
       Cursor = crVSplit
       Align = alTop
@@ -72,8 +72,8 @@ object fmMain: TfmMain
     object paintMap: TPaintBox
       Left = 1
       Top = 609
-      Width = 849
-      Height = 105
+      Width = 990
+      Height = 23
       Align = alClient
       Color = clBtnFace
       ParentColor = False
@@ -82,7 +82,7 @@ object fmMain: TfmMain
     object ScrollBox1: TScrollBox
       Left = 1
       Top = 1
-      Width = 849
+      Width = 990
       Height = 600
       Align = alTop
       TabOrder = 0
@@ -97,10 +97,10 @@ object fmMain: TfmMain
     end
   end
   object Panel2: TPanel
-    Left = 856
+    Left = 997
     Top = 0
     Width = 500
-    Height = 573
+    Height = 633
     Align = alRight
     TabOrder = 2
     object SpeedButton6: TSpeedButton
@@ -142,8 +142,8 @@ object fmMain: TfmMain
       Top = 8
       Width = 481
       Height = 521
-      ActivePage = tabInfo
-      TabIndex = 4
+      ActivePage = tabAction
+      TabIndex = 6
       TabOrder = 0
       OnChange = PageControl1Change
       object tabCCD: TTabSheet
@@ -1823,6 +1823,16 @@ object fmMain: TfmMain
           TabOrder = 1
           OnClick = btnClearLogClick
         end
+        object btnExportMarkerLog: TBitBtn
+          Left = 136
+          Top = 448
+          Width = 105
+          Height = 33
+          Hint = 'Marker'
+          Caption = #36664#20986#35352#37636
+          TabOrder = 2
+          OnClick = btnExportLogClick
+        end
       end
       object tabAction: TTabSheet
         Caption = #21205#20316'Log'
@@ -1852,6 +1862,16 @@ object fmMain: TfmMain
           TabOrder = 1
           OnClick = btnClearLogClick
         end
+        object btnExportActionLog: TBitBtn
+          Left = 136
+          Top = 448
+          Width = 105
+          Height = 33
+          Hint = 'Action'
+          Caption = #36664#20986#35352#37636
+          TabOrder = 2
+          OnClick = btnExportLogClick
+        end
       end
       object tabError: TTabSheet
         Caption = #37679#35492'Log'
@@ -1880,6 +1900,16 @@ object fmMain: TfmMain
           Caption = #37325#26032#35352#37636
           TabOrder = 1
           OnClick = btnClearLogClick
+        end
+        object btnExportErrorLog: TBitBtn
+          Left = 136
+          Top = 448
+          Width = 105
+          Height = 33
+          Hint = 'Error'
+          Caption = #36664#20986#35352#37636
+          TabOrder = 2
+          OnClick = btnExportLogClick
         end
       end
     end

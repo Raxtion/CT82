@@ -1604,7 +1604,47 @@ void __fastcall TfmMain::timerMessageTimer(TObject *Sender)
         listActionLog->Width = tabAction->Width-50;
         listErrorLog->Width = tabError->Width-50;
 
-
+        //change listbox behavior create herizontal scrollbar
+        int maxwidth = 0;
+        const int border = 3;
+        if (listMarkerLog->Items->Count>0)
+        {
+            for(int ii=0;ii<listMarkerLog->Items->Count;ii++)
+            {
+                String text = listMarkerLog->Items->Strings[ii];
+                //int width = listMarkerLog->Canvas->TextWidth(text);
+                int width = listMarkerLog->Items->Strings[ii].Length();
+                if(width >maxwidth) maxwidth = width;
+            }
+            //SendMessage(listMarkerLog->Handle, LB_SETHORIZONTALEXTENT, 8*maxwidth+2*border,0);
+            listMarkerLog->Perform(LB_SETHORIZONTALEXTENT, 8*maxwidth+2*border,0);
+        }
+        maxwidth = 0;
+        if (listActionLog->Items->Count>0)
+        {
+            for(int ii=0;ii<listActionLog->Items->Count;ii++)
+            {
+                String text = listActionLog->Items->Strings[ii];
+                //int width = listActionLog->Canvas->TextWidth(text);
+                int width = listActionLog->Items->Strings[ii].Length();
+                if(width >maxwidth) maxwidth = width;
+            }
+            //SendMessage(listActionLog->Handle, LB_SETHORIZONTALEXTENT, 8*maxwidth+2*border,0);
+            listActionLog->Perform(LB_SETHORIZONTALEXTENT, 8*maxwidth+2*border,0);
+        }
+        maxwidth = 0;
+        if (listErrorLog->Items->Count>0)
+        {
+            for(int ii=0;ii<listErrorLog->Items->Count;ii++)
+            {
+                String text = listErrorLog->Items->Strings[ii];
+                //int width = listErrorLog->Canvas->TextWidth(text);
+                int width = listErrorLog->Items->Strings[ii].Length();
+                if(width >maxwidth) maxwidth = width;
+            }
+            //SendMessage(listErrorLog->Handle, LB_SETHORIZONTALEXTENT, 8*maxwidth+2*border,0);
+            listErrorLog->Perform(LB_SETHORIZONTALEXTENT, 8*maxwidth+2*border,0);
+        }
 
         timerMessage->Enabled=true;
 }
@@ -1614,7 +1654,7 @@ void __fastcall TfmMain::timerMessageTimer(TObject *Sender)
 void __fastcall TfmMain::AddList(AnsiString strMessage)
 {
         //listHistory->AddItem(TimeToStr(Time())+"-->"+strMessage,NULL);    
-        listHistory->AddItem(DateTimeToStr(Now())+"-->"+strMessage,NULL);
+        listHistory->AddItem(DateTimeToStr(Now())+"--->"+strMessage,NULL);
         listHistory->ItemIndex=listHistory->Count-1;
 
 
@@ -1630,19 +1670,19 @@ void __fastcall TfmMain::AddVisionLog(AnsiString strLog)
 //---------------------------------------------------------------------------
 void __fastcall TfmMain::AddMarkerLog(AnsiString strLog)
 {
-        listMarkerLog->AddItem(DateTimeToStr(Now())+"-->"+strLog,NULL);
+        listMarkerLog->AddItem(DateTimeToStr(Now())+"--->"+strLog,NULL);
         listMarkerLog->ItemIndex=listMarkerLog->Count-1;
 }
 //---------------------------------------------------------------------------
 void __fastcall TfmMain::AddActionLog(AnsiString strLog)
 {
-        listActionLog->AddItem(DateTimeToStr(Now())+"-->"+strLog,NULL);
+        listActionLog->AddItem(DateTimeToStr(Now())+"--->"+strLog,NULL);
         listActionLog->ItemIndex=listActionLog->Count-1;
 }
 //---------------------------------------------------------------------------
 void __fastcall TfmMain::AddErrorLog(AnsiString strLog)
 {
-        listErrorLog->AddItem(DateTimeToStr(Now())+"-->"+strLog,NULL);
+        listErrorLog->AddItem(DateTimeToStr(Now())+"--->"+strLog,NULL);
         listErrorLog->ItemIndex=listErrorLog->Count-1;
 }
 
@@ -2949,6 +2989,59 @@ void __fastcall TfmMain::btnClearLogClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+void __fastcall TfmMain::btnExportLogClick(TObject *Sender)
+{
+        TSpeedButton *pBtn=(TSpeedButton *)Sender;
+        TStrings *strsInp;
+
+        if (pBtn->Hint == "Marker")
+        {
+            strsInp = listMarkerLog->Items;
+            g_pMainThread->m_listMarkerLog.push_back("Marker Log Save to C:\\C82 Log\\CSV.");
+            g_pMainThread->m_listLog.push_back("Marker Log Save to C:\\C82 Log\\CSV.");
+        }
+        else if (pBtn->Hint == "Action")
+        {
+            strsInp = listActionLog->Items;
+
+            g_pMainThread->m_listLog.push_back("Action Log Save to C:\\C82 Log\\CSV.");
+        }
+        else if (pBtn->Hint == "Error")
+        {
+            strsInp = listErrorLog->Items;
+
+            g_pMainThread->m_listLog.push_back("Error Log Save to C:\\C82 Log\\CSV.");
+        }
+
+        try
+        {
+            AnsiString strFileName;
+            time_t timer = time(NULL);
+            struct tm *tblock = localtime(&timer);
+            strFileName.sprintf("C:\\C82 Log\\CSV\\%4d_%02d_%02d_%2d_%02d_%02d.csv"
+                ,tblock->tm_year+1900,tblock->tm_mon+1,tblock->tm_mday
+                ,tblock->tm_hour,tblock->tm_min, tblock->tm_sec);
+
+            int iFileHandle;
+            iFileHandle = FileCreate(strFileName);
+            int iPos = 0;
+            for (int nX=0;nX<strsInp->Count;nX++)
+            {
+                AnsiString strOup = ReplaceString(strsInp->Strings[nX], "--->", ",");
+                strOup = strOup + "\r\n";
+                FileWrite(iFileHandle, strOup.c_str(), strOup.Length());
+            }
+            FileClose(iFileHandle);
+            ShowMessage("存檔完成");
+        }
+        catch (...)
+        {
+            ShowMessage("存檔失敗");
+        }
+
+}
+//---------------------------------------------------------------------------
+
 void __fastcall TfmMain::SpeedButton34Click(TObject *Sender)
 {
         AnsiString strFoldNameSrc="C:\\MapData\\"+g_IniFile.m_strSMSLotNo+"\\";
@@ -3212,4 +3305,6 @@ void __fastcall TfmMain::timerLoaderSigTimer(TObject *Sender)
     timerLoaderSig->Enabled = true;
 }
 //---------------------------------------------------------------------------
+
+
 

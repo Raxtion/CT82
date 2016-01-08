@@ -57,7 +57,8 @@ void DDXFile_String(bool bRead,TIniFile *pIniFile,AnsiString strSection,
 
 void FindFileName(char *strSource,char *strDest);
 
-
+TStringList* SplitString(AnsiString Original, AnsiString Delim);
+AnsiString ReplaceString(AnsiString Original, AnsiString OldStr, AnsiString NewStr);
 
 
 #endif

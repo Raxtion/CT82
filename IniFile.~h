@@ -189,6 +189,7 @@ public:
   void __fastcall AddNewID(int nLevel,char *strID,char *strPassword);
   AnsiString __fastcall ReadPassword(int nLevel,char *strID);
   void __fastcall AddLog(char *pRx,int nSize);
+  void __fastcall AddCSVLog(char *pRx,int nSize);
 
   AnsiString __fastcall GetFileNameWithNewExt(char *strFileName,char *strExtension);
   AnsiString __fastcall GetFileNameWithoutExt(char *strFileName);

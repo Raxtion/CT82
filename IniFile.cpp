@@ -384,90 +384,91 @@ AnsiString __fastcall CIniFile::ReadPassword(int nLevel,char *strID)
 }
 //---------------------------------------------------------------------------
 void __fastcall CIniFile::AddLog(char *pRx,int nSize)
- {
-    
-        AnsiString strTime;
-        time_t timer;
-        struct tm *tblock;
+{
 
-        timer = time(NULL);
-        tblock = localtime(&timer);  
+    AnsiString strTime;
+    time_t timer;
+    struct tm *tblock;
 
-        try{
-                FILE *pFile;
+    timer = time(NULL);
+    tblock = localtime(&timer);
 
-                strTime.sprintf("C:\\C77 Log\\%04d_%02d_%02d.txt",tblock->tm_year+1900,tblock->tm_mon+1,tblock->tm_mday);
+    try{
+        FILE *pFile;
 
-                pFile=fopen(strTime.c_str(),"a+");
+        strTime.sprintf("C:\\C82 Log\\%04d_%02d_%02d.txt",tblock->tm_year+1900,tblock->tm_mon+1,tblock->tm_mday);
 
-                if(pFile!=NULL)
-                {
-                        fprintf(pFile,"\n[%2d:%02d:%02d] ",tblock->tm_hour,tblock->tm_min, tblock->tm_sec);
+        pFile=fopen(strTime.c_str(),"a+");
 
-                        int nIndex=0;
-                        while(nIndex<nSize)
-                        {
-                                //if(pRx[nIndex]=='>') fprintf(pFile,"%c\n  ",pRx[nIndex]);
-                                //else
-                                fprintf(pFile,"%c",pRx[nIndex]);
-                                nIndex++;
-                        }
-                        fclose(pFile);
-                }
-
-        } catch(const EAccessViolation &e)
+        if(pFile!=NULL)
         {
+            fprintf(pFile,"\n[%2d:%02d:%02d] ",tblock->tm_hour,tblock->tm_min, tblock->tm_sec);
+
+                int nIndex=0;
+                while(nIndex<nSize)
+                {
+                    //if(pRx[nIndex]=='>') fprintf(pFile,"%c\n  ",pRx[nIndex]);
+                    //else
+                    fprintf(pFile,"%c",pRx[nIndex]);
+                    nIndex++;
+                }
+                fclose(pFile);
+        }
+
+    } catch(const EAccessViolation &e)
+    {
 
                 //Application->MessageBox(e.Message.c_str(), "AddLog Exception",MB_OK);
-        }
- }
- //---------------------------------------------------------------------------
- __fastcall CIniFile::CIniFile()
- {
-        mkdir("C:\\C77 Log");
- }
- //---------------------------------------------------------------------------
- AnsiString __fastcall CIniFile::GetFileNameWithoutExt(char *strFileName)
- {
-        char drive[MAXDRIVE];
-        char dir[MAXDIR];
-        char file[MAXFILE];
-        char ext[MAXEXT];
-        int flags;
+    }
+}
+//---------------------------------------------------------------------------
+__fastcall CIniFile::CIniFile()
+{
+    mkdir("C:\\C82 Log");
+    mkdir("C:\\C82 Log\\CSV");
+}
+//---------------------------------------------------------------------------
+AnsiString __fastcall CIniFile::GetFileNameWithoutExt(char *strFileName)
+{
+    char drive[MAXDRIVE];
+    char dir[MAXDIR];
+    char file[MAXFILE];
+    char ext[MAXEXT];
+    int flags;
 
-        flags=fnsplit(strFileName,drive,dir,file,ext);
+    flags=fnsplit(strFileName,drive,dir,file,ext);
 
-        return file;
- }
- //---------------------------------------------------------------------------
- AnsiString __fastcall CIniFile::GetFileNameWithNewExt(char *strFileName,char *strExtension)
- {
-        char drive[MAXDRIVE];
-        char dir[MAXDIR];
-        char file[MAXFILE];
-        char ext[MAXEXT];
-        int flags;
+    return file;
+}
+//---------------------------------------------------------------------------
+AnsiString __fastcall CIniFile::GetFileNameWithNewExt(char *strFileName,char *strExtension)
+{
+    char drive[MAXDRIVE];
+    char dir[MAXDIR];
+    char file[MAXFILE];
+    char ext[MAXEXT];
+    int flags;
 
-        flags=fnsplit(strFileName,drive,dir,file,ext);
-        AnsiString strName;
-        strName.sprintf("%s%s%s.%s",drive,dir,file,strExtension);
+    flags=fnsplit(strFileName,drive,dir,file,ext);
+    AnsiString strName;
+    strName.sprintf("%s%s%s.%s",drive,dir,file,strExtension);
 
-        return strName;
- }
+    return strName;
+}
 
-  //---------------------------------------------------------------------------
- AnsiString __fastcall CIniFile::GetFileNameWithNewPath(char *strFileName,char *strPathName)
- {
-        char drive[MAXDRIVE];
-        char dir[MAXDIR];
-        char file[MAXFILE];
-        char ext[MAXEXT];
-        int flags;
+//---------------------------------------------------------------------------
+AnsiString __fastcall CIniFile::GetFileNameWithNewPath(char *strFileName,char *strPathName)
+{
+    char drive[MAXDRIVE];
+    char dir[MAXDIR];
+    char file[MAXFILE];
+    char ext[MAXEXT];
+    int flags;
 
-        flags=fnsplit(strFileName,drive,dir,file,ext);
-        AnsiString strName;
-        strName.sprintf("%s%s.%s",strPathName,file,ext);
+    flags=fnsplit(strFileName,drive,dir,file,ext);
+    AnsiString strName;
+    strName.sprintf("%s%s.%s",strPathName,file,ext);
 
-        return strName;
- }
+    return strName;
+}
 
