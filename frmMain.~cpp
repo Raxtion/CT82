@@ -2587,13 +2587,16 @@ void __fastcall TfmMain::clientBoatIDError(TObject *Sender,
 
 void __fastcall TfmMain::SpeedButton26Click(TObject *Sender)
 {
-        g_SMSXML.QueryID();        
+        //if((g_DIO.GetDI(DI::FT_Negative) || g_DIO.GetDI(DI::RT_Negative))
+        if((false || true)
+            && Application->MessageBoxA("偵測平台為反向\n似乎有料片沒打完,確定要覆蓋資料?","Confirm",MB_ICONQUESTION|MB_OKCANCEL)==IDCANCEL) return;
+        g_SMSXML.QueryID();
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TfmMain::SpeedButton27Click(TObject *Sender)
 {
-        g_SMSXML.QueryIDEnd(g_pMainThread->m_nLaserCount);        
+        g_SMSXML.QueryIDEnd(g_pMainThread->m_nLaserCount);
 }
 //---------------------------------------------------------------------------
 

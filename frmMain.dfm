@@ -1,6 +1,6 @@
 object fmMain: TfmMain
-  Left = 34
-  Top = 22
+  Left = 46
+  Top = 61
   BorderIcons = [biMinimize, biMaximize]
   BorderStyle = bsSingle
   Caption = 'fmMain'
@@ -142,8 +142,8 @@ object fmMain: TfmMain
       Top = 8
       Width = 481
       Height = 521
-      ActivePage = tabError
-      TabIndex = 7
+      ActivePage = tabSMS
+      TabIndex = 3
       TabOrder = 0
       OnChange = PageControl1Change
       object tabCCD: TTabSheet
