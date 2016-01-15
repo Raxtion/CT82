@@ -1768,8 +1768,8 @@ void __fastcall TfmMain::timerCommTimer(TObject *Sender)
                         if(strCommand==strSetOffsetLaserCMD[nIndex])
                         {
                                 //Set Text
-                                bRet=g_Laser.SetText(g_IniFile.m_nLaserProgramNo[nIndex],0,GetSchedule(g_pMainThread->m_nLaserCount).c_str());
-                                bRet=g_Laser.SetText(g_IniFile.m_nLaserProgramNo[nIndex],2,GetSchedule(g_pMainThread->m_nLaserCount).c_str());
+                                bRet=g_Laser.SetText(g_IniFile.m_nLaserProgramNo[nIndex],0,GetSchedule(g_pMainThread->m_nLaserCount, nIndex).c_str());
+                                bRet=g_Laser.SetText(g_IniFile.m_nLaserProgramNo[nIndex],2,GetSchedule(g_pMainThread->m_nLaserCount, nIndex).c_str());
                                 //Set Offset
                                 bRet=g_Laser.SetToolPosOffset(g_IniFile.m_nLaserProgramNo[nIndex],g_pMainThread->m_tmpProductInfo[nIndex % 2].m_nOffsetX,g_pMainThread->m_tmpProductInfo[nIndex % 2].m_nOffsetY,g_pMainThread->m_tmpProductInfo[nIndex % 2].m_dOffsetAngle);
                                 // bRet=true;
@@ -1861,6 +1861,7 @@ void __fastcall TfmMain::serverLaserIDClientRead(TObject *Sender,
         AnsiString strMsg=Socket->ReceiveText();
 
         AddList("(上)雷刻完2D 讀取器-->"+strMsg);
+        g_pMainThread->m_strLastUpReadID = strMsg;
 
         if(strMsg=="NO_READ") g_pMainThread->m_listLaserCodeReaderRX.push_back("LASER_READER_NOREAD");
         else if(strMsg.Length()>8)
@@ -1897,6 +1898,7 @@ void __fastcall TfmMain::serverCoverIDClientRead(TObject *Sender,
         AddList("(下)雷刻完2D 讀取器-->"+strMsg);
 
         if(strMsg=="NO_READ") g_pMainThread->m_listCoverCodeReaderRX.push_back("COVER_READER_NOREAD");
+        else if(strMsg != g_pMainThread->m_strLastUpReadID) g_pMainThread->m_listCoverCodeReaderRX.push_back("2DCODE_DIFFERENCE_ERROR");
         else if(strMsg.Length()>3)
         {
                 g_pMainThread->m_listCoverCodeReaderRX.push_back(strMsg);
@@ -1992,8 +1994,8 @@ void __fastcall TfmMain::SpeedButton19Click(TObject *Sender)
 {
         g_pMainThread->m_nLaserCount=0;
 
-        g_Laser.SetText(g_IniFile.m_nLaserProgramNo[1],0,GetSchedule(g_pMainThread->m_nLaserCount).c_str());
-        g_Laser.SetText(g_IniFile.m_nLaserProgramNo[1],2,GetSchedule(g_pMainThread->m_nLaserCount).c_str());
+        g_Laser.SetText(g_IniFile.m_nLaserProgramNo[1],0,GetSchedule(g_pMainThread->m_nLaserCount, false).c_str());
+        g_Laser.SetText(g_IniFile.m_nLaserProgramNo[1],2,GetSchedule(g_pMainThread->m_nLaserCount, false).c_str());
 }
 //---------------------------------------------------------------------------
 
@@ -2001,13 +2003,16 @@ void __fastcall TfmMain::SpeedButton20Click(TObject *Sender)
 {
         g_pMainThread->m_nLaserCount=0;
         
-        g_Laser.SetText(g_IniFile.m_nLaserProgramNo[0],0,GetSchedule(g_pMainThread->m_nLaserCount).c_str());
-        g_Laser.SetText(g_IniFile.m_nLaserProgramNo[0],2,GetSchedule(g_pMainThread->m_nLaserCount).c_str());
+        g_Laser.SetText(g_IniFile.m_nLaserProgramNo[0],0,GetSchedule(g_pMainThread->m_nLaserCount, true).c_str());
+        g_Laser.SetText(g_IniFile.m_nLaserProgramNo[0],2,GetSchedule(g_pMainThread->m_nLaserCount, true).c_str());
 }
 //---------------------------------------------------------------------------
-AnsiString __fastcall TfmMain::GetSchedule(int nIndex)
+AnsiString __fastcall TfmMain::GetSchedule(int nLaserCount, int nIndex)
 {
-        return g_SMSXML.m_strSerialID;
+        if (nIndex == 0 || nIndex == 2) return g_pMainThread->m_tmpProductInfo[false].m_strLotID;
+        else return g_pMainThread->m_tmpProductInfo[true].m_strLotID;
+
+        //return g_SMSXML.m_strSerialID;
         /*
         int nSubNo=g_pMainThread->m_nLaserCount / g_IniFile.m_nSubLotSize;
         int nSN=g_pMainThread->m_nLaserCount % g_IniFile.m_nSubLotSize;

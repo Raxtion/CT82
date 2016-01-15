@@ -348,7 +348,7 @@ private:	// User declarations
         void __fastcall CreateMapArray(TRect &rect,int nPackageX,int nPackageY,int nDeviceGap,int nSectX,int nSectY);
         void __fastcall DoVisionProcess();
 
-        AnsiString __fastcall GetSchedule(int nIndex);
+        AnsiString __fastcall GetSchedule(int nLaserCount, int nIndex);
 
         void __fastcall SetLEDDimmer();
         bool __fastcall AxisMoveCheck();

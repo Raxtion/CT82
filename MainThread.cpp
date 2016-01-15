@@ -55,6 +55,7 @@ __fastcall CMainThread::CMainThread(bool CreateSuspended)
         m_bNeedHome=false;
         m_bStopBlower=false;
         bFrontTable=false;
+        m_strLastUpReadID="";
 
 }
 //---------------------------------------------------------------------------
@@ -2001,7 +2002,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                 case 39:
                         if(g_SMSXML.m_strSerialID!="FAIL" && g_SMSXML.m_strSerialID!="NOT_VALID")
                         {
-                                m_listLog.push_back("取得雷刻ID "+g_SMSXML.m_strSerialID);
+                                m_listLog.push_back("正面取得雷刻ID "+g_SMSXML.m_strSerialID);
                                 m_tmpProductInfo[bFront].m_strLotID=g_SMSXML.m_strSerialID;
 
                                 //Add to Marker Log
@@ -2181,15 +2182,16 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                         else if(p_tm1MS->timeUp()) g_IniFile.m_nErrorCode=416;
                         break;
                 case 54:
-                        //g_SMSXML.QueryID();          翻面不在取得lot member
+                        //g_SMSXML.QueryID();          翻面不在取得lot number
                         p_tm1MS->timeStart(10000);
                         nThreadIndex++;
                         break;
                 case 55:
                         if(g_SMSXML.m_strSerialID!="FAIL" && g_SMSXML.m_strSerialID!="NOT_VALID")
                         {
-                                m_listLog.push_back("取得雷刻ID "+g_SMSXML.m_strSerialID);
-                                m_tmpProductInfo[bFront].m_strLotID=g_SMSXML.m_strSerialID;
+                                m_listLog.push_back("反面沿用雷刻ID "+m_tmpProductInfo[bFront].m_strLotID);
+                                //m_listLog.push_back("取得雷刻ID "+g_SMSXML.m_strSerialID);
+                                //m_tmpProductInfo[bFront].m_strLotID=g_SMSXML.m_strSerialID;
 
                                 nThreadIndex++;
                         }
@@ -2631,6 +2633,7 @@ void __fastcall CMainThread::doSCPicker(int &nThreadIndex)
                                 m_listProductInfo.back().m_bIsSBT2DOK[1]=false;
                                 if(m_listCoverCodeReaderRX.back()=="COVER_READER_NOREAD") g_IniFile.m_nErrorCode=422;
                                 else if(m_listCoverCodeReaderRX.back()=="COVER_READER_LENGHT_ERROR") g_IniFile.m_nErrorCode=424;
+                                else if (m_listCoverCodeReaderRX.back()=="2DCODE_DIFFERENCE_ERROR") g_IniFile.m_nErrorCode=438;
                                 else
                                 {
                                         m_listLog.push_back("[DOWN]Laser Reader ID OK");
