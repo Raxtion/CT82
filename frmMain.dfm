@@ -1,10 +1,10 @@
 object fmMain: TfmMain
   Left = 33
-  Top = 565
+  Top = 191
   BorderIcons = [biMinimize, biMaximize]
   BorderStyle = bsSingle
   Caption = 'fmMain'
-  ClientHeight = 742
+  ClientHeight = 787
   ClientWidth = 1497
   Color = 13430215
   Font.Charset = DEFAULT_CHARSET
@@ -22,7 +22,7 @@ object fmMain: TfmMain
   TextHeight = 13
   object Splitter1: TSplitter
     Left = 0
-    Top = 633
+    Top = 678
     Width = 1497
     Height = 9
     Cursor = crVSplit
@@ -32,13 +32,13 @@ object fmMain: TfmMain
     Left = 992
     Top = 0
     Width = 5
-    Height = 633
+    Height = 678
     Cursor = crHSplit
     Align = alRight
   end
   object listHistory: TListBox
     Left = 0
-    Top = 642
+    Top = 687
     Width = 1497
     Height = 100
     Align = alBottom
@@ -56,7 +56,7 @@ object fmMain: TfmMain
     Left = 0
     Top = 0
     Width = 992
-    Height = 633
+    Height = 678
     Align = alClient
     TabOrder = 1
     object Splitter3: TSplitter
@@ -73,7 +73,7 @@ object fmMain: TfmMain
       Left = 1
       Top = 609
       Width = 990
-      Height = 23
+      Height = 68
       Align = alClient
       Color = clBtnFace
       ParentColor = False
@@ -100,7 +100,7 @@ object fmMain: TfmMain
     Left = 997
     Top = 0
     Width = 500
-    Height = 633
+    Height = 678
     Align = alRight
     TabOrder = 2
     object SpeedButton6: TSpeedButton
@@ -142,8 +142,8 @@ object fmMain: TfmMain
       Top = 8
       Width = 481
       Height = 521
-      ActivePage = tabLaser
-      TabIndex = 2
+      ActivePage = tabInfo
+      TabIndex = 4
       TabOrder = 0
       OnChange = PageControl1Change
       object tabCCD: TTabSheet

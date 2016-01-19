@@ -90,6 +90,8 @@ E0316=入料區 間隔材吸盤 上位檢知沒有ON (Sensor X074 Off) <Input Area-Paper vacuu
 E0317=入料區 間隔材吸盤 真空檢知沒有ON (Sensor X077 Off),間隔材移動中掉落 <Input Area-Paper vacuum error (Sensor X077 Off),Please check Paper prop >
 E0318=入料區 間隔材 丟棄盒放置檢知off (Sensor X058)<Input Area-Paper scrap box can not detect (Sensor X058)>
 E0319=入料區 間隔材 丟棄盒滿料檢知off (Sensor X061)<Input Area-Paper scrap box is full (Sensor X061)>
+E0320=入料區 基板反向 (Sensor X047)<Input Area-Subtrate error (Sensor X047)>
+E0321=入料區 Loader未進料警告 <Input Area-Loader no Loading, System Idle Alarm>
 
 E0400=前翻轉平台正面檢知沒有ON (Sensor X000) <Front site-Turn table position sensor not detect"ON"(sensor X000)>
 E0401=後翻轉平台正面檢知沒有ON (Sensor X008) <Back site-Turn table position sensor not detect"ON"(sensor X008)>
@@ -125,6 +127,12 @@ E0430=請求雷刻序號 SMS回傳失敗 <Request Laser serial number - SMS system facebac
 E0431=請求雷刻序號 SMS時間內沒有回應 <Request Laser serial number - SMS system faceback time out>
 E0432=前翻轉平台挾持汽缸沒有縮回 (Sensor X006) <Front site-Turn table SBT locker cylinder position error(Sensor X006)>
 E0433=後翻轉平台挾持汽缸沒有縮回 (Sensor X014) <Back site-Turn table SBT locker cylinder position error(Sensor X014)>
+E0434=前翻轉平台反面檢知沒有ON (Sensor X001) <Front site-Turn table negative sensor not detect"ON"(sensor X001)>
+E0435=後翻轉平台反面檢知沒有ON (Sensor X009) <Front site-Turn table negative sensor not detect"ON"(sensor X009)>
+E0436=前翻轉平台Lock汽缸沒有縮回 (Sensor X003) <Front site-Turn table Locker cylinder position error (Sensor X013)>
+E0437=後翻轉平台Lock汽缸沒有縮回 (Sensor X011) <Back site-Turn table Locker cylinder position error (Sensor X011)>
+E0438=平台翻轉鎖定: 請確認入料吸盤位於前極限,平台位於放料區或雷射區 <Table Flip Locked: Please check table location>
+E0439=基板2D 正反面雷刻讀取不同 <SBT 2D reader - 2D code are different>
 
 E0500=轉板區 基板吸盤 上位檢知沒有ON (Sensor X016)  <Pick up Area-"SBT" pickup vacuun cylinder "UP" detect sensor not "ON"(Sensor X016)>
 

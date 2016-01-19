@@ -58,6 +58,8 @@ public:
 
         std::list<ProductInfo> m_listProductInfo;            
         ProductInfo m_tmpProductInfo[2];
+        
+        AnsiString m_strLastUpReadID;        //for check the same between Up side and down side
 
         int nThreadIndex[MAX_PROCESS];		//0:Inti 1:Start Measure
         bool m_bRefresh;
