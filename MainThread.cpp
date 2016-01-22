@@ -56,7 +56,7 @@ __fastcall CMainThread::CMainThread(bool CreateSuspended)
         m_bStopBlower=false;
         bFrontTable=false;
         m_strLastUpReadID="";
-
+        m_nSubstrateInMachine=0;
 }
 //---------------------------------------------------------------------------
 void __fastcall CMainThread::Execute()
@@ -411,6 +411,7 @@ bool __fastcall CMainThread::InitialMachine(int &nThreadIndex)
                         m_nOKSummary=0;
                         m_nNGSummary=0;
                         m_nSubstrateRemains=0;
+                        m_nSubstrateInMachine=0;
                         m_nStripCount=0;
 
                         m_bLoadRailReady=false;
@@ -524,6 +525,7 @@ void __fastcall CMainThread::doLoadRail(int &nThreadIndex)
                                 //ShowNow
                                 fmShowNow->m_arraybShape[0] = true;
                                 m_nSubstrateRemains++;
+                                m_nSubstrateInMachine++;
                                 m_nStripCount++;
 
                                 if(m_nStripCount>=g_IniFile.m_nIssueQty && g_IniFile.m_nIssueQty>0 && !m_bStopLoad)
@@ -748,16 +750,8 @@ void __fastcall CMainThread::doUnLoadRail(int &nThreadIndex)
                         {
                                 if(m_nSubstrateRemains>0) m_nSubstrateRemains--;
 
-
-                                if(m_bStopLoad && g_IniFile.m_nIssueQty == 0)
-                                {
-                                    g_DIO.SetDO(DO::UnloaderEnough,true);
-                                }
-                                else if(m_bStopLoad && m_nSubstrateRemains<=0 && g_IniFile.m_bUsePQC) {}
-                                else if(m_bStopLoad && m_nSubstrateRemains<=0 && g_IniFile.m_nIssueQty != 0)
-                                {
-                                        g_DIO.SetDO(DO::UnloaderEnough,true);
-                                }
+                                if (m_nSubstrateInMachine>0) m_nSubstrateInMachine--;
+                                else if (m_nSubstrateInMachine == 0) g_DIO.SetDO(DO::UnloaderEnough,true);
 
                                 //ShowNow
                                 fmShowNow->m_arraybShape[12] = false;
@@ -772,10 +766,13 @@ void __fastcall CMainThread::doUnLoadRail(int &nThreadIndex)
                 case 10:
                         if(tm1MS.timeUp())
                         {
-                                g_DIO.SetDO(DO::UnloaderEnough,false);
-                                g_pMainThread->m_bStopLoad = false;
-                                g_pMainThread->m_bLoadLifterReady = true;
-                                g_pMainThread->m_bReLoad = true;
+                                if (g_DIO.GetDO(DO::UnloaderEnough))
+                                {
+                                    g_DIO.SetDO(DO::UnloaderEnough,false);
+                                    g_pMainThread->m_bStopLoad = false;
+                                    g_pMainThread->m_bLoadLifterReady = true;
+                                    g_pMainThread->m_bReLoad = true;
+                                }
 
                                 if(m_bStopLoad && m_nSubstrateRemains<=0 && g_IniFile.m_bUsePQC) g_IniFile.m_nErrorCode=914;
                                 else if(m_bStopLoad && m_nSubstrateRemains<=0 && g_IniFile.m_nIssueQty != 0)
@@ -1067,6 +1064,7 @@ void __fastcall CMainThread::doSSPickerFromLifter(int &nThreadIndex)
                                 if(bIsSubstrate)
                                 {
                                         m_nSubstrateRemains++;
+                                        m_nSubstrateInMachine++;
                                         m_nStripCount++;
 
                                         if(m_nStripCount>=g_IniFile.m_nIssueQty && g_IniFile.m_nIssueQty>0 && !m_bStopLoad)
@@ -2682,6 +2680,7 @@ void __fastcall CMainThread::doSCPicker(int &nThreadIndex)
                 case 21:
                         if(tm1MS.timeUp())
                         {
+                                m_nSubstrateInMachine--;
                                 g_DIO.SetDO(DO::SC_SSuckerVacOn,false);
                                 g_DIO.SetDO(DO::SC_SSuckerVacOff,true);
                                 g_DIO.SetDO(DO::SC_SSuckerDeVac,true);
