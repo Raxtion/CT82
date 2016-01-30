@@ -256,6 +256,18 @@ __published:	// IDE-managed Components
     TStaticText *StaticText114;
     TEdit *m_nLoadingAlarmTime;
     TStaticText *StaticText115;
+    TStaticText *StaticText116;
+    TEdit *m_dTableBackSpeedDown1;
+    TStaticText *StaticText117;
+    TStaticText *StaticText118;
+    TEdit *m_dTableBackSpeedUp1;
+    TStaticText *StaticText119;
+    TStaticText *StaticText120;
+    TEdit *m_dTableBackSpeedDown0;
+    TStaticText *StaticText121;
+    TStaticText *StaticText122;
+    TEdit *m_dTableBackSpeedUp0;
+    TStaticText *StaticText123;
         void __fastcall StaticText39Click(TObject *Sender);
 private:	// User declarations
 public:		// User declarations

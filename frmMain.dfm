@@ -1,10 +1,10 @@
 object fmMain: TfmMain
-  Left = 36
-  Top = 35
+  Left = 42
+  Top = 173
   BorderIcons = [biMinimize, biMaximize]
   BorderStyle = bsSingle
   Caption = 'fmMain'
-  ClientHeight = 787
+  ClientHeight = 703
   ClientWidth = 1497
   Color = 13430215
   Font.Charset = DEFAULT_CHARSET
@@ -22,7 +22,7 @@ object fmMain: TfmMain
   TextHeight = 13
   object Splitter1: TSplitter
     Left = 0
-    Top = 678
+    Top = 594
     Width = 1497
     Height = 9
     Cursor = crVSplit
@@ -32,13 +32,13 @@ object fmMain: TfmMain
     Left = 992
     Top = 0
     Width = 5
-    Height = 678
+    Height = 594
     Cursor = crHSplit
     Align = alRight
   end
   object listHistory: TListBox
     Left = 0
-    Top = 687
+    Top = 603
     Width = 1497
     Height = 100
     Align = alBottom
@@ -56,7 +56,7 @@ object fmMain: TfmMain
     Left = 0
     Top = 0
     Width = 992
-    Height = 678
+    Height = 594
     Align = alClient
     TabOrder = 1
     object Splitter3: TSplitter
@@ -73,7 +73,7 @@ object fmMain: TfmMain
       Left = 1
       Top = 609
       Width = 990
-      Height = 68
+      Height = 42
       Align = alClient
       Color = clBtnFace
       ParentColor = False
@@ -100,7 +100,7 @@ object fmMain: TfmMain
     Left = 997
     Top = 0
     Width = 500
-    Height = 678
+    Height = 594
     Align = alRight
     TabOrder = 2
     object SpeedButton6: TSpeedButton
@@ -1455,20 +1455,6 @@ object fmMain: TfmMain
           Font.Style = []
           ParentFont = False
           TabOrder = 0
-          object SpeedButton32: TSpeedButton
-            Left = 112
-            Top = 232
-            Width = 137
-            Height = 49
-            Caption = #35722#26356#38647#21051#25209#34399
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -13
-            Font.Name = 'MS Sans Serif'
-            Font.Style = []
-            ParentFont = False
-            OnClick = SpeedButton30Click
-          end
           object labelMachineID: TLabel
             Left = 152
             Top = 24
@@ -1492,14 +1478,14 @@ object fmMain: TfmMain
           end
           object labelLotNo: TLabel
             Left = 152
-            Top = 128
+            Top = 160
             Width = 48
             Height = 20
             Caption = 'Label3'
           end
           object labelProductID: TLabel
             Left = 152
-            Top = 192
+            Top = 224
             Width = 48
             Height = 20
             Caption = 'Label3'
@@ -1507,10 +1493,48 @@ object fmMain: TfmMain
           end
           object labelSBTLotNo: TLabel
             Left = 152
-            Top = 160
+            Top = 192
             Width = 48
             Height = 20
             Caption = 'Label3'
+            Visible = False
+          end
+          object labelSBTType: TLabel
+            Left = 152
+            Top = 128
+            Width = 48
+            Height = 20
+            Caption = 'Label3'
+          end
+          object SpeedButton32: TSpeedButton
+            Left = 112
+            Top = 232
+            Width = 137
+            Height = 49
+            Caption = #35722#26356#38647#21051#25209#34399
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
+            OnClick = SpeedButton30Click
+          end
+          object StaticText1: TStaticText
+            Left = 16
+            Top = 222
+            Width = 122
+            Height = 28
+            Alignment = taRightJustify
+            AutoSize = False
+            BevelInner = bvSpace
+            BevelKind = bkSoft
+            BevelOuter = bvNone
+            BorderStyle = sbsSingle
+            Caption = 'Product ID'
+            Color = clSkyBlue
+            ParentColor = False
+            TabOrder = 4
             Visible = False
           end
           object StaticText58: TStaticText
@@ -1563,7 +1587,7 @@ object fmMain: TfmMain
           end
           object StaticText37: TStaticText
             Left = 16
-            Top = 126
+            Top = 158
             Width = 122
             Height = 28
             Alignment = taRightJustify
@@ -1577,26 +1601,9 @@ object fmMain: TfmMain
             ParentColor = False
             TabOrder = 3
           end
-          object StaticText1: TStaticText
-            Left = 16
-            Top = 190
-            Width = 122
-            Height = 28
-            Alignment = taRightJustify
-            AutoSize = False
-            BevelInner = bvSpace
-            BevelKind = bkSoft
-            BevelOuter = bvNone
-            BorderStyle = sbsSingle
-            Caption = 'Product ID'
-            Color = clSkyBlue
-            ParentColor = False
-            TabOrder = 4
-            Visible = False
-          end
           object StaticText2: TStaticText
             Left = 16
-            Top = 158
+            Top = 190
             Width = 122
             Height = 28
             Alignment = taRightJustify
@@ -1610,6 +1617,22 @@ object fmMain: TfmMain
             ParentColor = False
             TabOrder = 5
             Visible = False
+          end
+          object StaticText3: TStaticText
+            Left = 16
+            Top = 126
+            Width = 122
+            Height = 28
+            Alignment = taRightJustify
+            AutoSize = False
+            BevelInner = bvSpace
+            BevelKind = bkSoft
+            BevelOuter = bvNone
+            BorderStyle = sbsSingle
+            Caption = 'Substrate Type'
+            Color = clSkyBlue
+            ParentColor = False
+            TabOrder = 6
           end
         end
         object GroupBox5: TGroupBox

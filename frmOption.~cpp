@@ -16,13 +16,13 @@ __fastcall TfmOption::TfmOption(TComponent* Owner)
 //---------------------------------------------------------------------------
 void __fastcall TfmOption::m_bUseFMCCD2Click(TObject *Sender)
 {
-    if (this->m_bUseFMCCD2 == true) m_bUseFMCCD->Checked = true;
+    if (this->m_bUseFMCCD2->Checked == true) m_bUseFMCCD->Checked = true;
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TfmOption::m_bUseFMCCDClick(TObject *Sender)
 {
-    if (this->m_bUseFMCCD == false) m_bUseFMCCD2->Checked = false;
+    if (this->m_bUseFMCCD->Checked == false) m_bUseFMCCD2->Checked = false;
 }
 //---------------------------------------------------------------------------
 

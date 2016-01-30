@@ -203,22 +203,34 @@ void PCIM114GL::SetMoveSpeed(unsigned short nAxis, double dMaxVal, double dTAcc,
 }
 //---------------------------------------------------------------------------
 
+void PCIM114GL::ChangeMoveSpeed(unsigned short nAxis, double dSpeedVal)
+{
+    if(!m_bInitOK) return ;
+    if (nAxis < 4)
+    {
+        _M114GL_v_change(m_nCardNo, nAxis, dSpeedVal*m_dMMtoPLS[nAxis], 0.01);
+    }
+    else
+    {
+        _mnet_m1_v_change(m_nStartRingNo, m_vectAxisMap[nAxis - 4], dSpeedVal*m_dMMtoPLS[nAxis], 0.01);
+    }
+}
+//---------------------------------------------------------------------------
+
 void PCIM114GL::AxisHome(unsigned short nAxis, bool bDir)
 {
         if(!m_bInitOK) return ;
 
         if (nAxis < 4)
-            {
-                if (bDir) _M114GL_home_move(m_nCardNo, nAxis, m_dStartVal[nAxis], m_dMaxVal[nAxis], m_dTAcc[nAxis]);
-                else _M114GL_home_move(m_nCardNo, nAxis, m_dStartVal[nAxis], -m_dMaxVal[nAxis], m_dTAcc[nAxis]);
-            }
-            else
-            {
-                if(bDir) _mnet_m1_start_home_move(m_nStartRingNo, m_vectAxisMap[nAxis - 4],1);
-                else _mnet_m1_start_home_move(m_nStartRingNo, m_vectAxisMap[nAxis - 4],0);
-            }
-
-
+        {
+            if (bDir) _M114GL_home_move(m_nCardNo, nAxis, m_dStartVal[nAxis], m_dMaxVal[nAxis], m_dTAcc[nAxis]);
+            else _M114GL_home_move(m_nCardNo, nAxis, m_dStartVal[nAxis], -m_dMaxVal[nAxis], m_dTAcc[nAxis]);
+        }
+        else
+        {
+            if(bDir) _mnet_m1_start_home_move(m_nStartRingNo, m_vectAxisMap[nAxis - 4],1);
+            else _mnet_m1_start_home_move(m_nStartRingNo, m_vectAxisMap[nAxis - 4],0);
+        }
 }
 //---------------------------------------------------------------------------
 
@@ -237,11 +249,11 @@ void PCIM114GL::AbsMove(unsigned short nAxis, double dDis)
         if(!m_bInitOK) return ;
         if(m_bAutoMode) m_dLastTargetPos[nAxis]=dDis;
         if (nAxis < 4) _M114GL_start_ta_move(m_nCardNo, nAxis, dDis*m_dMMtoPLS[nAxis],m_dStartVal[nAxis], m_dMaxVal[nAxis], m_dTAcc[nAxis], m_dTDec[nAxis]);
-            else _mnet_m1_start_a_move(m_nStartRingNo, m_vectAxisMap[nAxis - 4], dDis*m_dMMtoPLS[nAxis]);
+        else _mnet_m1_start_a_move(m_nStartRingNo, m_vectAxisMap[nAxis - 4], dDis*m_dMMtoPLS[nAxis]);
 
 
 
-            double a=m_dMMtoPLS[nAxis];
+        double a=m_dMMtoPLS[nAxis];
 }
 //---------------------------------------------------------------------------
 

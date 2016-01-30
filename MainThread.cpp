@@ -56,7 +56,6 @@ __fastcall CMainThread::CMainThread(bool CreateSuspended)
         m_bStopBlower=false;
         bFrontTable=false;
         m_strLastUpReadID="";
-        m_nSubstrateInMachine=0;
 }
 //---------------------------------------------------------------------------
 void __fastcall CMainThread::Execute()
@@ -145,6 +144,8 @@ void __fastcall CMainThread::Execute()
         if(m_bStopBlower && tmBlower.timeUp())
         {
             g_DIO.SetDO(DO::Blower, false);
+            g_DIO.SetDO(DO::Laser_BlowAir_Front, false);
+            g_DIO.SetDO(DO::Laser_BlowAir_Rear, false);
             m_bStopBlower = false;
         }
 
@@ -229,7 +230,7 @@ void __fastcall CMainThread::Execute()
 		{
 			g_DIO.SetDO(DO::StopBtnLamp,true);
 			g_DIO.SetDO(DO::StartBtnLamp,false);
-                        g_DIO.SetDO(DO::ResetBtnLamp,false);
+            g_DIO.SetDO(DO::ResetBtnLamp,false);
 
 			g_DIO.SetDO(DO::GreenLamp,false);
 			g_DIO.SetDO(DO::YellowLamp,true);
@@ -411,7 +412,6 @@ bool __fastcall CMainThread::InitialMachine(int &nThreadIndex)
                         m_nOKSummary=0;
                         m_nNGSummary=0;
                         m_nSubstrateRemains=0;
-                        m_nSubstrateInMachine=0;
                         m_nStripCount=0;
 
                         m_bLoadRailReady=false;
@@ -525,7 +525,6 @@ void __fastcall CMainThread::doLoadRail(int &nThreadIndex)
                                 //ShowNow
                                 fmShowNow->m_arraybShape[0] = true;
                                 m_nSubstrateRemains++;
-                                m_nSubstrateInMachine++;
                                 m_nStripCount++;
 
                                 if(m_nStripCount>=g_IniFile.m_nIssueQty && g_IniFile.m_nIssueQty>0 && !m_bStopLoad)
@@ -750,8 +749,14 @@ void __fastcall CMainThread::doUnLoadRail(int &nThreadIndex)
                         {
                                 if(m_nSubstrateRemains>0) m_nSubstrateRemains--;
 
-                                if (m_nSubstrateInMachine>0) m_nSubstrateInMachine--;
-                                else if (m_nSubstrateInMachine == 0) g_DIO.SetDO(DO::UnloaderEnough,true);
+                                //add g_DIO.SetDO(DO::UnloaderEnough,true);
+                                if (m_bStopLoad && !m_bLoadLifterReady
+                                    && !g_DIO.GetDI(DI::SR_Entry) && !g_DIO.GetDI(DI::SR_Exist) && !g_DIO.GetDI(DI::SR_Inp)
+                                    && !g_DIO.GetDI(DI::SS_SSuckerVacGauge) && !g_DIO.GetDI(DI::SS_SpaSuckerVacGauge)
+                                    && !g_DIO.GetDI(DI::FT_VacGauge) && !g_DIO.GetDI(DI::RT_VacGauge)
+                                    && !g_DIO.GetDI(DI::SC_SSuckerVacGauge)
+                                    && !g_DIO.GetDI(DI::SR2_Exist) && !g_DIO.GetDI(DI::SR2_Exit) && !g_DIO.GetDI(DI::SR2_Inp)
+                                    ) g_DIO.SetDO(DO::UnloaderEnough,true);
 
                                 //ShowNow
                                 fmShowNow->m_arraybShape[12] = false;
@@ -1064,7 +1069,6 @@ void __fastcall CMainThread::doSSPickerFromLifter(int &nThreadIndex)
                                 if(bIsSubstrate)
                                 {
                                         m_nSubstrateRemains++;
-                                        m_nSubstrateInMachine++;
                                         m_nStripCount++;
 
                                         if(m_nStripCount>=g_IniFile.m_nIssueQty && g_IniFile.m_nIssueQty>0 && !m_bStopLoad)
@@ -1943,8 +1947,8 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                                 {
                                         m_bLaserLocked=true;
                                         g_Motion.AbsMove(nAxisTable,g_IniFile.m_dTableLaserPos[bFront]);
-                                        if (bFront) g_DIO.SetDO(DO::Laser_BlowAir_Front, true);
-                                        else g_DIO.SetDO(DO::Laser_BlowAir_Rear, true);
+                                        //if (bFront) g_DIO.SetDO(DO::Laser_BlowAir_Front, true);     //mark for same time with DO::Blower
+                                        //else g_DIO.SetDO(DO::Laser_BlowAir_Rear, true);             //mark for same time with DO::Blower
                                         nThreadIndex++;
                                 }
                         }
@@ -2331,8 +2335,8 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                 case 68:
                 case nTagTableFinish:nThreadIndex=68;
                         g_Motion.AbsMove(nAxisTable,g_IniFile.m_dTablePickUpPos[bFront]);
-                        if (bFront) g_DIO.SetDO(DO::Laser_BlowAir_Front, false);
-                        else g_DIO.SetDO(DO::Laser_BlowAir_Rear, false);
+                        //if (bFront) g_DIO.SetDO(DO::Laser_BlowAir_Front, false);          //mark for same time with DO::Blower
+                        //else g_DIO.SetDO(DO::Laser_BlowAir_Rear, false);                  //mark for same time with DO::Blower
                         nThreadIndex++;
                         break;
 
@@ -2373,10 +2377,55 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                                 nThreadIndex++;
                         }
                         break;
+                case 72:
+                        if(!g_DIO.GetDI(iTablePositive)) bFront? g_IniFile.m_nErrorCode=400 : g_IniFile.m_nErrorCode=401;
+                        else
+                        {
+                                g_DIO.SetDO(oTableLock,true);
+                                p_tm1MS->timeStart(2000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 73:
+                        if(g_DIO.GetDI(iTableLockOn))
+                        {
+                                p_tm1MS->timeStart(100);
+                                nThreadIndex++;
+                        }
+                        else if(p_tm1MS->timeUp() ) bFront? g_IniFile.m_nErrorCode=402 : g_IniFile.m_nErrorCode=403;
+                        break;
+                case 74:
+                        if(p_tm1MS->timeUp())
+                        {
+                                g_DIO.SetDO(oTableClamp,btableClampOff);
+                                g_Motion.AbsMove(nAxisTable,g_IniFile.m_dTablePutDownPos[bFront]);
+                                p_tm1MS->timeStart(10000);
+                                nThreadIndex++;
+                        }
+                        break;
+                case 75:
+                        if(g_Motion.GetFeedbackPos(nAxisTable)<g_IniFile.m_dTableBackSpeedDown[bFront])
+                        {
+                            g_Motion.ChangeMoveSpeed(nAxisTable, g_IniFile.m_dWorkSpeed[nAxisTable]/2);
+                            nThreadIndex++;
+                        }
+                        break;
+                case 76:
+                        if(g_Motion.GetFeedbackPos(nAxisTable)<g_IniFile.m_dTableBackSpeedUp[bFront])
+                        {
+                            g_Motion.ChangeMoveSpeed(nAxisTable, g_IniFile.m_dWorkSpeed[nAxisTable]);
+                            nThreadIndex++;
+                        }
+                        break;
+                case 77:
+                        if(g_Motion.IsMotionDone(nAxisTable))
+                        {
+                            nThreadIndex++;
+                        }
+                        break;
                 default:
                         nThreadIndex=0;
                         break;
-
         }
 
 }
@@ -2680,7 +2729,6 @@ void __fastcall CMainThread::doSCPicker(int &nThreadIndex)
                 case 21:
                         if(tm1MS.timeUp())
                         {
-                                m_nSubstrateInMachine--;
                                 g_DIO.SetDO(DO::SC_SSuckerVacOn,false);
                                 g_DIO.SetDO(DO::SC_SSuckerVacOff,true);
                                 g_DIO.SetDO(DO::SC_SSuckerDeVac,true);
@@ -2749,6 +2797,8 @@ bool __fastcall CMainThread::doPreAuto(int &nThreadIndex)
                                 if (g_IniFile.m_bUseLaserMark)
                                 {
                                         g_DIO.SetDO(DO::Blower, true);
+                                        g_DIO.SetDO(DO::Laser_BlowAir_Front, true);
+                                        g_DIO.SetDO(DO::Laser_BlowAir_Rear, true);
                                         m_bStopBlower = false;
                                         tm2MS.timeStart(5000);
                                         nThreadIndex++;

@@ -48,13 +48,14 @@ private:
         bool __fastcall Initial(unsigned short nCardNo);
         void ServoOn(unsigned short nAxis, unsigned short bOn);
         void SetMoveSpeed(unsigned short nAxis, double dMaxVal, double dTAcc,double dTDec);
+        void ChangeMoveSpeed(unsigned short nAxis, double dSpeedVal);
         void AxisHome(unsigned short nAxis, bool bDir);
         void RelMove(unsigned short nAxis, double dDis);
         void AbsMove(unsigned short nAxis, double dDis);
         void AbsSMove(unsigned short nAxis, double dDis);
         bool IsMotionDone(unsigned short nAxis);
-        double GetFeedbackPos(unsigned short nPos);
-        void SetFeedbackPos(unsigned short nPos,double dPos);
+        double GetFeedbackPos(unsigned short nAxis);
+        void SetFeedbackPos(unsigned short nAxis,double dPos);
         double GetCommandPos(unsigned short nAxis);
         void SetCommandPos(unsigned short nAxis,double dPos);
         void StartJog(unsigned short nAxis,bool bDir);

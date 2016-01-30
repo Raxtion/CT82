@@ -1,11 +1,11 @@
 object fmManual: TfmManual
   Tag = 6
-  Left = 450
-  Top = 3
+  Left = 406
+  Top = 34
   Hint = 'Y'
   BorderStyle = bsDialog
   Caption = 'fmManual'
-  ClientHeight = 821
+  ClientHeight = 739
   ClientWidth = 1083
   Color = 13430215
   Font.Charset = DEFAULT_CHARSET
@@ -935,7 +935,7 @@ object fmManual: TfmManual
       object GroupBox1: TGroupBox
         Left = 16
         Top = 353
-        Width = 665
+        Width = 657
         Height = 328
         Caption = #31227#21205#36617#21488'('#21069')'
         TabOrder = 0
@@ -1000,8 +1000,8 @@ object fmManual: TfmManual
         end
         object SpeedButton21: TSpeedButton
           Tag = 6
-          Left = 584
-          Top = 126
+          Left = 904
+          Top = 30
           Width = 41
           Height = 28
           Hint = 'X'
@@ -1011,8 +1011,8 @@ object fmManual: TfmManual
         end
         object SpeedButton20: TSpeedButton
           Tag = 7
-          Left = 584
-          Top = 158
+          Left = 904
+          Top = 62
           Width = 41
           Height = 28
           Hint = 'Y2'
@@ -1440,8 +1440,8 @@ object fmManual: TfmManual
         end
         object StaticText34: TStaticText
           Tag = 4
-          Left = 320
-          Top = 126
+          Left = 640
+          Top = 30
           Width = 129
           Height = 28
           Hint = 'm_dTableLaserCodePosX1'
@@ -1459,8 +1459,8 @@ object fmManual: TfmManual
         end
         object StaticText35: TStaticText
           Tag = 5
-          Left = 320
-          Top = 158
+          Left = 640
+          Top = 62
           Width = 129
           Height = 28
           Hint = 'm_dTableLaserCodePosY1'
@@ -1477,8 +1477,8 @@ object fmManual: TfmManual
           OnClick = StaticText1Click
         end
         object m_dTableLaserCodePosX1: TEdit
-          Left = 456
-          Top = 126
+          Left = 776
+          Top = 30
           Width = 81
           Height = 24
           TabOrder = 20
@@ -1486,8 +1486,8 @@ object fmManual: TfmManual
           Visible = False
         end
         object m_dTableLaserCodePosY1: TEdit
-          Left = 456
-          Top = 158
+          Left = 776
+          Top = 62
           Width = 81
           Height = 24
           TabOrder = 21
@@ -1495,8 +1495,8 @@ object fmManual: TfmManual
           Visible = False
         end
         object StaticText36: TStaticText
-          Left = 544
-          Top = 126
+          Left = 864
+          Top = 30
           Width = 30
           Height = 28
           AutoSize = False
@@ -1511,8 +1511,8 @@ object fmManual: TfmManual
           Visible = False
         end
         object StaticText40: TStaticText
-          Left = 544
-          Top = 158
+          Left = 864
+          Top = 62
           Width = 30
           Height = 28
           AutoSize = False
@@ -1649,11 +1649,93 @@ object fmManual: TfmManual
           ParentColor = False
           TabOrder = 32
         end
+        object StaticText116: TStaticText
+          Tag = 4
+          Left = 320
+          Top = 126
+          Width = 129
+          Height = 28
+          Hint = 'm_dTableBackSpeedDown1'
+          AutoSize = False
+          BevelInner = bvSpace
+          BevelKind = bkSoft
+          BevelOuter = bvNone
+          BorderStyle = sbsSingle
+          Caption = #22238#31243#28187#36895#20301#32622
+          Color = clSkyBlue
+          ParentColor = False
+          TabOrder = 33
+          OnClick = StaticText1Click
+        end
+        object m_dTableBackSpeedDown1: TEdit
+          Left = 456
+          Top = 126
+          Width = 81
+          Height = 24
+          TabOrder = 34
+          Text = 'editPickSpacerPosY'
+        end
+        object StaticText117: TStaticText
+          Left = 544
+          Top = 126
+          Width = 30
+          Height = 28
+          AutoSize = False
+          BevelInner = bvSpace
+          BevelKind = bkSoft
+          BevelOuter = bvNone
+          BorderStyle = sbsSingle
+          Caption = 'mm'
+          Color = clSkyBlue
+          ParentColor = False
+          TabOrder = 35
+        end
+        object StaticText118: TStaticText
+          Tag = 4
+          Left = 320
+          Top = 158
+          Width = 129
+          Height = 28
+          Hint = 'm_dTableBackSpeedUp1'
+          AutoSize = False
+          BevelInner = bvSpace
+          BevelKind = bkSoft
+          BevelOuter = bvNone
+          BorderStyle = sbsSingle
+          Caption = #22238#31243#21152#36895#20301#32622
+          Color = clSkyBlue
+          ParentColor = False
+          TabOrder = 36
+          OnClick = StaticText1Click
+        end
+        object m_dTableBackSpeedUp1: TEdit
+          Left = 456
+          Top = 158
+          Width = 81
+          Height = 24
+          TabOrder = 37
+          Text = 'editPickSpacerPosY'
+        end
+        object StaticText119: TStaticText
+          Left = 544
+          Top = 158
+          Width = 30
+          Height = 28
+          AutoSize = False
+          BevelInner = bvSpace
+          BevelKind = bkSoft
+          BevelOuter = bvNone
+          BorderStyle = sbsSingle
+          Caption = 'mm'
+          Color = clSkyBlue
+          ParentColor = False
+          TabOrder = 38
+        end
       end
       object GroupBox7: TGroupBox
         Left = 16
         Top = 17
-        Width = 665
+        Width = 657
         Height = 328
         Caption = #31227#21205#36617#21488'('#24460')'
         TabOrder = 1
@@ -1719,8 +1801,8 @@ object fmManual: TfmManual
         end
         object SpeedButton30: TSpeedButton
           Tag = 15
-          Left = 584
-          Top = 126
+          Left = 904
+          Top = 30
           Width = 41
           Height = 28
           Hint = 'X1'
@@ -1730,8 +1812,8 @@ object fmManual: TfmManual
         end
         object SpeedButton29: TSpeedButton
           Tag = 16
-          Left = 584
-          Top = 158
+          Left = 904
+          Top = 62
           Width = 41
           Height = 28
           Hint = 'Y2'
@@ -2160,8 +2242,8 @@ object fmManual: TfmManual
         end
         object StaticText64: TStaticText
           Tag = 8
-          Left = 320
-          Top = 126
+          Left = 640
+          Top = 30
           Width = 129
           Height = 28
           Hint = 'm_dTableLaserCodePosX0'
@@ -2179,8 +2261,8 @@ object fmManual: TfmManual
         end
         object StaticText65: TStaticText
           Tag = 5
-          Left = 320
-          Top = 158
+          Left = 640
+          Top = 62
           Width = 129
           Height = 28
           Hint = 'm_dTableLaserCodePosY0'
@@ -2197,8 +2279,8 @@ object fmManual: TfmManual
           OnClick = StaticText1Click
         end
         object m_dTableLaserCodePosX0: TEdit
-          Left = 456
-          Top = 126
+          Left = 776
+          Top = 30
           Width = 81
           Height = 24
           TabOrder = 20
@@ -2206,8 +2288,8 @@ object fmManual: TfmManual
           Visible = False
         end
         object m_dTableLaserCodePosY0: TEdit
-          Left = 456
-          Top = 158
+          Left = 776
+          Top = 62
           Width = 81
           Height = 24
           TabOrder = 21
@@ -2215,8 +2297,8 @@ object fmManual: TfmManual
           Visible = False
         end
         object StaticText66: TStaticText
-          Left = 544
-          Top = 126
+          Left = 864
+          Top = 30
           Width = 30
           Height = 28
           AutoSize = False
@@ -2231,8 +2313,8 @@ object fmManual: TfmManual
           Visible = False
         end
         object StaticText67: TStaticText
-          Left = 544
-          Top = 158
+          Left = 864
+          Top = 62
           Width = 30
           Height = 28
           AutoSize = False
@@ -2368,6 +2450,88 @@ object fmManual: TfmManual
           Color = clSkyBlue
           ParentColor = False
           TabOrder = 32
+        end
+        object StaticText120: TStaticText
+          Tag = 5
+          Left = 320
+          Top = 126
+          Width = 129
+          Height = 28
+          Hint = 'm_dTableBackSpeedDown0'
+          AutoSize = False
+          BevelInner = bvSpace
+          BevelKind = bkSoft
+          BevelOuter = bvNone
+          BorderStyle = sbsSingle
+          Caption = #22238#31243#28187#36895#20301#32622
+          Color = clSkyBlue
+          ParentColor = False
+          TabOrder = 33
+          OnClick = StaticText1Click
+        end
+        object m_dTableBackSpeedDown0: TEdit
+          Left = 456
+          Top = 126
+          Width = 81
+          Height = 24
+          TabOrder = 34
+          Text = 'editPickSpacerPosY'
+        end
+        object StaticText121: TStaticText
+          Left = 544
+          Top = 126
+          Width = 30
+          Height = 28
+          AutoSize = False
+          BevelInner = bvSpace
+          BevelKind = bkSoft
+          BevelOuter = bvNone
+          BorderStyle = sbsSingle
+          Caption = 'mm'
+          Color = clSkyBlue
+          ParentColor = False
+          TabOrder = 35
+        end
+        object StaticText122: TStaticText
+          Tag = 5
+          Left = 320
+          Top = 158
+          Width = 129
+          Height = 28
+          Hint = 'm_dTableBackSpeedUp0'
+          AutoSize = False
+          BevelInner = bvSpace
+          BevelKind = bkSoft
+          BevelOuter = bvNone
+          BorderStyle = sbsSingle
+          Caption = #22238#31243#21152#36895#20301#32622
+          Color = clSkyBlue
+          ParentColor = False
+          TabOrder = 36
+          OnClick = StaticText1Click
+        end
+        object m_dTableBackSpeedUp0: TEdit
+          Left = 456
+          Top = 158
+          Width = 81
+          Height = 24
+          TabOrder = 37
+          Text = 'editPickSpacerPosY'
+        end
+        object StaticText123: TStaticText
+          Left = 544
+          Top = 158
+          Width = 30
+          Height = 28
+          AutoSize = False
+          BevelInner = bvSpace
+          BevelKind = bkSoft
+          BevelOuter = bvNone
+          BorderStyle = sbsSingle
+          Caption = 'mm'
+          Color = clSkyBlue
+          ParentColor = False
+          TabOrder = 38
         end
       end
     end

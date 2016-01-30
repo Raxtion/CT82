@@ -1,6 +1,6 @@
 object frmProductParam: TfrmProductParam
-  Left = 496
-  Top = 132
+  Left = 312
+  Top = 119
   BorderStyle = bsDialog
   Caption = 'frmProductParam'
   ClientHeight = 601
@@ -37,8 +37,8 @@ object frmProductParam: TfrmProductParam
     Top = 0
     Width = 761
     Height = 601
-    ActivePage = TabSheet2
-    TabIndex = 1
+    ActivePage = TabSheet1
+    TabIndex = 0
     TabOrder = 2
     object TabSheet1: TTabSheet
       Caption = #29986#21697#35215#26684

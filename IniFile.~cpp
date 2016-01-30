@@ -422,11 +422,6 @@ void __fastcall CIniFile::AddLog(char *pRx,int nSize)
     }
 }
 //---------------------------------------------------------------------------
-void __fastcall CIniFile::AddCSVLog(char *pRx,int nSize)
-{
-
-}
-//---------------------------------------------------------------------------
 __fastcall CIniFile::CIniFile()
 {
     mkdir("C:\\C82 Log");

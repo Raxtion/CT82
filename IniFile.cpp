@@ -200,6 +200,11 @@ void __fastcall CIniFile::ProductFile(char *strFileName,bool bRead,int nMode)
   DDXFile_Float(bRead,pIniFile,Product_Section,"m_dTableLaserCodePosY1",m_dTableLaserCodePosY[1],0.0);
   DDXFile_Float(bRead,pIniFile,Product_Section,"m_dTablePickUpPos0",m_dTablePickUpPos[0],0.0);
   DDXFile_Float(bRead,pIniFile,Product_Section,"m_dTablePickUpPos1",m_dTablePickUpPos[1],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dTableBackSpeedDown0",m_dTableBackSpeedDown[0],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dTableBackSpeedDown1",m_dTableBackSpeedDown[1],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dTableBackSpeedUp0",m_dTableBackSpeedUp[0],0.0);
+  DDXFile_Float(bRead,pIniFile,Product_Section,"m_dTableBackSpeedUp1",m_dTableBackSpeedUp[1],0.0);
+
 
   DDXFile_Float(bRead,pIniFile,Product_Section,"m_dSBTNGBoxPos",m_dSBTNGBoxPos,0.0);
   DDXFile_Float(bRead,pIniFile,Product_Section,"m_dSCPickerPutSSPos",m_dSCPickerPutSSPos,0.0);

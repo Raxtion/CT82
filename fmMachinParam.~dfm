@@ -1,6 +1,6 @@
 object frmMachineParam: TfrmMachineParam
-  Left = 321
-  Top = 101
+  Left = 1052
+  Top = 134
   Width = 1013
   Height = 747
   Caption = 'frmMachineParam'
@@ -35,8 +35,8 @@ object frmMachineParam: TfrmMachineParam
     Top = 0
     Width = 841
     Height = 713
-    ActivePage = TabSheet3
-    TabIndex = 5
+    ActivePage = TabSheet5
+    TabIndex = 1
     TabOrder = 3
     object TabSheet4: TTabSheet
       Caption = #39340#36948#36895#24230
@@ -1158,7 +1158,7 @@ object frmMachineParam: TfrmMachineParam
         Left = 16
         Top = 296
         Width = 297
-        Height = 345
+        Height = 337
         Caption = #31227#21205#36617#21488'('#21069')'
         TabOrder = 2
         object StaticText59: TStaticText
@@ -1416,7 +1416,7 @@ object frmMachineParam: TfrmMachineParam
         object StaticText71: TStaticText
           Tag = 4
           Left = 16
-          Top = 222
+          Top = 318
           Width = 129
           Height = 28
           Hint = 'm_dTableLaserCodePosX1'
@@ -1429,12 +1429,13 @@ object frmMachineParam: TfrmMachineParam
           Color = clSkyBlue
           ParentColor = False
           TabOrder = 18
+          Visible = False
           OnClick = StaticText39Click
         end
         object StaticText72: TStaticText
           Tag = 4
           Left = 16
-          Top = 254
+          Top = 350
           Width = 129
           Height = 28
           Hint = 'm_dTableLaserCodePosY1'
@@ -1447,27 +1448,30 @@ object frmMachineParam: TfrmMachineParam
           Color = clSkyBlue
           ParentColor = False
           TabOrder = 19
+          Visible = False
           OnClick = StaticText39Click
         end
         object m_dTableLaserCodePosX1: TEdit
           Left = 152
-          Top = 222
+          Top = 318
           Width = 81
           Height = 24
           TabOrder = 20
           Text = 'editPickSpacerPosY'
+          Visible = False
         end
         object m_dTableLaserCodePosY1: TEdit
           Left = 152
-          Top = 254
+          Top = 350
           Width = 81
           Height = 24
           TabOrder = 21
           Text = 'editPickSpacerPosY'
+          Visible = False
         end
         object StaticText73: TStaticText
           Left = 240
-          Top = 222
+          Top = 318
           Width = 30
           Height = 28
           AutoSize = False
@@ -1479,10 +1483,11 @@ object frmMachineParam: TfrmMachineParam
           Color = clSkyBlue
           ParentColor = False
           TabOrder = 22
+          Visible = False
         end
         object StaticText74: TStaticText
           Left = 240
-          Top = 254
+          Top = 350
           Width = 30
           Height = 28
           AutoSize = False
@@ -1494,11 +1499,12 @@ object frmMachineParam: TfrmMachineParam
           Color = clSkyBlue
           ParentColor = False
           TabOrder = 23
+          Visible = False
         end
         object StaticText75: TStaticText
           Tag = 4
           Left = 16
-          Top = 286
+          Top = 222
           Width = 129
           Height = 28
           Hint = 'm_dTablePickUpPos1'
@@ -1515,7 +1521,7 @@ object frmMachineParam: TfrmMachineParam
         end
         object m_dTablePickUpPos1: TEdit
           Left = 152
-          Top = 286
+          Top = 222
           Width = 81
           Height = 24
           TabOrder = 25
@@ -1523,7 +1529,7 @@ object frmMachineParam: TfrmMachineParam
         end
         object StaticText76: TStaticText
           Left = 240
-          Top = 286
+          Top = 222
           Width = 30
           Height = 28
           AutoSize = False
@@ -1618,12 +1624,94 @@ object frmMachineParam: TfrmMachineParam
           ParentColor = False
           TabOrder = 32
         end
+        object StaticText116: TStaticText
+          Tag = 4
+          Left = 16
+          Top = 254
+          Width = 129
+          Height = 28
+          Hint = 'm_dTablePickUpPos1'
+          AutoSize = False
+          BevelInner = bvSpace
+          BevelKind = bkSoft
+          BevelOuter = bvNone
+          BorderStyle = sbsSingle
+          Caption = #22238#31243#28187#36895#20301#32622
+          Color = clSkyBlue
+          ParentColor = False
+          TabOrder = 33
+          OnClick = StaticText39Click
+        end
+        object m_dTableBackSpeedDown1: TEdit
+          Left = 152
+          Top = 254
+          Width = 81
+          Height = 24
+          TabOrder = 34
+          Text = 'editPickSpacerPosY'
+        end
+        object StaticText117: TStaticText
+          Left = 240
+          Top = 254
+          Width = 30
+          Height = 28
+          AutoSize = False
+          BevelInner = bvSpace
+          BevelKind = bkSoft
+          BevelOuter = bvNone
+          BorderStyle = sbsSingle
+          Caption = 'mm'
+          Color = clSkyBlue
+          ParentColor = False
+          TabOrder = 35
+        end
+        object StaticText118: TStaticText
+          Tag = 4
+          Left = 16
+          Top = 286
+          Width = 129
+          Height = 28
+          Hint = 'm_dTablePickUpPos1'
+          AutoSize = False
+          BevelInner = bvSpace
+          BevelKind = bkSoft
+          BevelOuter = bvNone
+          BorderStyle = sbsSingle
+          Caption = #22238#31243#21152#36895#20301#32622
+          Color = clSkyBlue
+          ParentColor = False
+          TabOrder = 36
+          OnClick = StaticText39Click
+        end
+        object m_dTableBackSpeedUp1: TEdit
+          Left = 152
+          Top = 286
+          Width = 81
+          Height = 24
+          TabOrder = 37
+          Text = 'editPickSpacerPosY'
+        end
+        object StaticText119: TStaticText
+          Left = 240
+          Top = 286
+          Width = 30
+          Height = 28
+          AutoSize = False
+          BevelInner = bvSpace
+          BevelKind = bkSoft
+          BevelOuter = bvNone
+          BorderStyle = sbsSingle
+          Caption = 'mm'
+          Color = clSkyBlue
+          ParentColor = False
+          TabOrder = 38
+        end
       end
       object GroupBox11: TGroupBox
         Left = 336
         Top = 296
         Width = 297
-        Height = 345
+        Height = 337
         Caption = #31227#21205#36617#21488'('#24460')'
         TabOrder = 3
         object StaticText77: TStaticText
@@ -1881,7 +1969,7 @@ object frmMachineParam: TfrmMachineParam
         object StaticText89: TStaticText
           Tag = 5
           Left = 16
-          Top = 222
+          Top = 318
           Width = 129
           Height = 28
           Hint = 'm_dTableLaserCodePosX0'
@@ -1894,12 +1982,13 @@ object frmMachineParam: TfrmMachineParam
           Color = clSkyBlue
           ParentColor = False
           TabOrder = 18
+          Visible = False
           OnClick = StaticText39Click
         end
         object StaticText90: TStaticText
           Tag = 5
           Left = 16
-          Top = 254
+          Top = 350
           Width = 129
           Height = 28
           Hint = 'm_dTableLaserCodePosY0'
@@ -1912,27 +2001,30 @@ object frmMachineParam: TfrmMachineParam
           Color = clSkyBlue
           ParentColor = False
           TabOrder = 19
+          Visible = False
           OnClick = StaticText39Click
         end
         object m_dTableLaserCodePosX0: TEdit
           Left = 152
-          Top = 222
+          Top = 318
           Width = 81
           Height = 24
           TabOrder = 20
           Text = 'editPickSpacerPosY'
+          Visible = False
         end
         object m_dTableLaserCodePosY0: TEdit
           Left = 152
-          Top = 254
+          Top = 350
           Width = 81
           Height = 24
           TabOrder = 21
           Text = 'editPickSpacerPosY'
+          Visible = False
         end
         object StaticText91: TStaticText
           Left = 240
-          Top = 222
+          Top = 318
           Width = 30
           Height = 28
           AutoSize = False
@@ -1944,10 +2036,11 @@ object frmMachineParam: TfrmMachineParam
           Color = clSkyBlue
           ParentColor = False
           TabOrder = 22
+          Visible = False
         end
         object StaticText92: TStaticText
           Left = 240
-          Top = 254
+          Top = 350
           Width = 30
           Height = 28
           AutoSize = False
@@ -1959,11 +2052,12 @@ object frmMachineParam: TfrmMachineParam
           Color = clSkyBlue
           ParentColor = False
           TabOrder = 23
+          Visible = False
         end
         object StaticText93: TStaticText
           Tag = 5
           Left = 16
-          Top = 286
+          Top = 222
           Width = 129
           Height = 28
           Hint = 'm_dTablePickUpPos0'
@@ -1980,7 +2074,7 @@ object frmMachineParam: TfrmMachineParam
         end
         object m_dTablePickUpPos0: TEdit
           Left = 152
-          Top = 286
+          Top = 222
           Width = 81
           Height = 24
           TabOrder = 25
@@ -1988,7 +2082,7 @@ object frmMachineParam: TfrmMachineParam
         end
         object StaticText94: TStaticText
           Left = 240
-          Top = 286
+          Top = 222
           Width = 30
           Height = 28
           AutoSize = False
@@ -2082,6 +2176,88 @@ object frmMachineParam: TfrmMachineParam
           Color = clSkyBlue
           ParentColor = False
           TabOrder = 32
+        end
+        object StaticText120: TStaticText
+          Tag = 4
+          Left = 16
+          Top = 254
+          Width = 129
+          Height = 28
+          Hint = 'm_dTablePickUpPos1'
+          AutoSize = False
+          BevelInner = bvSpace
+          BevelKind = bkSoft
+          BevelOuter = bvNone
+          BorderStyle = sbsSingle
+          Caption = #22238#31243#28187#36895#20301#32622
+          Color = clSkyBlue
+          ParentColor = False
+          TabOrder = 33
+          OnClick = StaticText39Click
+        end
+        object m_dTableBackSpeedDown0: TEdit
+          Left = 152
+          Top = 254
+          Width = 81
+          Height = 24
+          TabOrder = 34
+          Text = 'editPickSpacerPosY'
+        end
+        object StaticText121: TStaticText
+          Left = 240
+          Top = 254
+          Width = 30
+          Height = 28
+          AutoSize = False
+          BevelInner = bvSpace
+          BevelKind = bkSoft
+          BevelOuter = bvNone
+          BorderStyle = sbsSingle
+          Caption = 'mm'
+          Color = clSkyBlue
+          ParentColor = False
+          TabOrder = 35
+        end
+        object StaticText122: TStaticText
+          Tag = 4
+          Left = 16
+          Top = 286
+          Width = 129
+          Height = 28
+          Hint = 'm_dTablePickUpPos1'
+          AutoSize = False
+          BevelInner = bvSpace
+          BevelKind = bkSoft
+          BevelOuter = bvNone
+          BorderStyle = sbsSingle
+          Caption = #22238#31243#21152#36895#20301#32622
+          Color = clSkyBlue
+          ParentColor = False
+          TabOrder = 36
+          OnClick = StaticText39Click
+        end
+        object m_dTableBackSpeedUp0: TEdit
+          Left = 152
+          Top = 286
+          Width = 81
+          Height = 24
+          TabOrder = 37
+          Text = 'editPickSpacerPosY'
+        end
+        object StaticText123: TStaticText
+          Left = 240
+          Top = 286
+          Width = 30
+          Height = 28
+          AutoSize = False
+          BevelInner = bvSpace
+          BevelKind = bkSoft
+          BevelOuter = bvNone
+          BorderStyle = sbsSingle
+          Caption = 'mm'
+          Color = clSkyBlue
+          ParentColor = False
+          TabOrder = 38
         end
       end
     end

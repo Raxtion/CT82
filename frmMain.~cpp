@@ -447,6 +447,10 @@ void __fastcall TfmMain::btnMachineParaClick(TObject *Sender)
         DDX_Float(bRead,g_IniFile.m_dTableLaserCodePosX[1],pMachineDlg->m_dTableLaserCodePosX1);
         DDX_Float(bRead,g_IniFile.m_dTableLaserCodePosY[1],pMachineDlg->m_dTableLaserCodePosY1);
         DDX_Float(bRead,g_IniFile.m_dTablePickUpPos[1],pMachineDlg->m_dTablePickUpPos1);
+        DDX_Float(bRead,g_IniFile.m_dTableBackSpeedDown[0],pMachineDlg->m_dTableBackSpeedDown0);
+        DDX_Float(bRead,g_IniFile.m_dTableBackSpeedDown[1],pMachineDlg->m_dTableBackSpeedDown1);
+        DDX_Float(bRead,g_IniFile.m_dTableBackSpeedUp[0],pMachineDlg->m_dTableBackSpeedUp0);
+        DDX_Float(bRead,g_IniFile.m_dTableBackSpeedUp[1],pMachineDlg->m_dTableBackSpeedUp1);
 
         DDX_Float(bRead,g_IniFile.m_dSCPickerPickSSPosY[0],pMachineDlg->m_dSCPickerPickSSPosY0);
         DDX_Float(bRead,g_IniFile.m_dSCPickerPickSSPosY[1],pMachineDlg->m_dSCPickerPickSSPosY1);
@@ -520,6 +524,10 @@ void __fastcall TfmMain::btnMachineParaClick(TObject *Sender)
         DDX_Float(bRead,g_IniFile.m_dTableLaserCodePosX[1],pMachineDlg->m_dTableLaserCodePosX1);
         DDX_Float(bRead,g_IniFile.m_dTableLaserCodePosY[1],pMachineDlg->m_dTableLaserCodePosY1);
         DDX_Float(bRead,g_IniFile.m_dTablePickUpPos[1],pMachineDlg->m_dTablePickUpPos1);
+        DDX_Float(bRead,g_IniFile.m_dTableBackSpeedDown[0],pMachineDlg->m_dTableBackSpeedDown0);
+        DDX_Float(bRead,g_IniFile.m_dTableBackSpeedDown[1],pMachineDlg->m_dTableBackSpeedDown1);
+        DDX_Float(bRead,g_IniFile.m_dTableBackSpeedUp[0],pMachineDlg->m_dTableBackSpeedUp0);
+        DDX_Float(bRead,g_IniFile.m_dTableBackSpeedUp[1],pMachineDlg->m_dTableBackSpeedUp1);
 
         DDX_Float(bRead,g_IniFile.m_dSCPickerPickSSPosY[0],pMachineDlg->m_dSCPickerPickSSPosY0);
         DDX_Float(bRead,g_IniFile.m_dSCPickerPickSSPosY[1],pMachineDlg->m_dSCPickerPickSSPosY1);
@@ -743,6 +751,10 @@ void __fastcall TfmMain::btnMotorManulClick(TObject *Sender)
                 DDX_Float(bRead,g_IniFile.m_dTableLaserCodePosX[1],pWnd->m_dTableLaserCodePosX1);
                 DDX_Float(bRead,g_IniFile.m_dTableLaserCodePosY[1],pWnd->m_dTableLaserCodePosY1);
                 DDX_Float(bRead,g_IniFile.m_dTablePickUpPos[1],pWnd->m_dTablePickUpPos1);
+                DDX_Float(bRead,g_IniFile.m_dTableBackSpeedDown[0],pWnd->m_dTableBackSpeedDown0);
+                DDX_Float(bRead,g_IniFile.m_dTableBackSpeedDown[1],pWnd->m_dTableBackSpeedDown1);
+                DDX_Float(bRead,g_IniFile.m_dTableBackSpeedUp[0],pWnd->m_dTableBackSpeedUp0);
+                DDX_Float(bRead,g_IniFile.m_dTableBackSpeedUp[1],pWnd->m_dTableBackSpeedUp1);
 
                 DDX_Float(bRead,g_IniFile.m_dSCPickerPickSSPosY[0],pWnd->m_dSCPickerPickSSPosY0);
                 DDX_Float(bRead,g_IniFile.m_dSCPickerPickSSPosY[1],pWnd->m_dSCPickerPickSSPosY1);
@@ -789,6 +801,10 @@ void __fastcall TfmMain::btnMotorManulClick(TObject *Sender)
                 DDX_Float(bRead,g_IniFile.m_dTableLaserCodePosX[1],pWnd->m_dTableLaserCodePosX1);
                 DDX_Float(bRead,g_IniFile.m_dTableLaserCodePosY[1],pWnd->m_dTableLaserCodePosY1);
                 DDX_Float(bRead,g_IniFile.m_dTablePickUpPos[1],pWnd->m_dTablePickUpPos1);
+                DDX_Float(bRead,g_IniFile.m_dTableBackSpeedDown[0],pWnd->m_dTableBackSpeedDown0);
+                DDX_Float(bRead,g_IniFile.m_dTableBackSpeedDown[1],pWnd->m_dTableBackSpeedDown1);
+                DDX_Float(bRead,g_IniFile.m_dTableBackSpeedUp[0],pWnd->m_dTableBackSpeedUp0);
+                DDX_Float(bRead,g_IniFile.m_dTableBackSpeedUp[1],pWnd->m_dTableBackSpeedUp1);
 
 
                 DDX_Float(bRead,g_IniFile.m_dSCPickerPickSSPosY[0],pWnd->m_dSCPickerPickSSPosY0);
@@ -2527,7 +2543,7 @@ void __fastcall TfmMain::timerSMSTimer(TObject *Sender)
         labelLotNo->Caption=g_IniFile.m_strSMSLotNo;
         labelProductID->Caption=g_IniFile.m_strProductID;
         labelSBTLotNo->Caption=g_IniFile.m_strSBTLotNo;
-
+        labelSBTType->Caption=g_IniFile.m_strSBTType;
 
 }
 //---------------------------------------------------------------------------

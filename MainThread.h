@@ -85,7 +85,6 @@ public:
         bool m_bStopLoad;
         bool m_bReLoad;
         int m_nSubstrateRemains;
-        int m_nSubstrateInMachine;     // Substrate IN the Machine then ++, OUT then --. End in 0.
         
         bool m_bStopBlower;
         bool bFrontTable;

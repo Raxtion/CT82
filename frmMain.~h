@@ -208,6 +208,8 @@ __published:	// IDE-managed Components
     TBitBtn *btnExportMarkerLog;
     TBitBtn *btnExportActionLog;
     TBitBtn *btnExportErrorLog;
+    TStaticText *StaticText3;
+    TLabel *labelSBTType;
         void __fastcall ImagePaintBoxMouseMove(TObject *Sender,
           TShiftState Shift, int X, int Y);
         void __fastcall btnFileOpenClick(TObject *Sender);

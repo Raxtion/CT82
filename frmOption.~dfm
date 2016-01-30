@@ -1,6 +1,6 @@
 object fmOption: TfmOption
-  Left = 656
-  Top = 189
+  Left = 657
+  Top = 190
   BorderStyle = bsDialog
   Caption = 'fmOption'
   ClientHeight = 414
