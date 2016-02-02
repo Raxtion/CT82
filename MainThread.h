@@ -64,9 +64,16 @@ public:
         int nThreadIndex[MAX_PROCESS];		//0:Inti 1:Start Measure
         bool m_bRefresh;
 
+        //Thread Machine Status
         bool m_bIsHomeDone;
         bool m_bIsAutoMode;
         bool m_bNeedHome;
+
+        //IsControlFromFrmMain
+        bool m_bIsMachineStrat;
+        bool m_bIsMachineStop;
+        bool m_bIsMachineReset;
+        bool m_bIsMachineInit;
 
         //Thread HandShake
         bool m_bLoadRailReady;       //Substrate ready to be pick up

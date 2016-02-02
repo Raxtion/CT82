@@ -96,13 +96,13 @@ void __fastcall CMainThread::Execute()
 
         g_Motion.m_bAutoMode=m_bIsAutoMode;
 
-
         //---Start Homing
 		if(g_DIO.ReadDIBit(DI::ResetBtn) && !bLastReset) tmReset.timeStart(3000);
-		if(bLastReset && tmReset.timeUp())
+		if((bLastReset && tmReset.timeUp()) || m_bIsMachineInit)
 		{
 			bStartMachineInit=true;
 			bHomeDone=false;
+            m_bIsMachineInit=false;
 		}
 		bLastReset=g_DIO.ReadDIBit(DI::ResetBtn);
 
@@ -111,7 +111,7 @@ void __fastcall CMainThread::Execute()
 
         //----Alarm Occured
         //--Stop Auto
-		if(g_DIO.ReadDIBit(DI::StopBtn) || (g_IniFile.m_nErrorCode>0 && g_IniFile.m_nErrorCode<1000))
+		if((g_DIO.ReadDIBit(DI::StopBtn) || (g_IniFile.m_nErrorCode>0 && g_IniFile.m_nErrorCode<1000)) || m_bIsMachineStop)
         {
             bStartMachineInit=false;
             bAutoMode=false;
@@ -2403,21 +2403,21 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                                 nThreadIndex++;
                         }
                         break;
-                case 72:
+                case 75:
                         if(g_Motion.GetFeedbackPos(nAxisTable)<g_IniFile.m_dTableBackSpeedDown[bFront])
                         {
                             g_Motion.ChangeMoveSpeed(nAxisTable, g_IniFile.m_dWorkSpeed[nAxisTable]/2);
                             nThreadIndex++;
                         }
                         break;
-                case 73:
+                case 76:
                         if(g_Motion.GetFeedbackPos(nAxisTable)<g_IniFile.m_dTableBackSpeedUp[bFront])
                         {
                             g_Motion.ChangeMoveSpeed(nAxisTable, g_IniFile.m_dWorkSpeed[nAxisTable]);
                             nThreadIndex++;
                         }
                         break;
-                case 74:
+                case 77:
                         if(g_Motion.IsMotionDone(nAxisTable))
                         {
                             nThreadIndex++;
@@ -2426,7 +2426,6 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                 default:
                         nThreadIndex=0;
                         break;
-
         }
 
 }

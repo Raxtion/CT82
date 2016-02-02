@@ -3329,5 +3329,28 @@ void __fastcall TfmMain::timerLoaderSigTimer(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+void __fastcall TfmMain::BitBtn12Click(TObject *Sender)
+{
+    g_pMainThread->m_bIsMachineStrat = true;
+}
+//---------------------------------------------------------------------------
 
+void __fastcall TfmMain::BitBtn13Click(TObject *Sender)
+{
+    g_pMainThread->m_bIsMachineStop = true;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TfmMain::BitBtn14Click(TObject *Sender)
+{
+    g_pMainThread->m_bIsMachineReset = true;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TfmMain::BitBtn15Click(TObject *Sender)
+{
+    if(Application->MessageBox("是否整機初始化", "Info", MB_OKCANCEL)==IDCANCEL) return;
+    g_pMainThread->m_bIsMachineInit = true;
+}
+//---------------------------------------------------------------------------
 

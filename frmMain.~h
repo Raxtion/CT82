@@ -210,6 +210,10 @@ __published:	// IDE-managed Components
     TBitBtn *btnExportErrorLog;
     TStaticText *StaticText3;
     TLabel *labelSBTType;
+    TBitBtn *BitBtn12;
+    TBitBtn *BitBtn13;
+    TBitBtn *BitBtn14;
+    TBitBtn *BitBtn15;
         void __fastcall ImagePaintBoxMouseMove(TObject *Sender,
           TShiftState Shift, int X, int Y);
         void __fastcall btnFileOpenClick(TObject *Sender);
@@ -343,6 +347,10 @@ __published:	// IDE-managed Components
     void __fastcall SpeedButton8Click(TObject *Sender);
     void __fastcall timerLoaderSigTimer(TObject *Sender);
     void __fastcall btnExportLogClick(TObject *Sender);
+    void __fastcall BitBtn12Click(TObject *Sender);
+    void __fastcall BitBtn13Click(TObject *Sender);
+    void __fastcall BitBtn14Click(TObject *Sender);
+    void __fastcall BitBtn15Click(TObject *Sender);
 private:	// User declarations         
         void __fastcall CreateCaptionFile(TForm *pForm);
         void __fastcall ReadCaptionFile(TForm *pForm,int nLanguage=0);

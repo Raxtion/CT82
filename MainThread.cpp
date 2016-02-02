@@ -96,13 +96,13 @@ void __fastcall CMainThread::Execute()
 
         g_Motion.m_bAutoMode=m_bIsAutoMode;
 
-
         //---Start Homing
 		if(g_DIO.ReadDIBit(DI::ResetBtn) && !bLastReset) tmReset.timeStart(3000);
-		if(bLastReset && tmReset.timeUp())
+		if((bLastReset && tmReset.timeUp()) || m_bIsMachineInit)
 		{
 			bStartMachineInit=true;
 			bHomeDone=false;
+            m_bIsMachineInit=false;
 		}
 		bLastReset=g_DIO.ReadDIBit(DI::ResetBtn);
 
@@ -111,7 +111,7 @@ void __fastcall CMainThread::Execute()
 
         //----Alarm Occured
         //--Stop Auto
-		if(g_DIO.ReadDIBit(DI::StopBtn) || (g_IniFile.m_nErrorCode>0 && g_IniFile.m_nErrorCode<1000))
+		if((g_DIO.ReadDIBit(DI::StopBtn) || (g_IniFile.m_nErrorCode>0 && g_IniFile.m_nErrorCode<1000)) || m_bIsMachineStop)
         {
             bStartMachineInit=false;
             bAutoMode=false;
@@ -136,6 +136,7 @@ void __fastcall CMainThread::Execute()
             g_DIO.SetDO(DO::SR2_PusherPush,false);
             g_DIO.SetDO(DO::SR2_PusherDown,false);
             g_DIO.SetDO(DO::UnloaderEnough,false);
+            m_bIsMachineStop = false;
             tmBlower.timeStart(10000);
             m_bStopBlower = true;
         }
@@ -150,12 +151,13 @@ void __fastcall CMainThread::Execute()
         }
 
                 //---Reset Alarm
-		if(g_DIO.ReadDIBit(DI::ResetBtn) )
+		if(g_DIO.ReadDIBit(DI::ResetBtn) || m_bIsMachineReset)
 		{
 			g_IniFile.m_nErrorCode=0;
 
 			g_DIO.SetDO(DO::RedLamp,false);
 			g_DIO.SetDO(DO::Buzzer,false);
+            m_bIsMachineReset = false;
 		}
 
                 //---Buzzer
@@ -176,8 +178,6 @@ void __fastcall CMainThread::Execute()
 			bAlarmLamp=!bAlarmLamp;
 			tmAlarm.timeStart(500);
 		}
-
-
 
 	        //---Homing Process
 		if(!bHomeDone && !bAutoMode  && bStartMachineInit)
@@ -236,7 +236,7 @@ void __fastcall CMainThread::Execute()
 			g_DIO.SetDO(DO::YellowLamp,true);
 			//g_DIO.SetDO(DO::RedLamp,false);
 
-			if(g_DIO.ReadDIBit(DI::StartBtn))
+			if(g_DIO.ReadDIBit(DI::StartBtn) || m_bIsMachineStrat)
 			{
                 if(g_IniFile.m_strProductPgm==g_IniFile.m_strSMSPartNo)
                 {
@@ -245,6 +245,7 @@ void __fastcall CMainThread::Execute()
                     SetManualSpeed();
                 }
                 else g_IniFile.m_nErrorCode=51;
+                m_bIsMachineStrat = false;
 			}
 
             if(bPreAuto)
