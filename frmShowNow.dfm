@@ -1,6 +1,6 @@
 object fmShowNow: TfmShowNow
-  Left = 420
-  Top = 224
+  Left = 619
+  Top = 404
   BorderStyle = bsDialog
   Caption = 'fmShowNow'
   ClientHeight = 385
@@ -206,6 +206,61 @@ object fmShowNow: TfmShowNow
     Top = 96
     Width = 57
     Height = 57
+  end
+  object Image1: TImage
+    Left = 24
+    Top = 16
+    Width = 169
+    Height = 89
+    Hint = #25353#19968#19979' '#37325#32622#20837#26009#27969#36947#20043#31995#32113#27493#39519
+    ParentShowHint = False
+    ShowHint = True
+    Transparent = True
+    OnClick = Image1Click
+  end
+  object Image5: TImage
+    Tag = 4
+    Left = 680
+    Top = 16
+    Width = 193
+    Height = 97
+    Hint = #25353#19968#19979' '#37325#32622#20986#26009#27969#36947#20043#31995#32113#27493#39519
+    ParentShowHint = False
+    ShowHint = True
+    OnClick = Image1Click
+  end
+  object Image3: TImage
+    Tag = 2
+    Left = 72
+    Top = 168
+    Width = 721
+    Height = 137
+    Hint = #25353#19968#19979' '#37325#32622#38617#36556#24179#21488#20043#31995#32113#27493#39519
+    ParentShowHint = False
+    ShowHint = True
+    OnClick = Image1Click
+  end
+  object Image2: TImage
+    Tag = 1
+    Left = 168
+    Top = 8
+    Width = 121
+    Height = 369
+    Hint = #25353#19968#19979' '#37325#32622#20837#26009#21560#30436#20043#31995#32113#27493#39519
+    ParentShowHint = False
+    ShowHint = True
+    OnClick = Image1Click
+  end
+  object Image4: TImage
+    Tag = 3
+    Left = 568
+    Top = 8
+    Width = 129
+    Height = 369
+    Hint = #25353#19968#19979' '#37325#32622#20986#26009#21560#30436#20043#31995#32113#27493#39519
+    ParentShowHint = False
+    ShowHint = True
+    OnClick = Image1Click
   end
   object timerShow: TTimer
     Interval = 50

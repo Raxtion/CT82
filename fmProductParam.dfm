@@ -1,6 +1,6 @@
 object frmProductParam: TfrmProductParam
-  Left = 312
-  Top = 119
+  Left = 369
+  Top = 90
   BorderStyle = bsDialog
   Caption = 'frmProductParam'
   ClientHeight = 601

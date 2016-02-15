@@ -1,6 +1,6 @@
 object fmMain: TfmMain
-  Left = 59
-  Top = 120
+  Left = 49
+  Top = 737
   BorderIcons = [biMinimize, biMaximize]
   BorderStyle = bsSingle
   Caption = 'fmMain'
@@ -141,9 +141,9 @@ object fmMain: TfmMain
       Left = 8
       Top = 56
       Width = 481
-      Height = 473
-      ActivePage = tabCCD
-      TabIndex = 0
+      Height = 481
+      ActivePage = tabInfo
+      TabIndex = 4
       TabOrder = 0
       OnChange = PageControl1Change
       object tabCCD: TTabSheet
@@ -1825,7 +1825,7 @@ object fmMain: TfmMain
           Left = 24
           Top = 12
           Width = 425
-          Height = 429
+          Height = 381
           Color = clMoneyGreen
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clGreen
@@ -1838,7 +1838,7 @@ object fmMain: TfmMain
         end
         object btnClearMarkerLog: TBitBtn
           Left = 24
-          Top = 448
+          Top = 408
           Width = 105
           Height = 33
           Hint = 'Marker'
@@ -1848,7 +1848,7 @@ object fmMain: TfmMain
         end
         object btnExportMarkerLog: TBitBtn
           Left = 136
-          Top = 448
+          Top = 408
           Width = 105
           Height = 33
           Hint = 'Marker'
@@ -1864,7 +1864,7 @@ object fmMain: TfmMain
           Left = 24
           Top = 12
           Width = 393
-          Height = 429
+          Height = 381
           Color = clMoneyGreen
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clGreen
@@ -1877,7 +1877,7 @@ object fmMain: TfmMain
         end
         object btnClearActionLog: TBitBtn
           Left = 24
-          Top = 448
+          Top = 408
           Width = 105
           Height = 33
           Hint = 'Action'
@@ -1887,7 +1887,7 @@ object fmMain: TfmMain
         end
         object btnExportActionLog: TBitBtn
           Left = 136
-          Top = 448
+          Top = 408
           Width = 105
           Height = 33
           Hint = 'Action'
@@ -1903,7 +1903,7 @@ object fmMain: TfmMain
           Left = 24
           Top = 12
           Width = 393
-          Height = 429
+          Height = 381
           Color = clMoneyGreen
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clGreen
@@ -1916,7 +1916,7 @@ object fmMain: TfmMain
         end
         object btnClearErrorLog: TBitBtn
           Left = 24
-          Top = 448
+          Top = 408
           Width = 105
           Height = 33
           Hint = 'Error'
@@ -1926,7 +1926,7 @@ object fmMain: TfmMain
         end
         object btnExportErrorLog: TBitBtn
           Left = 136
-          Top = 448
+          Top = 408
           Width = 105
           Height = 33
           Hint = 'Error'

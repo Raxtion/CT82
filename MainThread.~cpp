@@ -136,6 +136,7 @@ void __fastcall CMainThread::Execute()
             g_DIO.SetDO(DO::SR2_PusherPush,false);
             g_DIO.SetDO(DO::SR2_PusherDown,false);
             g_DIO.SetDO(DO::UnloaderEnough,false);
+            m_bIsMachineStop = false;
             tmBlower.timeStart(10000);
             m_bStopBlower = true;
         }
@@ -150,12 +151,13 @@ void __fastcall CMainThread::Execute()
         }
 
                 //---Reset Alarm
-		if(g_DIO.ReadDIBit(DI::ResetBtn) )
+		if(g_DIO.ReadDIBit(DI::ResetBtn) || m_bIsMachineReset)
 		{
 			g_IniFile.m_nErrorCode=0;
 
 			g_DIO.SetDO(DO::RedLamp,false);
 			g_DIO.SetDO(DO::Buzzer,false);
+            m_bIsMachineReset = false;
 		}
 
                 //---Buzzer
@@ -176,8 +178,6 @@ void __fastcall CMainThread::Execute()
 			bAlarmLamp=!bAlarmLamp;
 			tmAlarm.timeStart(500);
 		}
-
-
 
 	        //---Homing Process
 		if(!bHomeDone && !bAutoMode  && bStartMachineInit)
@@ -236,7 +236,7 @@ void __fastcall CMainThread::Execute()
 			g_DIO.SetDO(DO::YellowLamp,true);
 			//g_DIO.SetDO(DO::RedLamp,false);
 
-			if(g_DIO.ReadDIBit(DI::StartBtn))
+			if(g_DIO.ReadDIBit(DI::StartBtn) || m_bIsMachineStrat)
 			{
                 if(g_IniFile.m_strProductPgm==g_IniFile.m_strSMSPartNo)
                 {
@@ -245,6 +245,7 @@ void __fastcall CMainThread::Execute()
                     SetManualSpeed();
                 }
                 else g_IniFile.m_nErrorCode=51;
+                m_bIsMachineStrat = false;
 			}
 
             if(bPreAuto)
@@ -2409,12 +2410,24 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                             g_Motion.ChangeMoveSpeed(nAxisTable, g_IniFile.m_dWorkSpeed[nAxisTable]/2);
                             nThreadIndex++;
                         }
+                        else if(p_tm1MS->timeUp())
+                        {
+                            g_Motion.StopMove(nAxisTable);
+                            g_Motion.AbsMove(nAxisTable,g_IniFile.m_dTablePutDownPos[bFront]);
+                            p_tm1MS->timeStart(10000);
+                        }
                         break;
                 case 76:
                         if(g_Motion.GetFeedbackPos(nAxisTable)<g_IniFile.m_dTableBackSpeedUp[bFront])
                         {
                             g_Motion.ChangeMoveSpeed(nAxisTable, g_IniFile.m_dWorkSpeed[nAxisTable]);
                             nThreadIndex++;
+                        }
+                        else if(p_tm1MS->timeUp())
+                        {
+                            g_Motion.StopMove(nAxisTable);
+                            g_Motion.AbsMove(nAxisTable,g_IniFile.m_dTablePutDownPos[bFront]);
+                            p_tm1MS->timeStart(10000);
                         }
                         break;
                 case 77:

@@ -44,8 +44,14 @@ __published:	// IDE-managed Components
     TShape *Shape22;
     TTimer *timerShow;
     TShape *Shape24;
+    TImage *Image1;
+    TImage *Image2;
+    TImage *Image3;
+    TImage *Image4;
+    TImage *Image5;
     void __fastcall timerShowTimer(TObject *Sender);
     void __fastcall FormCreate(TObject *Sender);
+    void __fastcall Image1Click(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
     __fastcall TfmShowNow(TComponent* Owner);

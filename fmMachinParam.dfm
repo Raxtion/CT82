@@ -1,6 +1,6 @@
 object frmMachineParam: TfrmMachineParam
-  Left = 587
-  Top = 29
+  Left = 274
+  Top = 58
   Width = 1013
   Height = 747
   Caption = 'frmMachineParam'

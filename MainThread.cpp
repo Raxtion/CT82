@@ -139,6 +139,8 @@ void __fastcall CMainThread::Execute()
             m_bIsMachineStop = false;
             tmBlower.timeStart(10000);
             m_bStopBlower = true;
+            //if init not finished, reset the init steps.
+            nThreadIndex[0] = 0;
         }
 
         //---Off Blower
@@ -2410,12 +2412,24 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                             g_Motion.ChangeMoveSpeed(nAxisTable, g_IniFile.m_dWorkSpeed[nAxisTable]/2);
                             nThreadIndex++;
                         }
+                        else if(p_tm1MS->timeUp())
+                        {
+                            g_Motion.StopMove(nAxisTable);
+                            g_Motion.AbsMove(nAxisTable,g_IniFile.m_dTablePutDownPos[bFront]);
+                            p_tm1MS->timeStart(10000);
+                        }
                         break;
                 case 76:
                         if(g_Motion.GetFeedbackPos(nAxisTable)<g_IniFile.m_dTableBackSpeedUp[bFront])
                         {
                             g_Motion.ChangeMoveSpeed(nAxisTable, g_IniFile.m_dWorkSpeed[nAxisTable]);
                             nThreadIndex++;
+                        }
+                        else if(p_tm1MS->timeUp())
+                        {
+                            g_Motion.StopMove(nAxisTable);
+                            g_Motion.AbsMove(nAxisTable,g_IniFile.m_dTablePutDownPos[bFront]);
+                            p_tm1MS->timeStart(10000);
                         }
                         break;
                 case 77:
