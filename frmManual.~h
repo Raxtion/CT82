@@ -246,6 +246,10 @@ __published:	// IDE-managed Components
     TStaticText *StaticText122;
     TEdit *m_dTableBackSpeedUp0;
     TStaticText *StaticText123;
+        TSpeedButton *SpeedButton44;
+        TSpeedButton *SpeedButton45;
+        TSpeedButton *SpeedButton46;
+        TSpeedButton *SpeedButton47;
         void __fastcall SpeedButton1Click(TObject *Sender);
         void __fastcall SpeedButton2Click(TObject *Sender);
         void __fastcall btnSSYClick(TObject *Sender);

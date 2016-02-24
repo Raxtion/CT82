@@ -139,6 +139,8 @@ void __fastcall CMainThread::Execute()
             m_bIsMachineStop = false;
             tmBlower.timeStart(10000);
             m_bStopBlower = true;
+            //if init not finished, reset the init steps.
+            nThreadIndex[0] = 0;
         }
 
         //---Off Blower

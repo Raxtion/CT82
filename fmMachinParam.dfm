@@ -1,6 +1,6 @@
 object frmMachineParam: TfrmMachineParam
-  Left = 274
-  Top = 58
+  Left = 474
+  Top = 42
   Width = 1013
   Height = 747
   Caption = 'frmMachineParam'
@@ -1630,7 +1630,7 @@ object frmMachineParam: TfrmMachineParam
           Top = 254
           Width = 129
           Height = 28
-          Hint = 'm_dTablePickUpPos1'
+          Hint = 'm_dTableBackSpeedDown1'
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft
@@ -1671,7 +1671,7 @@ object frmMachineParam: TfrmMachineParam
           Top = 286
           Width = 129
           Height = 28
-          Hint = 'm_dTablePickUpPos1'
+          Hint = 'm_dTableBackSpeedUp1'
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft
@@ -2178,12 +2178,12 @@ object frmMachineParam: TfrmMachineParam
           TabOrder = 32
         end
         object StaticText120: TStaticText
-          Tag = 4
+          Tag = 5
           Left = 16
           Top = 254
           Width = 129
           Height = 28
-          Hint = 'm_dTablePickUpPos1'
+          Hint = 'm_dTableBackSpeedDown0'
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft
@@ -2219,12 +2219,12 @@ object frmMachineParam: TfrmMachineParam
           TabOrder = 35
         end
         object StaticText122: TStaticText
-          Tag = 4
+          Tag = 5
           Left = 16
           Top = 286
           Width = 129
           Height = 28
-          Hint = 'm_dTablePickUpPos1'
+          Hint = 'm_dTableBackSpeedUp0'
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft

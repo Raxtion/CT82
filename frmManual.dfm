@@ -1,11 +1,11 @@
 object fmManual: TfmManual
   Tag = 6
-  Left = 406
-  Top = 34
+  Left = 241
+  Top = 39
   Hint = 'Y'
   BorderStyle = bsDialog
   Caption = 'fmManual'
-  ClientHeight = 739
+  ClientHeight = 819
   ClientWidth = 1083
   Color = 13430215
   Font.Charset = DEFAULT_CHARSET
@@ -1192,6 +1192,26 @@ object fmManual: TfmManual
           Caption = 'GO!'
           OnClick = btnFTXClick
         end
+        object SpeedButton46: TSpeedButton
+          Tag = 22
+          Left = 584
+          Top = 126
+          Width = 41
+          Height = 28
+          Hint = 'X'
+          Caption = 'GO!'
+          OnClick = btnFTXClick
+        end
+        object SpeedButton47: TSpeedButton
+          Tag = 23
+          Left = 584
+          Top = 158
+          Width = 41
+          Height = 28
+          Hint = 'X'
+          Caption = 'GO!'
+          OnClick = btnFTXClick
+        end
         object StaticText13: TStaticText
           Tag = 4
           Left = 16
@@ -1991,6 +2011,26 @@ object fmManual: TfmManual
           Width = 41
           Height = 28
           Hint = 'Y'
+          Caption = 'GO!'
+          OnClick = btnFTXClick
+        end
+        object SpeedButton44: TSpeedButton
+          Tag = 24
+          Left = 584
+          Top = 126
+          Width = 41
+          Height = 28
+          Hint = 'X1'
+          Caption = 'GO!'
+          OnClick = btnFTXClick
+        end
+        object SpeedButton45: TSpeedButton
+          Tag = 25
+          Left = 584
+          Top = 158
+          Width = 41
+          Height = 28
+          Hint = 'X1'
           Caption = 'GO!'
           OnClick = btnFTXClick
         end

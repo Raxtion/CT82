@@ -2409,7 +2409,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                 case 75:
                         if(g_Motion.GetFeedbackPos(nAxisTable)<g_IniFile.m_dTableBackSpeedDown[bFront])
                         {
-                            g_Motion.ChangeMoveSpeed(nAxisTable, g_IniFile.m_dWorkSpeed[nAxisTable]/2);
+                            g_Motion.ChangeMoveSpeed(nAxisTable, g_IniFile.m_dWorkSpeed[nAxisTable]/10);
                             nThreadIndex++;
                         }
                         else if(p_tm1MS->timeUp())
