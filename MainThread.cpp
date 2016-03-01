@@ -1128,7 +1128,7 @@ void __fastcall CMainThread::doSSPickerFromLifter(int &nThreadIndex)
                                 }
 
                                 m_bLoadLifterReady=false;      //Announce Lifter to reload again
-
+                                
                         }
                         break;
                 case 11:
@@ -2401,11 +2401,35 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                         if(p_tm1MS->timeUp())
                         {
                                 g_DIO.SetDO(oTableClamp,btableClampOff);
-                                g_Motion.AbsMove(nAxisTable,g_IniFile.m_dTablePutDownPos[bFront]);
+                                //g_Motion.AbsMove(nAxisTable,g_IniFile.m_dTablePutDownPos[bFront]);
+                                g_Motion.AbsMove(nAxisTable,g_IniFile.m_dTableBackSpeedDown[bFront]);
                                 p_tm1MS->timeStart(10000);
                                 nThreadIndex++;
                         }
                         break;
+                case 75:
+                        if (g_Motion.IsLastPosDone(nAxisTable))
+                        {
+                            g_Motion.SetMoveSpeed(nAxisTable,g_IniFile.m_dJogSpeed[nAxisTable],0.01,0.01);
+                            g_Motion.AbsMove(nAxisTable,g_IniFile.m_dTableBackSpeedUp[bFront]);
+                            nThreadIndex++;
+                        }
+                        break;
+                case 76:
+                        if (g_Motion.IsLastPosDone(nAxisTable))
+                        {
+                            g_Motion.SetMoveSpeed(nAxisTable,g_IniFile.m_dWorkSpeed[nAxisTable],g_IniFile.m_dACCSpeed[nAxisTable],g_IniFile.m_dDECSpeed[nAxisTable]);
+                            g_Motion.AbsMove(nAxisTable,g_IniFile.m_dTablePutDownPos[bFront]);
+                            nThreadIndex++;
+                        }
+                        break;
+                case 77:
+                        if(g_Motion.IsLastPosDone(nAxisTable))
+                        {
+                            nThreadIndex++;
+                        }
+                        break;
+                        /*
                 case 75:
                         if(g_Motion.GetFeedbackPos(nAxisTable)<g_IniFile.m_dTableBackSpeedDown[bFront])
                         {
@@ -2438,6 +2462,8 @@ void __fastcall CMainThread::doTable(int &nThreadIndex,bool bFront)
                             nThreadIndex++;
                         }
                         break;
+                        */
+
                 default:
                         nThreadIndex=0;
                         break;
