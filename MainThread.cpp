@@ -2721,7 +2721,7 @@ void __fastcall CMainThread::doSCPicker(int &nThreadIndex)
                                 m_listProductInfo.back().m_bIsSBT2DOK[1]=false;
                                 if(m_listCoverCodeReaderRX.back()=="COVER_READER_NOREAD") g_IniFile.m_nErrorCode=422;
                                 else if(m_listCoverCodeReaderRX.back()=="COVER_READER_LENGHT_ERROR") g_IniFile.m_nErrorCode=424;
-                                else if (m_listCoverCodeReaderRX.back()=="2DCODE_DIFFERENCE_ERROR") g_IniFile.m_nErrorCode=439;
+                                else if (m_listCoverCodeReaderRX.back()=="2DCODE_DIFFERENCE_ERROR") g_IniFile.m_nErrorCode=440;
                                 else
                                 {
                                         m_listLog.push_back("[DOWN]Laser Reader ID OK");

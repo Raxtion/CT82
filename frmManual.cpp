@@ -325,7 +325,7 @@ void __fastcall TfmManual::SpeedButton14Click(TObject *Sender)
                 }
                 else
                 {
-                    if (Application->MessageBox("翻轉條件不合規定! 是否移動入料夾爪到後極限?", "Error", MB_OKCANCEL)==IDCANCEL)
+                    if (Application->MessageBox("翻轉條件不合規定! 是否移動入料夾爪到前極限?", "Error", MB_OKCANCEL)==IDCANCEL)
                     {
                         g_IniFile.m_nErrorCode=438;
                         return;
@@ -351,9 +351,8 @@ void __fastcall TfmManual::SpeedButton14Click(TObject *Sender)
                     {
                         g_MNet.SetDO(pBtn->Tag,!g_MNet.GetDO(pBtn->Tag));
                     }
-                    else g_IniFile.m_nErrorCode=438;
+                    else g_IniFile.m_nErrorCode=439;
                 }
-
         }
         else
         {

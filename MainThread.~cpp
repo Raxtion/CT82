@@ -1128,7 +1128,7 @@ void __fastcall CMainThread::doSSPickerFromLifter(int &nThreadIndex)
                                 }
 
                                 m_bLoadLifterReady=false;      //Announce Lifter to reload again
-
+                                
                         }
                         break;
                 case 11:
