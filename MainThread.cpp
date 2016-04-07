@@ -1107,6 +1107,7 @@ void __fastcall CMainThread::doSSPickerFromLifter(int &nThreadIndex)
 						else if ((m_listPutTable.front() == "FRONT")) bFrontTable = false;
 						else bFrontTable = true;
 						g_Motion.AbsMove(Axis_Const::SSY, g_IniFile.m_dSSPickerPutPos[bFrontTable]);
+						m_listPutTable.pop_front();
 					}
 					else
 					{
@@ -1316,6 +1317,7 @@ void __fastcall CMainThread::doSSPickerFromRail(int &nThreadIndex)
 				else if ((m_listPutTable.front() == "FRONT")) bFrontTable = false;
 				else bFrontTable = true;
 				g_Motion.AbsMove(Axis_Const::SSY, g_IniFile.m_dSSPickerPutPos[bFrontTable]);
+				m_listPutTable.pop_front();
 			}
 			else
 			{
@@ -1553,9 +1555,6 @@ void __fastcall CMainThread::doTable(int &nThreadIndex, bool bFront)
 			bFront ? m_listPickTable.push_back("FRONT") : m_listPickTable.push_back("REAR");
 			bFront ? m_listPutTable.push_back("FRONT") : m_listPutTable.push_back("REAR");
 
-			if (m_listPickTable.size()>3) m_listPickTable.pop_front();
-			if (m_listPutTable.size()>3) m_listPutTable.pop_front();
-
 			p_tm1MS->timeStart(5000);
 			nThreadIndex++;
 		}
@@ -1644,7 +1643,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex, bool bFront)
 		}
 		break;
 		//___________________________________________________________\\
-				                case 15:
+	case 15:
 	case nTagVenderCode:nThreadIndex = 15;
 		g_IniFile.m_bReadVenderID = false;
 		if (g_IniFile.m_bReadVenderID)
@@ -1692,7 +1691,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex, bool bFront)
 		else if (p_tm1MS->timeUp()) g_IniFile.m_nErrorCode = 413;
 		break;
 		//___________________________________________________________\\
-				                //使用電眼取得第一點Offset value
+	//使用電眼取得第一點Offset value
 	case 19:
 	case nTagFMCCD:nThreadIndex = 19;
 		if (g_IniFile.m_bUseFMCCD)
@@ -1758,7 +1757,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex, bool bFront)
 		else if (p_tm1MS->timeUp()) g_IniFile.m_nErrorCode = 415;
 		break;
 		//___________________________________________________________\\
-				                //使用電眼取得第二點Offset value
+	//使用電眼取得第二點Offset value
 	case 23:
 	case nTagFMCCD2:nThreadIndex = 23;
 		if (g_IniFile.m_bUseFMCCD2)
@@ -1849,7 +1848,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex, bool bFront)
 		else if (p_tm1MS->timeUp()) g_IniFile.m_nErrorCode = 415;
 		break;
 		//___________________________________________________________\\
-				                case 27:
+	case 27:
 	case nTagMapCCD:nThreadIndex = 27;
 		g_IniFile.m_bUseMapCCD = false;   //Option
 		if (g_IniFile.m_bUseMapCCD)
@@ -1938,13 +1937,13 @@ void __fastcall CMainThread::doTable(int &nThreadIndex, bool bFront)
 		}
 		break;
 		//___________________________________________________________\\
-				                case 34:
+	case 34:
 	case nTagUnLockMapCCD:nThreadIndex = 34;
 		m_bIsMapCCDLocked = false;
 		nThreadIndex++;
 		break;
 		//___________________________________________________________\\
-				                case 35:
+	case 35:
 	case nTagLaserMark:nThreadIndex = 35;
 		if (g_IniFile.m_bUseLaserMark)
 		{
@@ -2036,6 +2035,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex, bool bFront)
 		if (bFront) m_listTX.push_back("SET_LASER_OFFSET_FRONT_UP");
 		else m_listTX.push_back("SET_LASER_OFFSET_REAR_UP");
 
+		m_bIsMapCCDLocked = true;
 		p_tm1MS->timeStart(10000);
 		nThreadIndex++;
 		break;
@@ -2091,6 +2091,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex, bool bFront)
 		if (bFront) m_listTX.push_back("RESET_LASER_OFFSET_FRONT_UP");
 		else m_listTX.push_back("RESET_LASER_OFFSET_REAR_UP");
 
+		m_bIsMapCCDLocked = false;
 		p_tm1MS->timeStart(10000);
 		nThreadIndex++;
 		break;
@@ -2219,6 +2220,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex, bool bFront)
 		if (bFront) m_listTX.push_back("SET_LASER_OFFSET_FRONT_DOWN");
 		else m_listTX.push_back("SET_LASER_OFFSET_REAR_DOWN");
 
+        m_bIsMapCCDLocked = true;
 		p_tm1MS->timeStart(10000);
 		nThreadIndex++;
 		break;
@@ -2274,6 +2276,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex, bool bFront)
 		if (bFront) m_listTX.push_back("RESET_LASER_OFFSET_FRONT_DOWN");
 		else m_listTX.push_back("RESET_LASER_OFFSET_REAR_DOWN");
 
+        m_bIsMapCCDLocked = false;
 		p_tm1MS->timeStart(10000);
 		nThreadIndex++;
 		break;
@@ -2338,7 +2341,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex, bool bFront)
 		else if (p_tm1MS->timeUp()) bFront ? g_IniFile.m_nErrorCode = 402 : g_IniFile.m_nErrorCode = 403;
 		break;
 		//___________________________________________________________\\
-				                case 68:
+	case 68:
 	case nTagTableFinish:nThreadIndex = 68;
 		g_Motion.AbsMove(nAxisTable, g_IniFile.m_dTablePickUpPos[bFront]);
 		//if (bFront) g_DIO.SetDO(DO::Laser_BlowAir_Front, false);          //mark for same time with DO::Blower
@@ -2520,6 +2523,8 @@ void __fastcall CMainThread::doSCPicker(int &nThreadIndex)
 			{
 				if (m_bTableReady[1] && (m_listPickTable.front() == "FRONT")) bFrontTable = true;
 				else if (m_bTableReady[0] && (m_listPickTable.front() == "REAR")) bFrontTable = false;
+
+				m_listPickTable.pop_front();
 
 				g_Motion.AbsMove(Axis_Const::SCY, g_IniFile.m_dSCPickerPickSSPosY[bFrontTable]);
 				g_Motion.AbsMove(nAxisTable[bFrontTable], g_IniFile.m_dTablePickUpPos[bFrontTable]);
