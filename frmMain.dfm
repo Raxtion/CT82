@@ -1,11 +1,11 @@
 object fmMain: TfmMain
-  Left = 60
-  Top = 206
+  Left = 114
+  Top = 466
   BorderIcons = [biMinimize, biMaximize]
   BorderStyle = bsSingle
   Caption = 'fmMain'
   ClientHeight = 703
-  ClientWidth = 1497
+  ClientWidth = 1370
   Color = 13430215
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -23,13 +23,13 @@ object fmMain: TfmMain
   object Splitter1: TSplitter
     Left = 0
     Top = 594
-    Width = 1497
+    Width = 1370
     Height = 9
     Cursor = crVSplit
     Align = alBottom
   end
   object Splitter2: TSplitter
-    Left = 992
+    Left = 865
     Top = 0
     Width = 5
     Height = 594
@@ -39,7 +39,7 @@ object fmMain: TfmMain
   object listHistory: TListBox
     Left = 0
     Top = 603
-    Width = 1497
+    Width = 1370
     Height = 100
     Align = alBottom
     Color = clBlack
@@ -55,14 +55,14 @@ object fmMain: TfmMain
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 992
+    Width = 865
     Height = 594
     Align = alClient
     TabOrder = 1
     object Splitter3: TSplitter
       Left = 1
       Top = 601
-      Width = 990
+      Width = 863
       Height = 8
       Cursor = crVSplit
       Align = alTop
@@ -72,7 +72,7 @@ object fmMain: TfmMain
     object paintMap: TPaintBox
       Left = 1
       Top = 609
-      Width = 990
+      Width = 863
       Height = 105
       Align = alClient
       Color = clBtnFace
@@ -82,7 +82,7 @@ object fmMain: TfmMain
     object ScrollBox1: TScrollBox
       Left = 1
       Top = 1
-      Width = 990
+      Width = 863
       Height = 600
       Align = alTop
       TabOrder = 0
@@ -97,7 +97,7 @@ object fmMain: TfmMain
     end
   end
   object Panel2: TPanel
-    Left = 997
+    Left = 870
     Top = 0
     Width = 500
     Height = 594
@@ -142,8 +142,8 @@ object fmMain: TfmMain
       Top = 56
       Width = 481
       Height = 481
-      ActivePage = tabInfo
-      TabIndex = 4
+      ActivePage = tabCodeReader
+      TabIndex = 1
       TabOrder = 0
       OnChange = PageControl1Change
       object tabCCD: TTabSheet

@@ -353,7 +353,6 @@ void __fastcall TfmManual::SpeedButton14Click(TObject *Sender)
                     }
                     else g_IniFile.m_nErrorCode=439;
                 }
-
         }
         else
         {

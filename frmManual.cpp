@@ -331,10 +331,14 @@ void __fastcall TfmManual::SpeedButton14Click(TObject *Sender)
                         return;
                     }
                     // OK checked
+                    C_GetTime tm1MS(EX_SCALE::TIME_1MS,false);
+                    tm1MS.timeStart(5000);
                     while (true)
                     {
                         if (g_MNet.GetAxisStatus(Axis_Const::SSY,Axis_Const::PEL) == true) break;
                         g_MNet.AbsMove(Axis_Const::SSY,1200.0);
+                        Application->ProcessMessages();
+                        if(tm1MS.timeUp()) break;
                     }
 
                     if ( g_MNet.GetAxisStatus(Axis_Const::SSY,Axis_Const::PEL) && g_MNet.GetDI(DI::FT_LockerOff)

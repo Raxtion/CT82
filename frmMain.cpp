@@ -1877,13 +1877,25 @@ void __fastcall TfmMain::serverLaserIDClientRead(TObject *Sender,
         AnsiString strMsg=Socket->ReceiveText();
 
         AddList("(上)雷刻完2D 讀取器-->"+strMsg);
-        g_pMainThread->m_strLastUpReadID = strMsg;
 
         if(strMsg=="NO_READ") g_pMainThread->m_listLaserCodeReaderRX.push_back("LASER_READER_NOREAD");
         else if(strMsg.Length()>8)
         {
-                g_pMainThread->m_listLaserCodeReaderRX.push_back(strMsg);
-                AddList("(上)-->"+strMsg);
+                TStringList* slistTemp = SplitString(strMsg, ":");
+                AnsiString str2DData = slistTemp->operator [](0);
+                AnsiString strCheck = slistTemp->operator [](1);
+                if (strCheck == "A" || strCheck == "B")
+                {
+                    g_pMainThread->m_listLaserCodeReaderRX.push_back(str2DData);
+                    AddList("(上)-->"+str2DData);
+                }
+                else
+                {
+                    g_pMainThread->m_listLaserCodeReaderRX.push_back("LASER_READER_NOREAD");
+                    AddList("(上)-->LASER_READER_QUALITYERR");
+                }
+                g_pMainThread->m_strLastUpReadID = str2DData;
+                delete slistTemp;
         }
         else g_pMainThread->m_listLaserCodeReaderRX.push_back("LASER_READER_LENGHT_ERROR");
 }
@@ -1910,16 +1922,29 @@ void __fastcall TfmMain::serverCoverIDClientRead(TObject *Sender,
 {
         AnsiString strMsg=Socket->ReceiveText();
 
-        //AddList("下蓋板2D 讀取器-->"+strMsg);
         AddList("(下)雷刻完2D 讀取器-->"+strMsg);
 
         if(strMsg=="NO_READ") g_pMainThread->m_listCoverCodeReaderRX.push_back("COVER_READER_NOREAD");
-        else if(strMsg != g_pMainThread->m_strLastUpReadID) g_pMainThread->m_listCoverCodeReaderRX.push_back("2DCODE_DIFFERENCE_ERROR");
-        else if(strMsg.Length()>3)
+        else if(strMsg.Length()>8)
         {
-                g_pMainThread->m_listCoverCodeReaderRX.push_back(strMsg);
-                AddList("(下)-->"+strMsg);
-                //Send to EAP
+                TStringList* slistTemp = SplitString(strMsg, ":");
+                AnsiString str2DData = slistTemp->operator [](0);
+                AnsiString strCheck = slistTemp->operator [](1);
+                if (strCheck == "A" || strCheck == "B")
+                {
+                    if (str2DData != g_pMainThread->m_strLastUpReadID) g_pMainThread->m_listCoverCodeReaderRX.push_back("2DCODE_DIFFERENCE_ERROR");
+                    else
+                    {
+                        g_pMainThread->m_listCoverCodeReaderRX.push_back(str2DData);
+                        AddList("(下)-->"+str2DData);
+                    }
+                }
+                else
+                {
+                    g_pMainThread->m_listCoverCodeReaderRX.push_back("COVER_READER_NOREAD");
+                    AddList("(下)-->LASER_READER_QUALITYERR");
+                }
+                delete slistTemp;
         }
         else g_pMainThread->m_listCoverCodeReaderRX.push_back("COVER_READER_LENGHT_ERROR");
 }
