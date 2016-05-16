@@ -40,7 +40,7 @@ public:
   __fastcall CIniFile();
 
   //-----------------Machine-----------------
-   double m_dACCSpeed[10];
+  double m_dACCSpeed[10];
   double m_dDECSpeed[10];
   double m_dJogSpeed[10];
   double m_dWorkSpeed[10];
@@ -70,7 +70,6 @@ public:
   //Map
   AnsiString m_strProductID;
 
-  
   //pos
   double m_dTableMapCCDPosX[2];
   double m_dTableMapCCDPosY[2];
@@ -134,6 +133,8 @@ public:
   double m_dTableLaserCodePosX[2];
   double m_dTableLaserCodePosY[2];
   double m_dTablePickUpPos[2];
+  double m_dTableBackSpeedDown[2];
+  double m_dTableBackSpeedUp[2];
 
   double m_dSCPickerPickSSPosY[2];
 

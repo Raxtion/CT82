@@ -165,6 +165,7 @@ void __fastcall CIniFile::ProductFile(char *strFileName,bool bRead,int nMode)
   DDXFile_String(bRead,pIniFile,Product_Section,"m_strSBTSize",m_strSBTSize,"15X15*0.5");
 
   DDXFile_Int(bRead,pIniFile,Product_Section,"m_nSBTCorner",m_nSBTCorner,0);
+  DDXFile_Int(bRead,pIniFile,Product_Section,"m_nLaserQualityThreshold",m_nLaserQualityThreshold,1);
   }
   //pIniFile2
   if(nMode==FILE_MODE_ALL || nMode==FILE_MODE_MACHINE)

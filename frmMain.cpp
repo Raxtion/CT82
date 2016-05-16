@@ -599,6 +599,8 @@ void __fastcall TfmMain::btnProductParaClick(TObject *Sender)
         DDX_Radio(bRead,g_IniFile.m_nSBTColWord,pWnd->m_nSBTColWord);
         DDX_Radio(bRead,g_IniFile.m_nSBTRowWord,pWnd->m_nSBTRowWord);
 
+        DDX_ComboBox(bRead,g_IniFile.m_nLaserQualityThreshold,pWnd->m_cmbLaserQualityThreshold);
+
         if(pWnd->ShowModal()==mrOk)
         {                                                                                                                           
                 bRead=false;                                                                                                        
@@ -620,7 +622,6 @@ void __fastcall TfmMain::btnProductParaClick(TObject *Sender)
                 DDX_Int(bRead,g_IniFile.m_nLaserProgramNo[3],pWnd->m_nLaserProgramNo3);
 
 
-
                 DDX_String(bRead,g_IniFile.m_strScheduleNo,pWnd->m_strScheduleNo);
                 DDX_Int(bRead,g_IniFile.m_nSubLotSize,pWnd->m_nSubLotSize);
 
@@ -631,15 +632,14 @@ void __fastcall TfmMain::btnProductParaClick(TObject *Sender)
                 DDX_Radio(bRead,g_IniFile.m_nSBTColWord,pWnd->m_nSBTColWord);
                 DDX_Radio(bRead,g_IniFile.m_nSBTRowWord,pWnd->m_nSBTRowWord);
 
+                DDX_ComboBox(bRead,g_IniFile.m_nLaserQualityThreshold,pWnd->m_cmbLaserQualityThreshold);
+
                 g_IniFile.m_nLEDDimmer[0]=pWnd->trackLED0->Position;
                 g_IniFile.m_nLEDDimmer[1]=pWnd->trackLED1->Position;
 
                 SetLEDDimmer();
 
-
         }
-
-
 
         RefreshImage();
 
@@ -1883,19 +1883,37 @@ void __fastcall TfmMain::serverLaserIDClientRead(TObject *Sender,
         {
                 TStringList* slistTemp = SplitString(strMsg, ":");
                 AnsiString str2DData = slistTemp->operator [](0);
-                AnsiString strCheck = slistTemp->operator [](1);
-                if (strCheck == "A" || strCheck == "B")
+                if (slistTemp->Count > 1)
                 {
-                    g_pMainThread->m_listLaserCodeReaderRX.push_back(str2DData);
-                    AddList("(上)-->"+str2DData);
+                    AnsiString strCheck = slistTemp->operator [](1);
+                    int nCheck = 0;
+                    if (strCheck == "A") nCheck = 0;
+                    else if (strCheck == "B") nCheck = 1;
+                    else if (strCheck == "C") nCheck = 2;
+                    else if (strCheck == "D") nCheck = 3;
+                    else if (strCheck == "E") nCheck = 4;
+                    else if (strCheck == "F") nCheck = 5;
+
+                    if (nCheck <= g_IniFile.m_nLaserQualityThreshold)
+                    {
+                        g_pMainThread->m_listLaserCodeReaderRX.push_back(str2DData);
+                        AddList("(上)-->"+str2DData);
+                    }
+                    else
+                    {
+                        g_pMainThread->m_listLaserCodeReaderRX.push_back("LASER_READER_NOREAD");
+                        AddList("(上)-->LASER_READER_QUALITYERR");
+                    }
+                    g_pMainThread->m_strLastUpReadID = str2DData;
+                    delete slistTemp;
                 }
                 else
                 {
-                    g_pMainThread->m_listLaserCodeReaderRX.push_back("LASER_READER_NOREAD");
-                    AddList("(上)-->LASER_READER_QUALITYERR");
+                    g_pMainThread->m_listLaserCodeReaderRX.push_back(str2DData);
+                    AddList("(上)-->"+str2DData);
+                    g_pMainThread->m_strLastUpReadID = str2DData;
+                    delete slistTemp;
                 }
-                g_pMainThread->m_strLastUpReadID = str2DData;
-                delete slistTemp;
         }
         else g_pMainThread->m_listLaserCodeReaderRX.push_back("LASER_READER_LENGHT_ERROR");
 }
@@ -2274,14 +2292,12 @@ void __fastcall TfmMain::BitBtn10Click(TObject *Sender)
         if(nFounds<1)
         {
                 ShowMessage("找不到標記!!");
-
         }
         else
         {
                 double dX=theVision.GetMatchPosX(theVision.m_markMatch[1],1)-320.0;
                 double dY=theVision.GetMatchPosY(theVision.m_markMatch[1],1)-240.0;
                 AddList("2X="+FormatFloat("0.00 ",dX)+"2Y="+FormatFloat("0.00",dY));
-
         }
 
         RefreshImage();
@@ -2299,14 +2315,12 @@ void __fastcall TfmMain::BitBtn1Click(TObject *Sender)
         if(nFounds<1)
         {
                 ShowMessage("找不到標記!!");
-
         }
         else
         {
                 double dX=theVision.GetMatchPosX(theVision.m_markMatch[2],2)-320.0;
                 double dY=theVision.GetMatchPosY(theVision.m_markMatch[2],2)-240.0;
                 AddList("X="+FormatFloat("0.00 ",dX)+"Y="+FormatFloat("0.00",dY));
-
         }
 
         RefreshImage();
@@ -2333,14 +2347,12 @@ void __fastcall TfmMain::SpeedButton22Click(TObject *Sender)
                 ShowMessage("找不到標記!!");
                 pBtn->Enabled=true;
                 return;
-
         }
         else
         {
                 dX=theVision.GetMatchPosX(theVision.m_markMatch[2],2)-320.0;
                 dY=theVision.GetMatchPosY(theVision.m_markMatch[2],2)-240.0;
                 AddList("X="+FormatFloat("0.00 ",dX)+"Y="+FormatFloat("0.00",dY));
-
         }
 
         RefreshImage();
@@ -2384,14 +2396,12 @@ void __fastcall TfmMain::SpeedButton5Click(TObject *Sender)
                 ShowMessage("找不到標記!!");
                 pBtn->Enabled=true;
                 return;
-
         }
         else
         {
                 dX=theVision.GetMatchPosX(theVision.m_markMatch[1],1)-320.0;
                 dY=theVision.GetMatchPosY(theVision.m_markMatch[1],1)-240.0;
                 AddList("2X="+FormatFloat("0.00 ",dX)+"2Y="+FormatFloat("0.00",dY));
-
         }
 
         RefreshImage();
@@ -2735,6 +2745,8 @@ void __fastcall TfmMain::SpeedButton30Click(TObject *Sender)
                 g_IniFile.ProductFile(strName2.c_str(),true,FILE_MODE_PRODUCT);
                 theVision.LoadTool(g_IniFile.GetFileNameWithNewExt(strName2.c_str(),"cev").c_str(),"Dummy");
 
+                g_IniFile.m_strLastFileName=strName2.c_str();
+
         }
 
         g_SMSXML.m_strMachineID=g_IniFile.m_strSMSMachineID;
@@ -2742,6 +2754,7 @@ void __fastcall TfmMain::SpeedButton30Click(TObject *Sender)
         g_SMSXML.m_strPartNo=g_IniFile.m_strSMSPartNo;
         g_SMSXML.m_strLotNo=g_IniFile.m_strSMSLotNo;
 
+        Caption=g_IniFile.m_strLastFileName;
         RefreshImage();
         
         delete pWnd;

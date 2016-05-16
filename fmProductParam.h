@@ -76,6 +76,9 @@ __published:	// IDE-managed Components
         TStaticText *StaticText2;
         TEdit *m_nLaserProgramNo3;
         TUpDown *UpDown4;
+    TGroupBox *GroupBox2;
+    TComboBox *m_cmbLaserQualityThreshold;
+    TLabel *Label4;
         void __fastcall trackLED0Change(TObject *Sender);
         void __fastcall FormShow(TObject *Sender);
         void __fastcall trackLED1Change(TObject *Sender);

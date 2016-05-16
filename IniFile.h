@@ -146,6 +146,7 @@ public:
   int m_nLaserProgramNo[4];
   AnsiString m_strScheduleNo;
   int m_nSubLotSize;
+  int m_nLaserQualityThreshold;
 
   //Option
   bool m_bIsRailLoad;   //true:Load Rail false:Load Lifter

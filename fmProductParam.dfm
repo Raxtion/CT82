@@ -1,6 +1,6 @@
 object frmProductParam: TfrmProductParam
-  Left = 369
-  Top = 90
+  Left = 466
+  Top = 131
   BorderStyle = bsDialog
   Caption = 'frmProductParam'
   ClientHeight = 601
@@ -269,9 +269,9 @@ object frmProductParam: TfrmProductParam
       end
       object m_nSBTCorner: TRadioGroup
         Left = 432
-        Top = 16
+        Top = 136
         Width = 201
-        Height = 225
+        Height = 217
         Caption = #22522#26495#32570#35282#20301#32622
         ItemIndex = 0
         Items.Strings = (
@@ -390,6 +390,37 @@ object frmProductParam: TfrmProductParam
           Position = 0
           TabOrder = 5
           Wrap = False
+        end
+      end
+      object GroupBox2: TGroupBox
+        Left = 432
+        Top = 16
+        Width = 201
+        Height = 105
+        Caption = #38647#21051#21697#36074#31649#25511
+        TabOrder = 6
+        object Label4: TLabel
+          Left = 93
+          Top = 42
+          Width = 96
+          Height = 16
+          Caption = #31561#32026#20197#19978#36890#36942
+        end
+        object m_cmbLaserQualityThreshold: TComboBox
+          Left = 14
+          Top = 40
+          Width = 73
+          Height = 24
+          ItemHeight = 16
+          TabOrder = 0
+          Text = 'm_cmbLaserQualityThreshold'
+          Items.Strings = (
+            'A'
+            'B'
+            'C'
+            'D'
+            'E'
+            'F')
         end
       end
     end

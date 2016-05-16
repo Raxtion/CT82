@@ -177,6 +177,12 @@ void DDX_TrackBarFloat(bool bRead,double &dParameter,TTrackBar *pTrackBar,double
   else dParameter=pTrackBar->Position/dScale;
 }
 //---------------------------------------------------------------------------
+void DDX_ComboBox(bool bRead,int &nParameter, TComboBox *pComboBox)
+{
+  if(bRead) pComboBox->ItemIndex=nParameter;
+  else nParameter=pComboBox->ItemIndex;
+}
+//---------------------------------------------------------------------------
 void DDX_String(bool bRead,AnsiString &strParameter,TEdit *pEdit)
 {
   if(bRead) pEdit->Text=strParameter;
