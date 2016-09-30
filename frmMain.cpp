@@ -1945,24 +1945,45 @@ void __fastcall TfmMain::serverCoverIDClientRead(TObject *Sender,
         if(strMsg=="NO_READ") g_pMainThread->m_listCoverCodeReaderRX.push_back("COVER_READER_NOREAD");
         else if(strMsg.Length()>8)
         {
-                TStringList* slistTemp = SplitString(strMsg, ":");
-                AnsiString str2DData = slistTemp->operator [](0);
-                AnsiString strCheck = slistTemp->operator [](1);
-                if (strCheck == "A" || strCheck == "B")
-                {
-                    if (str2DData != g_pMainThread->m_strLastUpReadID) g_pMainThread->m_listCoverCodeReaderRX.push_back("2DCODE_DIFFERENCE_ERROR");
+            TStringList* slistTemp = SplitString(strMsg, ":");
+			AnsiString str2DData = slistTemp->operator [](0);
+			if (slistTemp->Count > 1)
+			{
+				AnsiString strCheck = slistTemp->operator [](1);
+				int nCheck = 0;
+				if (strCheck == "A") nCheck = 0;
+				else if (strCheck == "B") nCheck = 1;
+				else if (strCheck == "C") nCheck = 2;
+				else if (strCheck == "D") nCheck = 3;
+				else if (strCheck == "E") nCheck = 4;
+				else if (strCheck == "F") nCheck = 5;
+
+				if (nCheck <= g_IniFile.m_nLaserQualityThreshold)
+				{
+					if (str2DData != g_pMainThread->m_strLastUpReadID) g_pMainThread->m_listCoverCodeReaderRX.push_back("2DCODE_DIFFERENCE_ERROR");
                     else
                     {
                         g_pMainThread->m_listCoverCodeReaderRX.push_back(str2DData);
                         AddList("(下)-->"+str2DData);
                     }
-                }
+				}
+				else
+				{
+					g_pMainThread->m_listCoverCodeReaderRX.push_back("COVER_READER_NOREAD");
+                    AddList("(下)-->LASER_READER_QUALITYERR");
+				}
+				delete slistTemp;
+			}
+			else
+			{
+				if (str2DData != g_pMainThread->m_strLastUpReadID) g_pMainThread->m_listCoverCodeReaderRX.push_back("2DCODE_DIFFERENCE_ERROR");
                 else
                 {
-                    g_pMainThread->m_listCoverCodeReaderRX.push_back("COVER_READER_NOREAD");
-                    AddList("(下)-->LASER_READER_QUALITYERR");
+                    g_pMainThread->m_listCoverCodeReaderRX.push_back(str2DData);
+                    AddList("(下)-->"+str2DData);
                 }
-                delete slistTemp;
+				delete slistTemp;
+			}
         }
         else g_pMainThread->m_listCoverCodeReaderRX.push_back("COVER_READER_LENGHT_ERROR");
 }
