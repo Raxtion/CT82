@@ -1786,6 +1786,8 @@ void __fastcall TfmMain::timerCommTimer(TObject *Sender)
                                 //Set Text
                                 bRet=g_Laser.SetText(g_IniFile.m_nLaserProgramNo[nIndex],0,GetSchedule(g_pMainThread->m_nLaserCount, nIndex).c_str());
                                 bRet=g_Laser.SetText(g_IniFile.m_nLaserProgramNo[nIndex],2,GetSchedule(g_pMainThread->m_nLaserCount, nIndex).c_str());
+                                bRet=g_Laser.SetText(g_IniFile.m_nLaserProgramNo[nIndex],4,GetSchedule(g_pMainThread->m_nLaserCount, nIndex).c_str());
+                                bRet=g_Laser.SetText(g_IniFile.m_nLaserProgramNo[nIndex],6,GetSchedule(g_pMainThread->m_nLaserCount, nIndex).c_str());
                                 //Set Offset
                                 bRet=g_Laser.SetToolPosOffset(g_IniFile.m_nLaserProgramNo[nIndex],g_pMainThread->m_tmpProductInfo[nIndex % 2].m_nOffsetX,g_pMainThread->m_tmpProductInfo[nIndex % 2].m_nOffsetY,g_pMainThread->m_tmpProductInfo[nIndex % 2].m_dOffsetAngle);
                                 // bRet=true;
@@ -2076,6 +2078,8 @@ void __fastcall TfmMain::SpeedButton19Click(TObject *Sender)
 
         g_Laser.SetText(g_IniFile.m_nLaserProgramNo[1],0,GetSchedule(g_pMainThread->m_nLaserCount, false).c_str());
         g_Laser.SetText(g_IniFile.m_nLaserProgramNo[1],2,GetSchedule(g_pMainThread->m_nLaserCount, false).c_str());
+        g_Laser.SetText(g_IniFile.m_nLaserProgramNo[1],4,GetSchedule(g_pMainThread->m_nLaserCount, false).c_str());
+        g_Laser.SetText(g_IniFile.m_nLaserProgramNo[1],6,GetSchedule(g_pMainThread->m_nLaserCount, false).c_str());
 }
 //---------------------------------------------------------------------------
 
@@ -2085,6 +2089,8 @@ void __fastcall TfmMain::SpeedButton20Click(TObject *Sender)
         
         g_Laser.SetText(g_IniFile.m_nLaserProgramNo[0],0,GetSchedule(g_pMainThread->m_nLaserCount, true).c_str());
         g_Laser.SetText(g_IniFile.m_nLaserProgramNo[0],2,GetSchedule(g_pMainThread->m_nLaserCount, true).c_str());
+        g_Laser.SetText(g_IniFile.m_nLaserProgramNo[0],4,GetSchedule(g_pMainThread->m_nLaserCount, true).c_str());
+        g_Laser.SetText(g_IniFile.m_nLaserProgramNo[0],6,GetSchedule(g_pMainThread->m_nLaserCount, true).c_str());
 }
 //---------------------------------------------------------------------------
 AnsiString __fastcall TfmMain::GetSchedule(int nLaserCount, int nIndex)

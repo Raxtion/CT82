@@ -203,7 +203,7 @@ void PCIM114GL::SetMoveSpeed(unsigned short nAxis, double dMaxVal, double dTAcc,
 }
 //---------------------------------------------------------------------------
 
-void ChangeMoveSpeed(unsigned short nAxis, double dSpeedVal)
+void PCIM114GL::ChangeMoveSpeed(unsigned short nAxis, double dSpeedVal)
 {
     if(!m_bInitOK) return ;
     if (nAxis < 4)

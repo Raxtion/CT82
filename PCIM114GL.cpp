@@ -192,13 +192,13 @@ void PCIM114GL::SetMoveSpeed(unsigned short nAxis, double dMaxVal, double dTAcc,
         
         if(nAxis<4)
             {
-                m_dStartVal[nAxis] = (dMaxVal/2.0)*m_dMMtoPLS[nAxis];
+                m_dStartVal[nAxis] = 0;//(dMaxVal/2.0)*m_dMMtoPLS[nAxis];
                 m_dMaxVal[nAxis] = dMaxVal*m_dMMtoPLS[nAxis];
                 m_dTAcc[nAxis] = dTAcc;
                 m_dTDec[nAxis] = dTDec;
                 //m_dSVAcc[nAxis] = 1000; 
             }
-            else _mnet_m1_set_tmove_speed(m_nStartRingNo,m_vectAxisMap[nAxis-4],(dMaxVal/2.0)*m_dMMtoPLS[nAxis],dMaxVal*m_dMMtoPLS[nAxis],dTAcc,dTAcc);
+            else _mnet_m1_set_tmove_speed(m_nStartRingNo,m_vectAxisMap[nAxis-4],/*(dMaxVal/2.0)*m_dMMtoPLS[nAxis]*/0,dMaxVal*m_dMMtoPLS[nAxis],dTAcc,dTAcc);
 
 }
 //---------------------------------------------------------------------------
@@ -290,7 +290,7 @@ bool PCIM114GL::IsMotionDone(unsigned short nAxis)
 bool PCIM114GL::IsPosDone(int nAxis,double dPos)
 {
         double dP=GetFeedbackPos(nAxis);
-        if(dP>dPos-0.1 && dP<dPos+0.1) return true;
+        if(dP>dPos-0.02 && dP<dPos+0.02) return true;
         else return false;
 }
 //---------------------------------------------------------------------------
@@ -299,7 +299,7 @@ bool PCIM114GL::IsLastPosDone(int nAxis)
         double dPos=m_dLastTargetPos[nAxis];
 
         double dP=GetFeedbackPos(nAxis);
-        if(dP>dPos-0.1 && dP<dPos+0.1) return true;
+        if(dP>dPos-0.02 && dP<dPos+0.02) return true;
         else return false;
 }
 //---------------------------------------------------------------------------

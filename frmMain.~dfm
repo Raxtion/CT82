@@ -1,6 +1,6 @@
 object fmMain: TfmMain
-  Left = 106
-  Top = 197
+  Left = 114
+  Top = 267
   BorderIcons = [biMinimize, biMaximize]
   BorderStyle = bsSingle
   Caption = 'fmMain'
