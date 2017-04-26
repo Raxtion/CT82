@@ -332,8 +332,8 @@ void __fastcall TfmMain::btnMotorCheckClick(TObject *Sender)
         }
         else if (pChoiceMotorDlg->m_nSelectAxis == 6)
         {
-                pMotorCheckDlg->btnFWD->Glyph->LoadFromFile(sPath+"\\bmp\\up.bmp");
-                pMotorCheckDlg->btnRWD->Glyph->LoadFromFile(sPath+"\\bmp\\down.bmp");
+                pMotorCheckDlg->btnFWD->Glyph->LoadFromFile(sPath+"\\bmp\\down.bmp");
+                pMotorCheckDlg->btnRWD->Glyph->LoadFromFile(sPath+"\\bmp\\up.bmp");
         }
         else if (pChoiceMotorDlg->m_nSelectAxis == 7)
         {

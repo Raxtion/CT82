@@ -1,11 +1,11 @@
 object fmManual: TfmManual
   Tag = 6
-  Left = 277
-  Top = 0
+  Left = 276
+  Top = 23
   Hint = 'Y'
   BorderStyle = bsDialog
   Caption = 'fmManual'
-  ClientHeight = 739
+  ClientHeight = 817
   ClientWidth = 1083
   Color = 13430215
   Font.Charset = DEFAULT_CHARSET
