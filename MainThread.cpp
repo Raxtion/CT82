@@ -411,6 +411,8 @@ bool __fastcall CMainThread::InitialMachine(int &nThreadIndex)
 		//do initial pos or flag
 		for (int nIndex = 4; nIndex<AXIS_SIZE; nIndex++) g_Motion.m_dLastTargetPos[nIndex] = 0.0;
 
+        SetManualSpeed();
+
 		m_nLaserCount = 0;
 		m_nOKSummary = 0;
 		m_nNGSummary = 0;
@@ -615,6 +617,7 @@ void __fastcall CMainThread::doLoadRail(int &nThreadIndex)
 void __fastcall CMainThread::doUnLoadRail(int &nThreadIndex)
 {
 	static C_GetTime tm1MS(EX_SCALE::TIME_1MS, false);
+    static C_GetTime tm2MS(EX_SCALE::TIME_1MS, false);
 
 
 	switch (nThreadIndex)
@@ -710,6 +713,7 @@ void __fastcall CMainThread::doUnLoadRail(int &nThreadIndex)
 			g_DIO.SetDO(DO::SR2_OutGoing, true);
 			g_DIO.SetDO(DO::SR2_PressWheel, false);
 			tm1MS.timeStart(5000);
+            tm2MS.timeStart(500);
 			nThreadIndex++;
 		}
 		else if (g_DIO.GetDI(DI::SR2_PusherUp))
@@ -739,7 +743,7 @@ void __fastcall CMainThread::doUnLoadRail(int &nThreadIndex)
 			g_DIO.SetDO(DO::SR2_PusherDown, true);
 			tm1MS.timeStart(5000);
 		}
-		else if (!g_DIO.GetDI(DI::SR2_PusherAlarm))
+		else if (!g_DIO.GetDI(DI::SR2_PusherAlarm) && tm2MS.timeUp())
 		{
 			g_DIO.SetDO(DO::SR2_PusherPush, false);
 			g_DIO.SetDO(DO::SR2_PusherDown, false);

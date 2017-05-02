@@ -332,8 +332,8 @@ void __fastcall TfmMain::btnMotorCheckClick(TObject *Sender)
         }
         else if (pChoiceMotorDlg->m_nSelectAxis == 6)
         {
-                pMotorCheckDlg->btnFWD->Glyph->LoadFromFile(sPath+"\\bmp\\up.bmp");
-                pMotorCheckDlg->btnRWD->Glyph->LoadFromFile(sPath+"\\bmp\\down.bmp");
+                pMotorCheckDlg->btnFWD->Glyph->LoadFromFile(sPath+"\\bmp\\down.bmp");
+                pMotorCheckDlg->btnRWD->Glyph->LoadFromFile(sPath+"\\bmp\\up.bmp");
         }
         else if (pChoiceMotorDlg->m_nSelectAxis == 7)
         {
@@ -374,8 +374,9 @@ void __fastcall TfmMain::btnExitClick(TObject *Sender)
 
   } 
 
-  
-  exit(0);
+  FormClose(this, true);
+  Application->Terminate();
+  //exit(0);
 }
 //---------------------------------------------------------------------------
 
@@ -1789,7 +1790,10 @@ void __fastcall TfmMain::timerCommTimer(TObject *Sender)
                                 bRet=g_Laser.SetText(g_IniFile.m_nLaserProgramNo[nIndex],4,GetSchedule(g_pMainThread->m_nLaserCount, nIndex).c_str());
                                 bRet=g_Laser.SetText(g_IniFile.m_nLaserProgramNo[nIndex],6,GetSchedule(g_pMainThread->m_nLaserCount, nIndex).c_str());
                                 //Set Offset
-                                bRet=g_Laser.SetToolPosOffset(g_IniFile.m_nLaserProgramNo[nIndex],g_pMainThread->m_tmpProductInfo[nIndex % 2].m_nOffsetX,g_pMainThread->m_tmpProductInfo[nIndex % 2].m_nOffsetY,g_pMainThread->m_tmpProductInfo[nIndex % 2].m_dOffsetAngle);
+                                bRet=g_Laser.SetToolPosOffset(g_IniFile.m_nLaserProgramNo[nIndex],
+                                    0.0 + g_pMainThread->m_tmpProductInfo[nIndex % 2].m_nOffsetX,
+                                    0.0 - g_pMainThread->m_tmpProductInfo[nIndex % 2].m_nOffsetY,
+                                    g_pMainThread->m_tmpProductInfo[nIndex % 2].m_dOffsetAngle);
                                 // bRet=true;
                                 if(bRet) g_pMainThread->m_listLaserRX.push_back("SET_LASER_OFFSET_OK");
                                 else g_pMainThread->m_listLaserRX.push_back("SET_LASER_OFFSET_NG");
@@ -2389,15 +2393,20 @@ void __fastcall TfmMain::SpeedButton22Click(TObject *Sender)
          C_GetTime tm1MS(EX_SCALE::TIME_1MS,false);
         tm1MS.timeStart(10000);
 
-        g_MNet.AbsMove(Axis_Const::FTX,g_IniFile.m_dTableMarkPosX[nTable]-dX*g_IniFile.m_dFMCCDResolution[0]);
-        g_MNet.AbsMove(Axis_Const::CCD,g_IniFile.m_dTableMarkPosY[nTable]+dY*g_IniFile.m_dFMCCDResolution[1]);
+        unsigned short nAxisTable[] = { Axis_Const::RTX,Axis_Const::FTX };
 
-        while(1)
+        double dPosX = g_IniFile.m_dTableMarkPosX[nTable] - dX*g_IniFile.m_dFMCCDResolution[0];
+        double dPosY = g_IniFile.m_dTableMarkPosY[nTable] + dY*g_IniFile.m_dFMCCDResolution[1];
+
+        g_Motion.AbsMove(nAxisTable[nTable], dPosX);
+        g_Motion.AbsMove(Axis_Const::CCD, dPosY);
+
+        while (1)
         {
-                if( g_MNet.IsPosDone(Axis_Const::FTX,g_IniFile.m_dTableMarkPosX[nTable])  &&
-                        g_MNet.IsPosDone(Axis_Const::CCD,g_IniFile.m_dTableMarkPosY[nTable])) break;
-                if(tm1MS.timeUp()) break;
-                Application->ProcessMessages();
+        	if (g_Motion.IsPosDone(nAxisTable[nTable], dPosX) &&
+		        g_Motion.IsPosDone(Axis_Const::CCD, dPosY)) break;
+        	if (tm1MS.timeUp()) break;
+            	Application->ProcessMessages();
         }
 
         pBtn->Enabled=true;
@@ -2438,15 +2447,20 @@ void __fastcall TfmMain::SpeedButton5Click(TObject *Sender)
         C_GetTime tm1MS(EX_SCALE::TIME_1MS,false);
         tm1MS.timeStart(10000);
 
-        g_MNet.AbsMove(Axis_Const::FTX,g_IniFile.m_dTableMarkPos2X[nTable]-dX*g_IniFile.m_dFMCCDResolution[0]);
-        g_MNet.AbsMove(Axis_Const::CCD,g_IniFile.m_dTableMarkPos2Y[nTable]+dY*g_IniFile.m_dFMCCDResolution[1]);
+        unsigned short nAxisTable[] = { Axis_Const::RTX,Axis_Const::FTX };
 
-        while(1)
+        double dPosX = g_IniFile.m_dTableMarkPos2X[nTable] - dX*g_IniFile.m_dFMCCDResolution[0];
+        double dPosY = g_IniFile.m_dTableMarkPos2Y[nTable] + dY*g_IniFile.m_dFMCCDResolution[1];
+
+        g_Motion.AbsMove(nAxisTable[nTable], dPosX);
+        g_Motion.AbsMove(Axis_Const::CCD, dPosY);
+
+        while (1)
         {
-                if( g_MNet.IsPosDone(Axis_Const::FTX,g_IniFile.m_dTableMarkPos2X[nTable])  &&
-                        g_MNet.IsPosDone(Axis_Const::CCD,g_IniFile.m_dTableMarkPos2Y[nTable])) break;
-                if(tm1MS.timeUp()) break;
-                Application->ProcessMessages();
+        	if (g_Motion.IsPosDone(nAxisTable[nTable], dPosX) &&
+		        g_Motion.IsPosDone(Axis_Const::CCD, dPosY)) break;
+        	if (tm1MS.timeUp()) break;
+            	Application->ProcessMessages();
         }
 
         pBtn->Enabled=true;
@@ -3418,4 +3432,48 @@ void __fastcall TfmMain::BitBtn15Click(TObject *Sender)
     g_pMainThread->m_bIsMachineInit = true;
 }
 //---------------------------------------------------------------------------
+
+void __fastcall TfmMain::ImagePaintBoxMouseDown(TObject *Sender,
+      TMouseButton Button, TShiftState Shift, int X, int Y)
+{
+    AddList("繪圖像數座標: X=" + IntToStr(X) + " : Y=" + IntToStr(Y));
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TfmMain::btnFMCCDFireLaserTestClick(TObject *Sender)
+{
+    if (!AxisMoveCheck()) return;
+
+    C_GetTime tm1MS(EX_SCALE::TIME_1MS, false);
+
+    TSpeedButton *pBtn = (TSpeedButton *)Sender;
+    bool bFront = pBtn->Tag;
+    int nIndex = g_pMainThread->nThreadIndex[5];
+    bool bTableLock; (bFront) ? bTableLock = g_DIO.GetDI(DI::FT_LockerOn) : bTableLock = g_DIO.GetDI(DI::RT_LockerOn);
+
+	pBtn->Enabled = false;
+    tm1MS.timeStart(60000);
+
+    g_pMainThread->nThreadIndex[5] = 19;
+    g_pMainThread->m_listLog.push_back("系統控制中, 請勿操作...");
+    while (true)
+    {
+        g_pMainThread->doTable(g_pMainThread->nThreadIndex[5], bFront);
+        if (g_pMainThread->nThreadIndex[5] == 67) break;
+        if (g_IniFile.m_nErrorCode>0 && g_IniFile.m_nErrorCode<1000) break;
+        if (tm1MS.timeUp()) break;
+        Application->ProcessMessages();
+        ::Sleep(10);
+    }
+
+    g_pMainThread->m_bIsMachineStop = true;
+    g_pMainThread->nThreadIndex[5] = nIndex;
+
+    (bFront) ? g_DIO.SetDO(DO::FT_Locker, bTableLock) : g_DIO.SetDO(DO::RT_Locker, bTableLock);
+
+    pBtn->Enabled = true;
+}
+//---------------------------------------------------------------------------
+
 

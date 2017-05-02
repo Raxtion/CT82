@@ -1,6 +1,6 @@
 object fmMain: TfmMain
-  Left = 113
-  Top = 207
+  Left = 100
+  Top = 208
   BorderIcons = [biMinimize, biMaximize]
   BorderStyle = bsSingle
   Caption = 'fmMain'
@@ -91,6 +91,7 @@ object fmMain: TfmMain
         Top = 0
         Width = 680
         Height = 513
+        OnMouseDown = ImagePaintBoxMouseDown
         OnMouseMove = ImagePaintBoxMouseMove
         OnPaint = ImagePaintBoxPaint
       end
@@ -142,8 +143,8 @@ object fmMain: TfmMain
       Top = 56
       Width = 481
       Height = 481
-      ActivePage = tabInfo
-      TabIndex = 4
+      ActivePage = tabCCD
+      TabIndex = 0
       TabOrder = 0
       OnChange = PageControl1Change
       object tabCCD: TTabSheet
@@ -1279,6 +1280,23 @@ object fmMain: TfmMain
           Height = 57
           Caption = 'Test Offset'
           OnClick = SpeedButton23Click
+        end
+        object SpeedButton48: TSpeedButton
+          Left = 288
+          Top = 248
+          Width = 145
+          Height = 89
+          Caption = #24460#27969#36947' '#23450#20301#38647#23556#28204#35430
+          OnClick = btnFMCCDFireLaserTestClick
+        end
+        object btnFMCCDFireLaserTest: TSpeedButton
+          Tag = 1
+          Left = 288
+          Top = 356
+          Width = 145
+          Height = 89
+          Caption = #21069#27969#36947' '#23450#20301#38647#23556#28204#35430
+          OnClick = btnFMCCDFireLaserTestClick
         end
       end
       object tabSMS: TTabSheet

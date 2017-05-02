@@ -33,7 +33,8 @@ __fastcall PCIM114GL::PCIM114GL()
         m_dMMtoPLS[Axis_Const::FTX]=10000.0/40.0;
         m_dMMtoPLS[Axis_Const::RTX]=10000.0/40.0;
         m_dMMtoPLS[Axis_Const::SSY]=10000.0/20.0;
-        m_dMMtoPLS[Axis_Const::CCD]=10000.0/20.0;
+        //m_dMMtoPLS[Axis_Const::CCD]=10000.0/20.0;
+        m_dMMtoPLS[Axis_Const::CCD]=10000.0/10.0;
         //m_dMMtoPLS[Axis_Const::BPY]=10000.0/20.0;
         //m_dMMtoPLS[Axis_Const::BPZ]=10000.0/5.0;
         //m_dMMtoPLS[Axis_Const::BLZ]=10000.0/5.0;
@@ -366,11 +367,18 @@ void PCIM114GL::StartJog(unsigned short nAxis,bool bDir)
     }
 }
 //---------------------------------------------------------------------------
-void PCIM114GL::StopMove(unsigned short nAxis)
+void PCIM114GL::EmgStopMove(unsigned short nAxis)
 {
         if(!m_bInitOK) return;
     if (nAxis < 4) _M114GL_emg_stop(m_nCardNo, nAxis);
     else _mnet_m1_emg_stop(m_nStartRingNo, m_vectAxisMap[nAxis - 4]);
+}
+//---------------------------------------------------------------------------
+void PCIM114GL::StopMove(unsigned short nAxis)
+{
+        if(!m_bInitOK) return;
+    if (nAxis < 4) _M114GL_sd_stop(m_nCardNo, nAxis,0.1);
+    else _mnet_m1_sd_stop(m_nStartRingNo, m_vectAxisMap[nAxis - 4]);
 }
 //---------------------------------------------------------------------------
         //DIO

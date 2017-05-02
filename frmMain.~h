@@ -214,6 +214,8 @@ __published:	// IDE-managed Components
     TBitBtn *BitBtn13;
     TBitBtn *BitBtn14;
     TBitBtn *BitBtn15;
+    TSpeedButton *SpeedButton48;
+    TSpeedButton *btnFMCCDFireLaserTest;
         void __fastcall ImagePaintBoxMouseMove(TObject *Sender,
           TShiftState Shift, int X, int Y);
         void __fastcall btnFileOpenClick(TObject *Sender);
@@ -351,6 +353,9 @@ __published:	// IDE-managed Components
     void __fastcall BitBtn13Click(TObject *Sender);
     void __fastcall BitBtn14Click(TObject *Sender);
     void __fastcall BitBtn15Click(TObject *Sender);
+    void __fastcall ImagePaintBoxMouseDown(TObject *Sender,
+          TMouseButton Button, TShiftState Shift, int X, int Y);
+    void __fastcall btnFMCCDFireLaserTestClick(TObject *Sender);
 private:	// User declarations         
         void __fastcall CreateCaptionFile(TForm *pForm);
         void __fastcall ReadCaptionFile(TForm *pForm,int nLanguage=0);

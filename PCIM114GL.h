@@ -59,6 +59,7 @@ private:
         double GetCommandPos(unsigned short nAxis);
         void SetCommandPos(unsigned short nAxis,double dPos);
         void StartJog(unsigned short nAxis,bool bDir);
+        void EmgStopMove(unsigned short nAxis);
         void StopMove(unsigned short nAxis);
         void SetDO(int nBitNo, bool bOnOff);     //for DI16 DO16
         void SetDOPort(int nBitNo, byte nValue);

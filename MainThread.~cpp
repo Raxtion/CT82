@@ -411,6 +411,8 @@ bool __fastcall CMainThread::InitialMachine(int &nThreadIndex)
 		//do initial pos or flag
 		for (int nIndex = 4; nIndex<AXIS_SIZE; nIndex++) g_Motion.m_dLastTargetPos[nIndex] = 0.0;
 
+        SetManualSpeed();
+
 		m_nLaserCount = 0;
 		m_nOKSummary = 0;
 		m_nNGSummary = 0;
@@ -1643,7 +1645,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex, bool bFront)
 		}
 		break;
 		//___________________________________________________________\\
-						                case 15:
+	case 15:
 	case nTagVenderCode:nThreadIndex = 15;
 		g_IniFile.m_bReadVenderID = false;
 		if (g_IniFile.m_bReadVenderID)
@@ -1691,7 +1693,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex, bool bFront)
 		else if (p_tm1MS->timeUp()) g_IniFile.m_nErrorCode = 413;
 		break;
 		//___________________________________________________________\\
-						                //使用電眼取得第一點Offset value
+	//使用電眼取得第一點Offset value
 	case 19:
 	case nTagFMCCD:nThreadIndex = 19;
 		if (g_IniFile.m_bUseFMCCD)
@@ -1757,7 +1759,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex, bool bFront)
 		else if (p_tm1MS->timeUp()) g_IniFile.m_nErrorCode = 415;
 		break;
 		//___________________________________________________________\\
-						                //使用電眼取得第二點Offset value
+	//使用電眼取得第二點Offset value
 	case 23:
 	case nTagFMCCD2:nThreadIndex = 23;
 		if (g_IniFile.m_bUseFMCCD2)
@@ -1848,7 +1850,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex, bool bFront)
 		else if (p_tm1MS->timeUp()) g_IniFile.m_nErrorCode = 415;
 		break;
 		//___________________________________________________________\\
-						                case 27:
+	case 27:
 	case nTagMapCCD:nThreadIndex = 27;
 		g_IniFile.m_bUseMapCCD = false;   //Option
 		if (g_IniFile.m_bUseMapCCD)
@@ -1937,13 +1939,13 @@ void __fastcall CMainThread::doTable(int &nThreadIndex, bool bFront)
 		}
 		break;
 		//___________________________________________________________\\
-						                case 34:
+	case 34:
 	case nTagUnLockMapCCD:nThreadIndex = 34;
 		m_bIsMapCCDLocked = false;
 		nThreadIndex++;
 		break;
 		//___________________________________________________________\\
-						                case 35:
+	case 35:
 	case nTagLaserMark:nThreadIndex = 35;
 		if (g_IniFile.m_bUseLaserMark)
 		{
@@ -2341,7 +2343,7 @@ void __fastcall CMainThread::doTable(int &nThreadIndex, bool bFront)
 		else if (p_tm1MS->timeUp()) bFront ? g_IniFile.m_nErrorCode = 402 : g_IniFile.m_nErrorCode = 403;
 		break;
 		//___________________________________________________________\\
-						                case 68:
+	case 68:
 	case nTagTableFinish:nThreadIndex = 68;
 		g_Motion.AbsMove(nAxisTable, g_IniFile.m_dTablePickUpPos[bFront]);
 		//if (bFront) g_DIO.SetDO(DO::Laser_BlowAir_Front, false);          //mark for same time with DO::Blower

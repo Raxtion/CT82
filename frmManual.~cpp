@@ -424,8 +424,8 @@ void __fastcall TfmManual::StaticText1Click(TObject *Sender)
         }
         else if (pMotorCheckDlg->m_nActiveAxis == 6)
         {
-                pMotorCheckDlg->btnFWD->Glyph->LoadFromFile(sPath+"\\bmp\\up.bmp");
-                pMotorCheckDlg->btnRWD->Glyph->LoadFromFile(sPath+"\\bmp\\down.bmp");
+                pMotorCheckDlg->btnFWD->Glyph->LoadFromFile(sPath+"\\bmp\\down.bmp");
+                pMotorCheckDlg->btnRWD->Glyph->LoadFromFile(sPath+"\\bmp\\up.bmp");
         }
         else if (pMotorCheckDlg->m_nActiveAxis == 7)
         {
