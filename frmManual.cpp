@@ -490,6 +490,8 @@ void __fastcall TfmManual::EnableAllButton(bool bEnabled)
                 }
         }
 
+        ::Sleep(500);
+
 }
 
 

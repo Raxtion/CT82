@@ -31,8 +31,8 @@ object fmManual: TfmManual
     Top = 0
     Width = 1457
     Height = 737
-    ActivePage = TabSheet1
-    TabIndex = 0
+    ActivePage = TabSheet2
+    TabIndex = 1
     TabOrder = 1
     object TabSheet1: TTabSheet
       Caption = '1/2'
@@ -2415,7 +2415,7 @@ object fmManual: TfmManual
           Top = 62
           Width = 129
           Height = 28
-          Hint = 'm_dTableMarkPosX0'
+          Hint = 'm_dTableMarkPos2X0'
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft
@@ -2433,7 +2433,7 @@ object fmManual: TfmManual
           Top = 94
           Width = 129
           Height = 28
-          Hint = 'm_dTableMarkPosY0'
+          Hint = 'm_dTableMarkPos2Y0'
           AutoSize = False
           BevelInner = bvSpace
           BevelKind = bkSoft

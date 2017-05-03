@@ -291,7 +291,7 @@ bool PCIM114GL::IsMotionDone(unsigned short nAxis)
 bool PCIM114GL::IsPosDone(int nAxis,double dPos)
 {
         double dP=GetFeedbackPos(nAxis);
-        if(dP>dPos-0.02 && dP<dPos+0.02) return true;
+        if(dP>dPos-0.008 && dP<dPos+0.008) return true;
         else return false;
 }
 //---------------------------------------------------------------------------
@@ -300,7 +300,7 @@ bool PCIM114GL::IsLastPosDone(int nAxis)
         double dPos=m_dLastTargetPos[nAxis];
 
         double dP=GetFeedbackPos(nAxis);
-        if(dP>dPos-0.02 && dP<dPos+0.02) return true;
+        if(dP>dPos-0.008 && dP<dPos+0.008) return true;
         else return false;
 }
 //---------------------------------------------------------------------------
